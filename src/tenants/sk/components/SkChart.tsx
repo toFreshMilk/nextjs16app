@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { getTenantConfig } from "@/config/tenant.config";
+import { getTenantConfig } from "@/config/tenant.config"; // 경로 확인 필요
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -13,17 +13,12 @@ const geistMono = Geist_Mono({
     subsets: ["latin"],
 });
 
+// 동적 메타데이터 생성 (고객사명 반영)
 export async function generateMetadata(): Promise<Metadata> {
     const config = getTenantConfig();
     return {
-        title: {
-            template: `%s | ${config.name}`,
-            default: config.name,
-        },
+        title: `${config.name} - Main`,
         description: "Enterprise Legal Management System",
-        icons: {
-            icon: "/favicon.ico", // 고객사별 파비콘 분기 가능
-        },
     };
 }
 
@@ -38,10 +33,8 @@ export default function RootLayout({
         <html lang="ko">
         <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-            // 테마 색상을 CSS 변수로 주입하여 Tailwind 등에서 var(--primary-color)로 사용 가능
-            style={{
-                '--primary-color': config.theme.primaryColor
-            } as React.CSSProperties}
+            // 테마 색상을 CSS 변수로 주입하여 Tailwind 설정에서 사용 가능하게 함
+            style={{ '--primary-color': config.theme.primaryColor } as React.CSSProperties}
         >
         {children}
         </body>
