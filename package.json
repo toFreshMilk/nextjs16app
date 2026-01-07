@@ -4,10 +4,18 @@
   "private": true,
   "packageManager": "pnpm@10.24.0",
   "scripts": {
-    "dev": "cross-env NEXT_PUBLIC_TENANT=default next dev",
-    "dev:sk": "cross-env NEXT_PUBLIC_TENANT=sk next dev --port 3001",
-    "build": "cross-env NEXT_PUBLIC_TENANT=default next build",
-    "build:sk": "cross-env NEXT_PUBLIC_TENANT=sk next build"
+    "dev": "next dev",
+
+    "dev:saas": "cross-env NEXT_PUBLIC_TENANT=saas next dev",
+
+    "build:sk": "cross-env NEXT_PUBLIC_TENANT=sk next build",
+    "build:naver": "cross-env NEXT_PUBLIC_TENANT=naver next build",
+    "build:lg": "cross-env NEXT_PUBLIC_TENANT=lg next build",
+
+    "build:saas": "cross-env NEXT_PUBLIC_TENANT=saas next build",
+
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "clsx": "^2.1.1",
