@@ -1,75 +1,45 @@
-import { getTenantConfig } from "@/config/tenant.config";
-import Link from "next/link";
+'use client';
 
-export default function Home() {
-    const config = getTenantConfig();
+import { useAppConfig } from "@/core/contexts/AppConfigContext";
+import { authService } from "@/services/auth/auth.service";
+import { useRouter } from "next/navigation";
+import Logo from "@/uikit/branding/Logo";
+import { useEffect, useState } from "react";
+
+export default function LoginPage() {
+    // 초기 렌더링 시 config가 없을 수 있으므로 안전하게 처리
+    const config = useAppConfig();
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+
+    const handleLogin = async () => {
+        setLoading(true);
+        // 로그인 시뮬레이션
+        const success = await authService.login('admin@test.com');
+        if (success) {
+            router.push('/dashboard');
+        } else {
+            setLoading(false);
+        }
+    };
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-6">
-            <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-
-                {/* 로고 영역 */}
-                <div className="text-center mb-8">
-                    <div className={`text-4xl font-extrabold mb-2 ${config.theme.primaryColor}`}>
-                        Buptle<span className="text-black">Biz</span>
-                    </div>
-                    <p className="text-gray-500 text-sm">
-                        {config.name} Enterprise Login
-                    </p>
+        <main className="flex h-screen items-center justify-center bg-slate-50">
+            <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg text-center border border-slate-100">
+                <div className="flex justify-center mb-6">
+                    <Logo tenantName={config?.name || 'Loading...'} />
                 </div>
+                <h1 className="text-2xl font-bold text-slate-800 mb-2">환영합니다</h1>
+                <p className="text-slate-500 mb-8">서비스 이용을 위해 로그인해주세요.</p>
 
-                {/* 로그인 폼 (목업) */}
-                <form className="space-y-6">
-                    <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                            이메일
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                            placeholder="admin@buptle.com"
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                            비밀번호
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                            placeholder="••••••••"
-                        />
-                    </div>
-
-                    <button
-                        type="button" // 실제론 submit
-                        className={`w-full py-3 px-4 text-white font-bold rounded-lg shadow transition hover:opacity-90 ${
-                            // Tailwind 클래스로 색상 지정이 어려운 경우 style 사용
-                            config.id === 'sk' ? 'bg-red-700' : 'bg-blue-600'
-                        }`}
-                    >
-                        로그인
-                    </button>
-                </form>
-
-                {/* 개발용 네비게이션 (검증용) */}
-                <div className="mt-8 pt-6 border-t text-center">
-                    <p className="text-xs text-gray-400 mb-2">DEV MODE SHORTCUTS</p>
-                    <Link
-                        href="/dashboard"
-                        className="text-sm text-blue-500 hover:underline font-medium"
-                    >
-                        대시보드로 바로가기 →
-                    </Link>
-                </div>
-            </div>
-
-            <div className="mt-8 text-center text-xs text-gray-400">
-                © 2026 Buptle Corp. All rights reserved.<br/>
-                Tenant ID: <span className="font-mono text-gray-600">{config.id}</span>
+                <button
+                    onClick={handleLogin}
+                    disabled={loading}
+                    className="w-full py-3.5 text-white rounded-lg font-bold shadow transition-all hover:opacity-90 disabled:opacity-50"
+                    style={{ backgroundColor: config?.theme?.primaryColor || '#2563eb' }}
+                >
+                    {loading ? '로그인 중...' : '로그인'}
+                </button>
             </div>
         </main>
     );

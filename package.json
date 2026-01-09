@@ -5,17 +5,11 @@
   "packageManager": "pnpm@10.24.0",
   "scripts": {
     "dev": "next dev",
-
-    "dev:saas": "cross-env NEXT_PUBLIC_TENANT=saas next dev",
-
-    "build:sk": "cross-env NEXT_PUBLIC_TENANT=sk next build",
-    "build:naver": "cross-env NEXT_PUBLIC_TENANT=naver next build",
-    "build:lg": "cross-env NEXT_PUBLIC_TENANT=lg next build",
-
-    "build:saas": "cross-env NEXT_PUBLIC_TENANT=saas next build",
-
+    "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:stg": "cross-env NEXT_PUBLIC_ENV=stg next build",
+    "build:prod": "cross-env NEXT_PUBLIC_ENV=prod next build"
   },
   "dependencies": {
     "clsx": "^2.1.1",
