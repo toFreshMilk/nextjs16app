@@ -4,19 +4,15 @@ import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
 
 type Props = {
     children: ReactNode;
-    params: Promise<{ tenant: string }>;  // ✅ Promise 타입
+    params: Promise<{ tenant: string }>;
 };
 
 export default async function TenantLayout({ children, params }: Props) {
-    const { tenant } = await params;  // ✅ await로 풀기
+    const { tenant } = await params;
     const clientConfig = getClientConfig(tenant);
 
-    const cssVarsStyle = Object.entries(clientConfig.theme.cssVars)
-        .map(([key, value]) => `${key}: ${value};`)
-        .join(' ');
-
     return (
-        <div data-tenant={clientConfig.key} style={{ cssVarsStyle } as React.CSSProperties}>
+        <div data-tenant={clientConfig.key} style={clientConfig.theme.cssVars as React.CSSProperties}>
             {clientConfig.theme.inlineCss && (
                 <style dangerouslySetInnerHTML={{ __html: clientConfig.theme.inlineCss }} />
             )}

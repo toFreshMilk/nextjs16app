@@ -1,8 +1,8 @@
 import { ComponentType } from 'react';
 import { deepMerge } from '@/core/utils/object.util';
-import {aprConfig} from "@/core/config/apr.config";
-import {handokConfig} from "@/core/config/handok.config";
-import {iicConfig} from "@/core/config/iic.config";
+import {aprConfig} from "@/core/config/tenants/apr.config";
+import {handokConfig} from "@/core/config/tenants/handok.config";
+import {iicConfig} from "@/core/config/tenants/iic.config";
 
 
 export type TenantKey = 'demo' | 'apr' | 'handok' | 'iic';
