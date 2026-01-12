@@ -1,3 +1,5 @@
+// 📁 src/standard/services/TopNavbar.tsx
+
 'use client';
 
 import Link from 'next/link';
@@ -8,8 +10,8 @@ export default function TopNavbar() {
     const { tenant } = useAppConfig();
     const pathname = usePathname();
 
-    // ✅ features 대신 menus 사용
-    const enabledMenus = tenant.menus.filter(menu => menu.enabled);
+    // ✅ topMenus를 order 순서대로 정렬
+    const sortedMenus = [...tenant.topMenus].sort((a, b) => a.order - b.order);
 
     const linkClass = (path: string) => {
         const isActive = pathname === path || pathname.endsWith(path);
@@ -29,7 +31,7 @@ export default function TopNavbar() {
                     </Link>
 
                     <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-                        {enabledMenus.map(menu => (
+                        {sortedMenus.map(menu => (
                             <Link
                                 key={menu.key}
                                 href={menu.path}
@@ -39,6 +41,25 @@ export default function TopNavbar() {
                             </Link>
                         ))}
                     </nav>
+                </div>
+
+                {/* ✅ 기능 플래그에 따른 UI 표시 예시 */}
+                <div className="ml-auto flex items-center gap-2">
+                    {tenant.features.search && (
+                        <button className="p-2 hover:bg-[var(--brand-surface)] rounded">
+                            🔍 Search
+                        </button>
+                    )}
+                    {tenant.features.notification && (
+                        <button className="p-2 hover:bg-[var(--brand-surface)] rounded">
+                            🔔 Notifications
+                        </button>
+                    )}
+                    {tenant.features.chat && (
+                        <button className="p-2 hover:bg-[var(--brand-surface)] rounded">
+                            💬 Chat
+                        </button>
+                    )}
                 </div>
             </div>
         </header>
