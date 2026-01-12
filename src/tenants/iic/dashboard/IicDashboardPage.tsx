@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import PageContainer from '@/uikit/layout/PageContainer';
-import DashboardStatsWidget from '@/standard/dashboard/widgets/DashboardStatsWidget';
+import DashboardStatsServices from '@/standard/dashboard/services/DashboardStatsServices';
 import SimpleChart from '@/uikit/chart/SimpleChart';
 
 export default function IicDashboardPage() {
@@ -64,7 +64,7 @@ export default function IicDashboardPage() {
                     </div>
                 </div>
 
-                <DashboardStatsWidget />
+                <DashboardStatsServices />
 
                 {/* IIC 혁신 지표 차트 */}
                 <div className="std-card">

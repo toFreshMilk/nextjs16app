@@ -1,5 +1,5 @@
 import PageContainer from '@/uikit/layout/PageContainer';
-import ContractListWidget from './widgets/ContractListWidget';
+import ContractListServices from '@/standard/contract/services/ContractListServices';
 
 export default function ContractPage() {
     return (
@@ -14,7 +14,7 @@ export default function ContractPage() {
                     </button>
                 </div>
 
-                <ContractListWidget />
+                <ContractListServices />
             </div>
         </PageContainer>
     );

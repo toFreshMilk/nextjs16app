@@ -1,7 +1,7 @@
 'use client';
 
 import PageContainer from '@/uikit/layout/PageContainer';
-import DashboardStatsWidget from '@/standard/dashboard/widgets/DashboardStatsWidget';
+import DashboardStatsServices from '@/standard/dashboard/services/DashboardStatsServices';
 
 export default function HandokDashboardPage() {
     return (
@@ -23,7 +23,7 @@ export default function HandokDashboardPage() {
                     </div>
                 </div>
 
-                <DashboardStatsWidget />
+                <DashboardStatsServices />
 
                 {/* Handok 특화 정보 */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

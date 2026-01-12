@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import PageContainer from '@/uikit/layout/PageContainer';
-import DashboardStatsWidget from '@/standard/dashboard/widgets/DashboardStatsWidget';
+import DashboardStatsServices from '@/standard/dashboard/services/DashboardStatsServices';
 import SimpleChart from '@/uikit/chart/SimpleChart';
 
 export default function AprDashboardPage() {
@@ -36,7 +36,7 @@ export default function AprDashboardPage() {
                     </div>
                 </div>
 
-                <DashboardStatsWidget />
+                <DashboardStatsServices />
 
                 <div className="std-card">
                     <h3 className="text-lg font-bold text-brand-text mb-6">월별 계약 추이</h3>

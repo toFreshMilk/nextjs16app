@@ -11,7 +11,7 @@ const STATUS_MAP = {
     EXPIRED: { label: '만료', color: 'badge-error' },
 };
 
-export default function ContractListWidget() {
+export default function ContractListServices() {
     const contracts = useObservable(contracts$, []);
 
     useEffect(() => {

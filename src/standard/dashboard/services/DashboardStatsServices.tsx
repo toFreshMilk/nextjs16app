@@ -5,7 +5,7 @@ import { useObservable } from '@/core/hooks/useObservable';
 import { dashboardStore, dashboardStats$ } from '../store/dashboard.store';
 import StatCard from '@/uikit/card/StatCard';
 
-export default function DashboardStatsWidget() {
+export default function DashboardStatsServices() {
     const stats = useObservable(dashboardStats$, {
         pendingContracts: 0,
         activeAdvisories: 0,

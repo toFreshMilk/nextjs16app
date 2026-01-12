@@ -1,5 +1,5 @@
 import PageContainer from '@/uikit/layout/PageContainer';
-import DashboardStatsWidget from './widgets/DashboardStatsWidget';
+import DashboardStatsServices from '@/standard/dashboard/services/DashboardStatsServices';
 
 export default function DashboardPage() {
     return (
@@ -15,7 +15,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-8">
-                <DashboardStatsWidget />
+                <DashboardStatsServices />
 
                 <div className="std-card h-64 flex items-center justify-center">
                     <div className="text-center">

@@ -1,4 +1,4 @@
-import LoginForm from './widgets/LoginForm';
+import LoginForm from '@/standard/login/services/LoginForm';
 
 export default function LoginPage() {
     return (

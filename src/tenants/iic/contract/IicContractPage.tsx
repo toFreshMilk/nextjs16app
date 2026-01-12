@@ -1,7 +1,7 @@
 'use client';
 
 import PageContainer from '@/uikit/layout/PageContainer';
-import ContractListWidget from '@/standard/contract/widgets/ContractListWidget';
+import ContractListServices from '@/standard/contract/services/ContractListServices';
 
 export default function IicContractPage() {
     return (
@@ -33,7 +33,7 @@ export default function IicContractPage() {
                     </div>
                 </div>
 
-                <ContractListWidget />
+                <ContractListServices />
             </div>
         </PageContainer>
     );

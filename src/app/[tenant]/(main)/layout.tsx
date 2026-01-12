@@ -1,5 +1,5 @@
 import React from 'react';
-import TopNavbar from '@/standard/widgets/TopNavbar';
+import TopNavbar from '@/standard/services/TopNavbar';
 
 type Props = {
     children: React.ReactNode;
