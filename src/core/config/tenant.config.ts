@@ -1,5 +1,3 @@
-// 📁 src/core/config/tenant.config.ts
-
 import { ComponentType } from 'react';
 
 export type TenantKey = 'demo' | 'apr' | 'handok' | 'iic';
@@ -7,18 +5,35 @@ export type FeatureKey = 'dashboard' | 'contract' | 'login';
 
 type ComponentLoader = () => Promise<{ default: ComponentType<Record<string, never>> }>;
 
+export type MenuConfig = {
+    key: FeatureKey;
+    label: string;
+    path: string;
+    enabled: boolean;
+    component: ComponentLoader;
+};
+
+export type ClientMenuConfig = {
+    key: FeatureKey;
+    label: string;
+    path: string;
+    enabled: boolean;
+};
+
 export type TenantConfig = {
     key: TenantKey;
     displayName: string;
-    features: Record<FeatureKey, boolean>;
+    menus: MenuConfig[];
     theme: {
         cssVars: Record<string, string>;
         inlineCss?: string;
     };
-    customMenus: Record<FeatureKey, ComponentLoader>;
 };
 
-// ✅ DeepPartial 타입 정의
+export type ClientTenantConfig = Omit<TenantConfig, 'menus'> & {
+    menus: ClientMenuConfig[];
+};
+
 type DeepPartial<T> = {
     [P in keyof T]?: T[P] extends object
         ? T[P] extends ComponentLoader
@@ -29,12 +44,10 @@ type DeepPartial<T> = {
 
 type TenantOverride = DeepPartial<Omit<TenantConfig, 'key'>> & { key: TenantKey };
 
-// ✅ Type guard
 function isObject(item: unknown): item is Record<string, unknown> {
     return !!item && typeof item === 'object' && !Array.isArray(item);
 }
 
-// ✅ Deep merge 유틸리티 함수
 function deepMerge<T extends Record<string, unknown>>(
     target: T,
     source: Partial<T>
@@ -62,11 +75,32 @@ function deepMerge<T extends Record<string, unknown>>(
     return output;
 }
 
-// ✅ DEMO 기본 설정 (완전한 설정)
 const DEMO_BASE_CONFIG: TenantConfig = {
     key: 'demo',
     displayName: 'Demo Workspace',
-    features: { dashboard: true, contract: true, login: true },
+    menus: [
+        {
+            key: 'dashboard',
+            label: 'Dashboard',
+            path: '/dashboard',
+            enabled: true,
+            component: () => import('@/standard/dashboard/DashboardPage'),
+        },
+        {
+            key: 'contract',
+            label: 'Contract',
+            path: '/contract',
+            enabled: true,
+            component: () => import('@/standard/contract/ContractPage'),
+        },
+        {
+            key: 'login',
+            label: 'Login',
+            path: '/login',
+            enabled: true,
+            component: () => import('@/standard/login/LoginPage'),
+        },
+    ],
     theme: {
         cssVars: {
             '--brand-primary': '#2563EB',
@@ -77,29 +111,39 @@ const DEMO_BASE_CONFIG: TenantConfig = {
             '--brand-muted': '#94A3B8',
         },
     },
-    customMenus: {
-        login: () => import('@/standard/login/LoginPage'),
-        dashboard: () => import('@/standard/dashboard/DashboardPage'),
-        contract: () => import('@/standard/contract/ContractPage'),
-    },
 };
 
-// ✅ 테넌트별 Override 설정 - 다양한 케이스
 const TENANT_OVERRIDES: Record<TenantKey, TenantOverride> = {
     demo: {
         key: 'demo',
     },
 
-    // ✅ Case 1: APR - Full Customization (모든 요소 커스터마이징)
     apr: {
         key: 'apr',
         displayName: 'APR BuptleBiz',
-        // ✅ 모든 기능 활성화 (명시적으로 표현)
-        features: {
-            dashboard: true,
-            contract: true,
-            login: true
-        },
+        menus: [
+            {
+                key: 'dashboard',
+                label: 'APR Dashboard',
+                path: '/dashboard',
+                enabled: true,
+                component: () => import('@/tenants/apr/dashboard/AprDashboardPage'),
+            },
+            {
+                key: 'contract',
+                label: 'Contract Management',
+                path: '/contract',
+                enabled: true,
+                component: () => import('@/tenants/apr/contract/AprContractPage'),
+            },
+            {
+                key: 'login',
+                label: 'APR Login',
+                path: '/login',
+                enabled: true,
+                component: () => import('@/tenants/apr/login/AprLoginPage'),
+            },
+        ],
         theme: {
             cssVars: {
                 '--brand-primary': '#EA002C',
@@ -113,31 +157,25 @@ const TENANT_OVERRIDES: Record<TenantKey, TenantOverride> = {
         [data-tenant="apr"] .page-title {
           border-left: 4px solid #EA002C;
           padding-left: 16px;
-          font-weight: 700;
-        }
-        [data-tenant="apr"] .nav-item:hover {
-          background-color: #EA002C;
         }
       `,
         },
-        // ✅ 모든 페이지를 커스텀 컴포넌트로 override
-        customMenus: {
-            login: () => import('@/tenants/apr/login/AprLoginPage'),
-            dashboard: () => import('@/tenants/apr/dashboard/AprDashboardPage'),
-            contract: () => import('@/tenants/apr/contract/AprContractPage'),
-        },
     },
 
-    // ✅ Case 2: Handok - Partial Customization (일부 기능 비활성화 + 일부만 커스터마이징)
     handok: {
         key: 'handok',
         displayName: 'Handok BuptleBiz',
-        // ✅ contract 기능 비활성화 (차별화 포인트)
-        features: {
-            dashboard: true,
-            contract: false,  // ⚠️ 비활성화
-            login: true
-        },
+        menus: [
+            {
+                key: 'dashboard',
+                label: 'Handok Dashboard',
+                component: () => import('@/tenants/handok/dashboard/HandokDashboardPage'),
+            },
+            {
+                key: 'contract',
+                enabled: false,
+            },
+        ],
         theme: {
             cssVars: {
                 '--brand-primary': '#00A651',
@@ -154,21 +192,12 @@ const TENANT_OVERRIDES: Record<TenantKey, TenantOverride> = {
         }
       `,
         },
-        // ✅ dashboard만 커스터마이징, login은 demo 기본값 사용
-        customMenus: {
-            dashboard: () => import('@/tenants/handok/dashboard/HandokDashboardPage'),
-            // login: demo 기본값 (LoginPage) 사용
-            // contract: demo 기본값 (ContractPage) 사용 (하지만 features에서 비활성화됨)
-        },
     },
 
-    // ✅ Case 3: IIC - Minimal Customization (테마만 변경, 나머지 전부 demo)
     iic: {
         key: 'iic',
         displayName: 'IIC BuptleBiz',
-        // ✅ features 명시 안 함 → demo 기본값 상속 (모두 true)
         theme: {
-            // ✅ CSS Variables만 부분 override (inlineCss는 demo 기본값 사용)
             cssVars: {
                 '--brand-primary': '#FF6B00',
                 '--brand-primary-weak': '#FFEADB',
@@ -177,12 +206,7 @@ const TENANT_OVERRIDES: Record<TenantKey, TenantOverride> = {
                 '--brand-text': '#FFF5F0',
                 '--brand-muted': '#B59080',
             },
-            // ✅ inlineCss는 명시하지 않음 → demo 기본값(undefined) 사용
         },
-        // ✅ customMenus 자체를 명시하지 않음 → 모든 페이지가 demo 기본값 사용
-        // login: LoginPage (demo)
-        // dashboard: DashboardPage (demo)
-        // contract: ContractPage (demo)
     },
 };
 
@@ -203,10 +227,41 @@ export function getTenantByKey(key: string): TenantConfig {
     return merged;
 }
 
+export function getMenuComponent(
+    tenantKey: TenantKey,
+    menuKey: FeatureKey
+): ComponentLoader {
+    const config = getTenantByKey(tenantKey);
+    const menu = config.menus.find(m => m.key === menuKey);
+
+    if (!menu) {
+        throw new Error(`Menu not found: ${menuKey} for tenant ${tenantKey}`);
+    }
+
+    return menu.component;
+}
+
 export function getTenantComponentLoader(
     tenantKey: TenantKey,
     feature: FeatureKey
 ): ComponentLoader {
+    return getMenuComponent(tenantKey, feature);
+}
+
+export function getClientConfig(tenantKey: string): ClientTenantConfig {
     const config = getTenantByKey(tenantKey);
-    return config.customMenus[feature];
+
+    const clientMenus: ClientMenuConfig[] = config.menus.map(menu => ({
+        key: menu.key,
+        label: menu.label,
+        path: menu.path,
+        enabled: menu.enabled,
+    }));
+
+    return {
+        key: config.key,
+        displayName: config.displayName,
+        menus: clientMenus,
+        theme: config.theme,
+    };
 }

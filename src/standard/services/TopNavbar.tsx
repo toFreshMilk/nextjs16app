@@ -3,76 +3,42 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
-import { globalStore } from '@/core/store/global.store';
-import { useObservable } from '@/core/hooks/useObservable';
 
 export default function TopNavbar() {
     const { tenant } = useAppConfig();
     const pathname = usePathname();
-    const auth = useObservable(globalStore.auth$, {
-        isAuthenticated: false,
-        userName: null,
-        userEmail: null,
-    });
 
-    // ✅ 서브도메인 기반이므로 경로에 tenant 불필요
-    const isActive = (segment: string) => pathname.includes(segment);
+    // ✅ features 대신 menus 사용
+    const enabledMenus = tenant.menus.filter(menu => menu.enabled);
 
-    const linkClass = (segment: string) =>
-        isActive(segment)
-            ? 'text-brand-primary font-bold border-b-2 border-brand-primary pb-1'
-            : 'text-brand-muted hover:text-brand-text transition-colors';
-
-    const handleLogout = () => {
-        globalStore.logout();
-        window.location.href = '/login';
+    const linkClass = (path: string) => {
+        const isActive = pathname === path || pathname.endsWith(path);
+        return isActive
+            ? 'text-[var(--brand-primary)] font-semibold'
+            : 'text-[var(--brand-text)] hover:text-[var(--brand-primary)]';
     };
 
     return (
-        <header className="sticky top-0 z-50 h-16 border-b border-white/10 bg-brand-surface/95 backdrop-blur-sm">
-            <div className="h-full max-w-[1920px] mx-auto px-4 md:px-8 flex items-center justify-between">
-                <div className="flex items-center gap-8">
-                    <Link
-                        href="/dashboard"
-                        className="text-xl font-bold tracking-tight text-brand-primary hover:opacity-80 transition"
-                    >
-                        {tenant.displayName}
+        <header className="sticky top-0 z-50 w-full border-b border-[var(--brand-surface)] bg-[var(--brand-bg)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--brand-bg)]/60">
+            <div className="container flex h-14 items-center">
+                <div className="mr-4 flex">
+                    <Link href="/dashboard" className="mr-6 flex items-center space-x-2">
+                        <span className="font-bold text-[var(--brand-primary)]">
+                            {tenant.displayName}
+                        </span>
                     </Link>
 
                     <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-                        {tenant.features.dashboard && (
-                            <Link href="/dashboard" className={linkClass('/dashboard')}>
-                                대시보드
-                            </Link>
-                        )}
-                        {tenant.features.contract && (
-                            <Link href="/contract" className={linkClass('/contract')}>
-                                계약관리
-                            </Link>
-                        )}
-                    </nav>
-                </div>
-
-                <div className="flex items-center gap-4">
-          <span className="text-xs px-2 py-1 rounded bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
-            {tenant.key}
-          </span>
-
-                    <span className="custom-badge hidden sm:inline-block px-3 py-1 rounded-full text-xs font-bold text-white">
-            {tenant.key.toUpperCase()}
-          </span>
-
-                    {auth.isAuthenticated && auth.userName && (
-                        <div className="hidden md:flex items-center gap-2 text-sm">
-                            <span className="text-brand-muted">{auth.userName}</span>
-                            <button
-                                onClick={handleLogout}
-                                className="text-brand-primary hover:underline text-xs"
+                        {enabledMenus.map(menu => (
+                            <Link
+                                key={menu.key}
+                                href={menu.path}
+                                className={linkClass(menu.path)}
                             >
-                                로그아웃
-                            </button>
-                        </div>
-                    )}
+                                {menu.label}
+                            </Link>
+                        ))}
+                    </nav>
                 </div>
             </div>
         </header>

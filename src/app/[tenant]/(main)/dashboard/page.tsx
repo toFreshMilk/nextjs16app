@@ -1,8 +1,19 @@
-export default function Page() {
-    return (
-        <div className="p-8">
-            <h1 className="text-2xl font-bold text-white">Dashboard Works!</h1>
-            <p className="text-gray-400 mt-4">Route is working correctly.</p>
-        </div>
+import { getTenantComponentLoader } from '@/core/config/tenant.config';
+import type { TenantKey } from '@/core/config/tenant.config';
+
+type Props = {
+    params: Promise<{ tenant: string }>;  // ✅ Promise 타입
+};
+
+export default async function DashboardPage({ params }: Props) {
+    const { tenant } = await params;  // ✅ await로 풀기
+
+    const ComponentLoader = getTenantComponentLoader(
+        tenant as TenantKey,
+        'dashboard'
     );
+
+    const { default: DashboardComponent } = await ComponentLoader();
+
+    return <DashboardComponent />;
 }

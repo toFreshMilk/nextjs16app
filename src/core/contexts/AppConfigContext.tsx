@@ -1,10 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useMemo } from 'react';
-import type { TenantConfig } from '@/core/config/tenant.config';
-
-// ✅ 클라이언트에서 사용 가능한 테넌트 설정 (함수 제외)
-export type ClientTenantConfig = Omit<TenantConfig, 'customComponents'>;
+import type { ClientTenantConfig } from '@/core/config/tenant.config';
 
 type AppConfigContextValue = {
     tenant: ClientTenantConfig;
