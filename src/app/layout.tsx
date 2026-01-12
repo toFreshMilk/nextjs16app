@@ -1,28 +1,23 @@
+import type { Metadata } from 'next';
 import './globals.css';
-import { headers } from 'next/headers';
-import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
+import '@/standard/standard.css';
 
-export const metadata = {
-    title: 'LawTle Biz',
-    description: 'Enterprise Legal Management Solution',
+// 테넌트 커스텀 CSS
+import '@/tenants/apr/apr.css';
+import '@/tenants/handok/handok.css';
+import '@/tenants/iic/iic.css';
+
+export const metadata: Metadata = {
+    title: 'BuptleBiz Legal Solution',
+    description: 'Enterprise Legal Management System',
 };
 
-export default async function RootLayout({
-                                             children,
-                                         }: {
-    children: React.ReactNode;
-}) {
-    // Server Component에서 헤더를 통해 테넌트 ID 감지
-    const headersList = await headers();
-    const tenantId = headersList.get('x-tenant-id') || 'default';
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="ko">
-        <body>
-        {/* 클라이언트 컴포넌트에 테넌트 정보 주입 */}
-        <AppConfigProvider detectedTenantId={tenantId}>
-            {children}
-        </AppConfigProvider>
+        {/* ✅ body는 최소한의 스타일만, 테마는 Tenant Layout에서 주입 */}
+        <body className="antialiased">
+        {children}
         </body>
         </html>
     );

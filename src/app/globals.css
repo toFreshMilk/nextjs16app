@@ -1,11 +1,45 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
+/* ✅ Tailwind v4: @theme으로 커스텀 색상 정의 */
+@theme {
+    --color-brand-primary: #2563EB;
+    --color-brand-primary-weak: #DBEAFE;
+    --color-brand-bg: #0F172A;
+    --color-brand-surface: #1E293B;
+    --color-brand-text: #F1F5F9;
+    --color-brand-muted: #94A3B8;
+}
+
+/* ✅ :root에 동일 변수 정의 (테넌트별 덮어쓰기용) */
 :root {
-  --primary-color: #2563eb; /* Default fallback */
+    --brand-primary: var(--color-brand-primary);
+    --brand-primary-weak: var(--color-brand-primary-weak);
+    --brand-bg: var(--color-brand-bg);
+    --brand-surface: var(--color-brand-surface);
+    --brand-text: var(--color-brand-text);
+    --brand-muted: var(--color-brand-muted);
 }
 
 body {
-  background-color: #f8fafc;
+    background-color: var(--brand-bg);
+    color: var(--brand-text);
+}
+
+/* 스크롤바 커스텀 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

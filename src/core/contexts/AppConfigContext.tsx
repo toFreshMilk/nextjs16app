@@ -1,30 +1,46 @@
 'use client';
 
-import { createContext, useContext, ReactNode } from 'react';
-import { TenantConfig, configs } from '@/core/config/tenant.config';
+import React, { createContext, useContext, useMemo } from 'react';
+import type { TenantConfig } from '@/core/config/tenant.config';
 
-const Context = createContext<TenantConfig | null>(null);
+// ✅ 함수 제외한 안전한 타입
+type SafeTenantConfig = Omit<TenantConfig, 'customComponents'>;
 
-interface Props {
-    children: ReactNode;
-    detectedTenantId?: string;
-}
+type AppConfigContextValue = {
+    tenant: SafeTenantConfig;
+};
 
-export function AppConfigProvider({ children, detectedTenantId }: Props) {
-    const targetId = detectedTenantId || 'default';
-    const config = configs[targetId] || configs.default;
+const AppConfigContext = createContext<AppConfigContextValue | null>(null);
+
+export function AppConfigProvider({
+                                      tenant,
+                                      children,
+                                  }: {
+    tenant: TenantConfig;
+    children: React.ReactNode;
+}) {
+    // ✅ customComponents 제외하고 전달
+    const safeTenant: SafeTenantConfig = useMemo(() => {
+        const { customComponents, ...rest } = tenant;
+        return rest;
+    }, [tenant]);
+
+    const value = useMemo<AppConfigContextValue>(
+        () => ({ tenant: safeTenant }),
+        [safeTenant]
+    );
 
     return (
-        <Context.Provider value={config}>
-            <div style={{ display: 'contents', '--primary-color': config.theme.primaryColor } as React.CSSProperties}>
-                {children}
-            </div>
-        </Context.Provider>
+        <AppConfigContext.Provider value={value}>
+            {children}
+        </AppConfigContext.Provider>
     );
 }
 
-export const useAppConfig = () => {
-    const context = useContext(Context);
-    if (!context) throw new Error('useAppConfig must be used within AppConfigProvider');
+export function useAppConfig(): AppConfigContextValue {
+    const context = useContext(AppConfigContext);
+    if (!context) {
+        throw new Error('useAppConfig must be used within AppConfigProvider');
+    }
     return context;
-};
+}

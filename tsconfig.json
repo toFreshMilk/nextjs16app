@@ -1,7 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    // [최적화 1] 타겟 버전 상향 (ES2017 -> ES2022)
+    // 최신 Node.js 및 브라우저 환경에 맞춰 불필요한 트랜스파일링 제거
+    "target": "ES2022",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -11,24 +17,34 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx",
+    "jsx": "react-jsx", // Next.js가 알아서 처리하므로 'preserve' 권장 (또는 'react-jsx')
     "incremental": true,
+    // [최적화 2] 최신 Next.js 플러그인 설정
     "plugins": [
       {
         "name": "next"
       }
     ],
+    // [경로 별칭] 명확하게 유지
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    // [추가 권장] 사용되지 않는 변수/파라미터 체크 (Strictness 강화)
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    // .next/dev/types는 Next 버전마다 다를 수 있으니 .next/types로 통칭 가능하지만 유지해도 무방
+    "**/*.mts",
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }
