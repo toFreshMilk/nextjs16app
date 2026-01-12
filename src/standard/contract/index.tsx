@@ -1,18 +1,22 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import { lazy, Suspense } from 'react';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
-import ContractPage from './ContractPage';
-
-const standardLoader = () => Promise.resolve({ default: ContractPage });
+import { getTenantComponentLoader } from '@/core/config/tenant.config';
 
 export default function ContractRegistry() {
     const { tenant } = useAppConfig();
-    const loader = tenant.customComponents?.contract ?? standardLoader;
+    const Page = lazy(getTenantComponentLoader(tenant.key, 'contract'));
 
-    const Page = dynamic(loader, {
-        loading: () => <div className="p-12 text-center text-brand-muted">Loading...</div>,
-    });
-
-    return <Page />;
+    return (
+        <Suspense
+            fallback={
+                <div className="p-12 text-center text-brand-muted">
+                    Loading...
+                </div>
+            }
+        >
+            <Page />
+        </Suspense>
+    );
 }
