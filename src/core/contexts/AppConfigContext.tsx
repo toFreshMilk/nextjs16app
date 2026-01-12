@@ -3,11 +3,11 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import type { TenantConfig } from '@/core/config/tenant.config';
 
-// ✅ 함수 제외한 안전한 타입
-type SafeTenantConfig = Omit<TenantConfig, 'customComponents'>;
+// ✅ 클라이언트에서 사용 가능한 테넌트 설정 (함수 제외)
+export type ClientTenantConfig = Omit<TenantConfig, 'customComponents'>;
 
 type AppConfigContextValue = {
-    tenant: SafeTenantConfig;
+    tenant: ClientTenantConfig;
 };
 
 const AppConfigContext = createContext<AppConfigContextValue | null>(null);
@@ -16,18 +16,12 @@ export function AppConfigProvider({
                                       tenant,
                                       children,
                                   }: {
-    tenant: TenantConfig;
+    tenant: ClientTenantConfig;
     children: React.ReactNode;
 }) {
-    // ✅ customComponents 제외하고 전달
-    const safeTenant: SafeTenantConfig = useMemo(() => {
-        const { customComponents, ...rest } = tenant;
-        return rest;
-    }, [tenant]);
-
     const value = useMemo<AppConfigContextValue>(
-        () => ({ tenant: safeTenant }),
-        [safeTenant]
+        () => ({ tenant }),
+        [tenant]
     );
 
     return (

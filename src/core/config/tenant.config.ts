@@ -1,10 +1,10 @@
 import { ComponentType } from 'react';
 
 export type TenantKey = 'demo' | 'apr' | 'handok' | 'iic';
-
 export type FeatureKey = 'dashboard' | 'contract' | 'login';
 
-type ComponentLoader = () => Promise<{ default: ComponentType<any> }>;
+// ✅ any 대신 명확한 타입 사용
+type ComponentLoader = () => Promise<{ default: ComponentType<Record<string, never>> }>;
 
 export type TenantConfig = {
     key: TenantKey;
@@ -14,15 +14,17 @@ export type TenantConfig = {
         cssVars: Record<string, string>;
         inlineCss?: string;
     };
-    customComponents?: {
-        login?: ComponentLoader;
-        dashboard?: ComponentLoader;
-        contract?: ComponentLoader;
-    };
+    customComponents: Record<FeatureKey, ComponentLoader>;
+};
+
+// ✅ demo 기본 컴포넌트
+const DEMO_COMPONENTS: Record<FeatureKey, ComponentLoader> = {
+    login: () => import('@/standard/login/LoginPage'),
+    dashboard: () => import('@/standard/dashboard/DashboardPage'),
+    contract: () => import('@/standard/contract/ContractPage'),
 };
 
 export const TENANTS: Record<TenantKey, TenantConfig> = {
-    // Demo: 표준 구현만 사용
     demo: {
         key: 'demo',
         displayName: 'Demo Workspace',
@@ -37,9 +39,9 @@ export const TENANTS: Record<TenantKey, TenantConfig> = {
                 '--brand-muted': '#94A3B8',
             },
         },
+        customComponents: DEMO_COMPONENTS,
     },
 
-    // APR: 대시보드, 계약, 로그인 커스텀
     apr: {
         key: 'apr',
         displayName: 'APR BuptleBiz',
@@ -58,20 +60,17 @@ export const TENANTS: Record<TenantKey, TenantConfig> = {
           border-left: 4px solid #EA002C;
           padding-left: 16px;
         }
-        [data-tenant="apr"] .custom-badge {
-          background: linear-gradient(135deg, #EA002C 0%, #C40023 100%);
-          box-shadow: 0 4px 12px rgba(234, 0, 44, 0.3);
-        }
       `,
         },
         customComponents: {
+            ...DEMO_COMPONENTS,
+            // ✅ 실제 파일명으로 수정
             login: () => import('@/tenants/apr/login/AprLoginPage'),
             dashboard: () => import('@/tenants/apr/dashboard/AprDashboardPage'),
             contract: () => import('@/tenants/apr/contract/AprContractPage'),
         },
     },
 
-    // Handok: 대시보드만 커스텀
     handok: {
         key: 'handok',
         displayName: 'Handok BuptleBiz',
@@ -93,11 +92,11 @@ export const TENANTS: Record<TenantKey, TenantConfig> = {
       `,
         },
         customComponents: {
+            ...DEMO_COMPONENTS,
             dashboard: () => import('@/tenants/handok/dashboard/HandokDashboardPage'),
         },
     },
 
-    // IIC: 로그인 + 대시보드 커스텀
     iic: {
         key: 'iic',
         displayName: 'IIC BuptleBiz',
@@ -119,6 +118,7 @@ export const TENANTS: Record<TenantKey, TenantConfig> = {
       `,
         },
         customComponents: {
+            ...DEMO_COMPONENTS,
             login: () => import('@/tenants/iic/login/IicLoginPage'),
             dashboard: () => import('@/tenants/iic/dashboard/IicDashboardPage'),
         },
@@ -135,4 +135,12 @@ export function getTenantByKey(key: string): TenantConfig {
         return TENANTS.demo;
     }
     return TENANTS[key];
+}
+
+export function getTenantComponentLoader(
+    tenantKey: TenantKey,
+    feature: FeatureKey
+): ComponentLoader {
+    const config = getTenantByKey(tenantKey);
+    return config.customComponents[feature];
 }

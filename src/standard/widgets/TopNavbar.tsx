@@ -15,15 +15,7 @@ export default function TopNavbar() {
         userEmail: null,
     });
 
-    const basePath = `/${tenant.key}`;
-
-    // ✅ 디버깅 로그
-    console.log('🔗 TopNavbar:', {
-        tenantKey: tenant.key,
-        basePath,
-        pathname,
-    });
-
+    // ✅ 서브도메인 기반이므로 경로에 tenant 불필요
     const isActive = (segment: string) => pathname.includes(segment);
 
     const linkClass = (segment: string) =>
@@ -33,7 +25,7 @@ export default function TopNavbar() {
 
     const handleLogout = () => {
         globalStore.logout();
-        window.location.href = `${basePath}/login`;
+        window.location.href = '/login';
     };
 
     return (
@@ -41,7 +33,7 @@ export default function TopNavbar() {
             <div className="h-full max-w-[1920px] mx-auto px-4 md:px-8 flex items-center justify-between">
                 <div className="flex items-center gap-8">
                     <Link
-                        href={`${basePath}/dashboard`}
+                        href="/dashboard"
                         className="text-xl font-bold tracking-tight text-brand-primary hover:opacity-80 transition"
                     >
                         {tenant.displayName}
@@ -49,12 +41,12 @@ export default function TopNavbar() {
 
                     <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
                         {tenant.features.dashboard && (
-                            <Link href={`${basePath}/dashboard`} className={linkClass('/dashboard')}>
+                            <Link href="/dashboard" className={linkClass('/dashboard')}>
                                 대시보드
                             </Link>
                         )}
                         {tenant.features.contract && (
-                            <Link href={`${basePath}/contract`} className={linkClass('/contract')}>
+                            <Link href="/contract" className={linkClass('/contract')}>
                                 계약관리
                             </Link>
                         )}
@@ -62,9 +54,8 @@ export default function TopNavbar() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    {/* ✅ 현재 테넌트 키 표시 (디버깅용) */}
-                    <span className="text-xs px-2 py-1 rounded bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
-            Tenant: {tenant.key}
+          <span className="text-xs px-2 py-1 rounded bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+            {tenant.key}
           </span>
 
                     <span className="custom-badge hidden sm:inline-block px-3 py-1 rounded-full text-xs font-bold text-white">
