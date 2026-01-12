@@ -1,9 +1,10 @@
+// 📁 src/core/config/tenant.config.ts
+
 import { ComponentType } from 'react';
 
 export type TenantKey = 'demo' | 'apr' | 'handok' | 'iic';
 export type FeatureKey = 'dashboard' | 'contract' | 'login';
 
-// ✅ any 대신 명확한 타입 사용
 type ComponentLoader = () => Promise<{ default: ComponentType<Record<string, never>> }>;
 
 export type TenantConfig = {
@@ -17,35 +18,81 @@ export type TenantConfig = {
     customComponents: Record<FeatureKey, ComponentLoader>;
 };
 
-// ✅ demo 기본 컴포넌트
-const DEMO_COMPONENTS: Record<FeatureKey, ComponentLoader> = {
-    login: () => import('@/standard/login/LoginPage'),
-    dashboard: () => import('@/standard/dashboard/DashboardPage'),
-    contract: () => import('@/standard/contract/ContractPage'),
+// ✅ DeepPartial 타입 정의
+type DeepPartial<T> = {
+    [P in keyof T]?: T[P] extends object
+        ? T[P] extends ComponentLoader
+            ? T[P]
+            : DeepPartial<T[P]>
+        : T[P];
 };
 
-export const TENANTS: Record<TenantKey, TenantConfig> = {
+type TenantOverride = DeepPartial<Omit<TenantConfig, 'key'>> & { key: TenantKey };
+
+// ✅ Type guard: 객체인지 확인
+function isObject(item: unknown): item is Record<string, unknown> {
+    return !!item && typeof item === 'object' && !Array.isArray(item);
+}
+
+// ✅ Deep merge 유틸리티 함수 (any 제거, unknown 사용)
+function deepMerge<T extends Record<string, unknown>>(
+    target: T,
+    source: Partial<T>
+): T {
+    const output = { ...target };
+
+    for (const key in source) {
+        const sourceValue = source[key];
+        const targetValue = output[key];
+
+        // ✅ Type guard로 안전하게 체크
+        if (isObject(sourceValue)) {
+            if (isObject(targetValue)) {
+                output[key] = deepMerge(
+                    targetValue as Record<string, unknown>,
+                    sourceValue as Record<string, unknown>
+                ) as T[Extract<keyof T, string>];
+            } else {
+                output[key] = sourceValue as T[Extract<keyof T, string>];
+            }
+        } else if (sourceValue !== undefined) {
+            output[key] = sourceValue as T[Extract<keyof T, string>];
+        }
+    }
+
+    return output;
+}
+
+// ... 나머지 코드는 동일
+const DEMO_BASE_CONFIG: TenantConfig = {
+    key: 'demo',
+    displayName: 'Demo Workspace',
+    features: { dashboard: true, contract: true, login: true },
+    theme: {
+        cssVars: {
+            '--brand-primary': '#2563EB',
+            '--brand-primary-weak': '#DBEAFE',
+            '--brand-bg': '#0F172A',
+            '--brand-surface': '#1E293B',
+            '--brand-text': '#F1F5F9',
+            '--brand-muted': '#94A3B8',
+        },
+    },
+    customComponents: {
+        login: () => import('@/standard/login/LoginPage'),
+        dashboard: () => import('@/standard/dashboard/DashboardPage'),
+        contract: () => import('@/standard/contract/ContractPage'),
+    },
+};
+
+const TENANT_OVERRIDES: Record<TenantKey, TenantOverride> = {
     demo: {
         key: 'demo',
-        displayName: 'Demo Workspace',
-        features: { dashboard: true, contract: true, login: true },
-        theme: {
-            cssVars: {
-                '--brand-primary': '#2563EB',
-                '--brand-primary-weak': '#DBEAFE',
-                '--brand-bg': '#0F172A',
-                '--brand-surface': '#1E293B',
-                '--brand-text': '#F1F5F9',
-                '--brand-muted': '#94A3B8',
-            },
-        },
-        customComponents: DEMO_COMPONENTS,
     },
 
     apr: {
         key: 'apr',
         displayName: 'APR BuptleBiz',
-        features: { dashboard: true, contract: true, login: true },
         theme: {
             cssVars: {
                 '--brand-primary': '#EA002C',
@@ -63,8 +110,6 @@ export const TENANTS: Record<TenantKey, TenantConfig> = {
       `,
         },
         customComponents: {
-            ...DEMO_COMPONENTS,
-            // ✅ 실제 파일명으로 수정
             login: () => import('@/tenants/apr/login/AprLoginPage'),
             dashboard: () => import('@/tenants/apr/dashboard/AprDashboardPage'),
             contract: () => import('@/tenants/apr/contract/AprContractPage'),
@@ -74,7 +119,6 @@ export const TENANTS: Record<TenantKey, TenantConfig> = {
     handok: {
         key: 'handok',
         displayName: 'Handok BuptleBiz',
-        features: { dashboard: true, contract: true, login: true },
         theme: {
             cssVars: {
                 '--brand-primary': '#00A651',
@@ -92,7 +136,6 @@ export const TENANTS: Record<TenantKey, TenantConfig> = {
       `,
         },
         customComponents: {
-            ...DEMO_COMPONENTS,
             dashboard: () => import('@/tenants/handok/dashboard/HandokDashboardPage'),
         },
     },
@@ -100,7 +143,6 @@ export const TENANTS: Record<TenantKey, TenantConfig> = {
     iic: {
         key: 'iic',
         displayName: 'IIC BuptleBiz',
-        features: { dashboard: true, contract: true, login: true },
         theme: {
             cssVars: {
                 '--brand-primary': '#FF6B00',
@@ -118,23 +160,34 @@ export const TENANTS: Record<TenantKey, TenantConfig> = {
       `,
         },
         customComponents: {
-            ...DEMO_COMPONENTS,
             login: () => import('@/tenants/iic/login/IicLoginPage'),
             dashboard: () => import('@/tenants/iic/dashboard/IicDashboardPage'),
         },
     },
 };
 
+const configCache = new Map<TenantKey, TenantConfig>();
+
 export function isKnownTenantKey(value: string): value is TenantKey {
-    return value in TENANTS;
+    return value in TENANT_OVERRIDES;
 }
 
 export function getTenantByKey(key: string): TenantConfig {
-    if (!isKnownTenantKey(key)) {
-        console.warn(`Unknown tenant: ${key}, fallback to demo`);
-        return TENANTS.demo;
-    }
-    return TENANTS[key];
+    const tenantKey = isKnownTenantKey(key) ? key : 'demo';
+
+    const cached = configCache.get(tenantKey);
+    if (cached) return cached;
+
+    const override = TENANT_OVERRIDES[tenantKey];
+    const merged = deepMerge(
+        DEMO_BASE_CONFIG as Record<string, unknown>,
+        override as Partial<Record<string, unknown>>
+    ) as TenantConfig;
+    merged.key = tenantKey;
+
+    configCache.set(tenantKey, merged);
+
+    return merged;
 }
 
 export function getTenantComponentLoader(
