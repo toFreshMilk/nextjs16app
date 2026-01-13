@@ -1,8 +1,13 @@
-import { loadTenantConfig } from '@/core/config/tenant.config';
+import { getTenantComponent } from '@/core/utils/component-loader';
 
-export default async function DashboardPage({ params }: { params: Promise<{ tenant: string }> }) {
+interface PageProps {
+    params: Promise<{ tenant: string }>;
+}
+
+export default async function DashboardPage({ params }: PageProps) {
     const { tenant } = await params;
-    const config = await loadTenantConfig(tenant);
-    const Component = config.components.DashboardPage;
+
+    const Component = await getTenantComponent(tenant, 'DashboardPage');
+
     return <Component />;
 }

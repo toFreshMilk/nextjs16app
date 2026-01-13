@@ -7,7 +7,7 @@ export default function DashboardPage() {
 
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Dashboard Overview</h2>
+            <h2 className="text-2xl font-bold">Dashboard Overviewㅂㅂㅂㅂㅂㅂ</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <StatCard title="Active Contracts" value="150" />

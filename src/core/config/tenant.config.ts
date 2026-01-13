@@ -10,11 +10,6 @@ export interface TenantConfig {
     theme: {
         primaryColor: string;
     };
-    components: {
-        LoginPage: ComponentType;
-        DashboardPage: ComponentType;
-        ContractPage: ComponentType;
-    };
 }
 
 export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> {

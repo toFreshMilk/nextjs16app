@@ -100,7 +100,7 @@ buptlebiz_fe/
 │   │   │   ├── components/
 │   │   │   │   ├── DemoPromoBanner.tsx
 │   │   │   │   └── DemoFeatureLock.tsx
-│   │   │   └── DemoDashboardPage.tsx
+│   │   │   └── AprDashboardPage.tsx
 │   │   └── contract/
 │   │       ├── components/
 │   │       │   └── DemoContractLimit.tsx
