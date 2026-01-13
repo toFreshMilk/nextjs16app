@@ -1,21 +1,11 @@
-import PageContainer from '@/uikit/layout/PageContainer';
-import ContractListServices from '@/standard/contract/services/ContractListServices';
-
+'use client';
 export default function ContractPage() {
     return (
-        <PageContainer title="계약 관리">
-            <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <p className="text-brand-muted">
-                        전체 계약 현황을 관리하고 추적하세요
-                    </p>
-                    <button className="btn-primary">
-                        새 계약 등록
-                    </button>
-                </div>
-
-                <ContractListServices />
+        <div className="p-6 bg-white rounded-xl shadow-sm">
+            <h2 className="text-xl font-bold mb-4">Contract List</h2>
+            <div className="text-gray-500 text-center py-10">
+                Standard Contract List Implementation
             </div>
-        </PageContainer>
+        </div>
     );
 }

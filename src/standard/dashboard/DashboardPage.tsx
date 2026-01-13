@@ -1,33 +1,24 @@
-// 📁 src/standard/dashboard/DashboardPage.tsx
-
 'use client';
-
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
+import { StatCard } from '@/uikit/card/StatCard';
 
 export default function DashboardPage() {
-    const { tenant } = useAppConfig();
+    const { config } = useAppConfig();
 
     return (
-        <div>
-            <h1>Dashboard</h1>
+        <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Dashboard Overview</h2>
 
-            {/* ✅ AI 기능 활성화 시만 표시 */}
-            {tenant.features.ai && (
-                <div className="ai-widget">
-                    <h2>AI 추천</h2>
-                    <p>AI가 분석한 계약 리스크...</p>
-                </div>
-            )}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <StatCard title="Active Contracts" value="150" />
+                <StatCard title="Pending Approvals" value="12" highlight />
+                <StatCard title="Expiring Soon" value="5" />
+            </div>
 
-            {/* ✅ 이메일 기능 활성화 시만 표시 */}
-            {tenant.features.email && (
-                <button>이메일 발송</button>
-            )}
-
-            {/* ✅ 분석 기능 활성화 시만 표시 */}
-            {tenant.features.analytics && (
-                <div className="analytics-chart">
-                    <h2>통계 분석</h2>
+            {config.features.ai && (
+                <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-lg">
+                    <h3 className="font-semibold text-indigo-900">AI Legal Assistant Active</h3>
+                    <p className="text-sm text-indigo-700">Contract analysis is running in background.</p>
                 </div>
             )}
         </div>

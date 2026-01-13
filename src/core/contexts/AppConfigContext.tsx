@@ -1,37 +1,36 @@
 'use client';
 
 import React, { createContext, useContext, useMemo } from 'react';
-import type { ClientTenantConfig } from '@/core/config/tenant.config';
+import { GlobalStore } from '../store/global.store';
+import { TenantConfig } from '../config/tenant.config';
 
-type AppConfigContextValue = {
-    tenant: ClientTenantConfig;
-};
+export type TenantConfigData = Omit<TenantConfig, 'components'>;
 
-const AppConfigContext = createContext<AppConfigContextValue | null>(null);
+interface ContextValue {
+    config: TenantConfigData;
+    store: GlobalStore;
+}
+
+const AppConfigContext = createContext<ContextValue | null>(null);
 
 export function AppConfigProvider({
-                                      tenant,
-                                      children,
+                                      tenantConfig,
+                                      children
                                   }: {
-    tenant: ClientTenantConfig;
+    tenantConfig: TenantConfigData;
     children: React.ReactNode;
 }) {
-    const value = useMemo<AppConfigContextValue>(
-        () => ({ tenant }),
-        [tenant]
-    );
+    const store = useMemo(() => new GlobalStore({ tenantId: tenantConfig.id }), [tenantConfig.id]);
 
     return (
-        <AppConfigContext.Provider value={value}>
+        <AppConfigContext.Provider value={{ config: tenantConfig, store }}>
             {children}
         </AppConfigContext.Provider>
     );
 }
 
-export function useAppConfig(): AppConfigContextValue {
-    const context = useContext(AppConfigContext);
-    if (!context) {
-        throw new Error('useAppConfig must be used within AppConfigProvider');
-    }
-    return context;
+export function useAppConfig() {
+    const ctx = useContext(AppConfigContext);
+    if (!ctx) throw new Error('useAppConfig must be used within AppConfigProvider');
+    return ctx;
 }

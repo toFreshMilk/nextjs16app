@@ -1,20 +1,11 @@
-'use client';
-
 import { useEffect, useState } from 'react';
-import type { Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
-/**
- * RxJS Observable을 React State로 변환하는 Hook
- */
 export function useObservable<T>(observable$: Observable<T>, initialValue: T): T {
     const [value, setValue] = useState<T>(initialValue);
 
     useEffect(() => {
-        const subscription = observable$.subscribe({
-            next: setValue,
-            error: (err) => console.error('Observable error:', err),
-        });
-
+        const subscription = observable$.subscribe(setValue);
         return () => subscription.unsubscribe();
     }, [observable$]);
 

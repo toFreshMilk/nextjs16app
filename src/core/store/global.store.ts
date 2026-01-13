@@ -1,41 +1,32 @@
-'use client';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-import { BehaviorSubject } from 'rxjs';
+export interface GlobalState {
+    tenantId: string;
+    user?: { name: string; role: string };
+    sidebarCollapsed: boolean;
+}
 
-export type AuthState = {
-    isAuthenticated: boolean;
-    userName: string | null;
-    userEmail: string | null;
-};
+const INITIAL: GlobalState = { tenantId: '', sidebarCollapsed: false };
 
-const _auth$ = new BehaviorSubject<AuthState>({
-    isAuthenticated: false,
-    userName: null,
-    userEmail: null,
-});
+export class GlobalStore {
+    private _state$ = new BehaviorSubject<GlobalState>(INITIAL);
 
-export const auth$ = _auth$.asObservable();
+    constructor(initial?: Partial<GlobalState>) {
+        if (initial) this._state$.next({ ...INITIAL, ...initial });
+    }
 
-export const globalStore = {
-    auth$,
+    get state$(): Observable<GlobalState> { return this._state$.asObservable(); }
 
-    login(email: string, name: string) {
-        _auth$.next({
-            isAuthenticated: true,
-            userName: name,
-            userEmail: email,
-        });
-    },
+    select<K extends keyof GlobalState>(key: K): Observable<GlobalState[K]> {
+        return this._state$.pipe(map(s => s[key]));
+    }
 
-    logout() {
-        _auth$.next({
-            isAuthenticated: false,
-            userName: null,
-            userEmail: null,
-        });
-    },
+    setState(update: Partial<GlobalState>) {
+        this._state$.next({ ...this._state$.value, ...update });
+    }
 
-    getCurrentAuth(): AuthState {
-        return _auth$.value;
-    },
-};
+    toggleSidebar() {
+        this.setState({ sidebarCollapsed: !this._state$.value.sidebarCollapsed });
+    }
+}

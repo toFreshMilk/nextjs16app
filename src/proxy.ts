@@ -1,76 +1,58 @@
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
-import { isKnownTenantKey } from '@/core/config/tenant.config';
+import { NextRequest, NextResponse } from 'next/server';
 
-function parseSubdomain(hostname: string): string | null {
-    // xxx.localhost → xxx
-    if (hostname.includes('.localhost')) {
-        const sub = hostname.split('.localhost')[0];
-        return sub || null;
-    }
+// 유효한 테넌트 목록
+const VALID_TENANTS = new Set(['demo', 'apr']);
+const VALID_ROOT_DOMAINS = ['buptle.com', 'buptlestg.com', 'localhost.com', 'localhost'];
 
-    // xxx.buptle.com → xxx
-    if (hostname.includes('.buptle.com') || hostname.includes('.buptlestg.com')) {
-        const parts = hostname.split('.');
-        return parts.length >= 3 ? parts[0] : null;
-    }
+// 헬퍼 함수: 테넌트 감지
+function detectTenant(hostname: string): string | null {
+    const host = hostname.split(':')[0];
+    const rootDomain = VALID_ROOT_DOMAINS.find(d => host.endsWith(d));
+
+    if (!rootDomain) return null;
+
+    const subdomain = host.slice(0, host.length - rootDomain.length);
+    const sanitized = subdomain.endsWith('.') ? subdomain.slice(0, -1) : subdomain;
+
+    if (!sanitized || sanitized === 'www') return 'demo';
+    if (VALID_TENANTS.has(sanitized)) return sanitized;
 
     return null;
 }
 
-export function proxy(request: NextRequest): NextResponse {
-    const { pathname } = request.nextUrl;
+// Next.js 16 Proxy Entrypoint
+export default function proxy(req: NextRequest) {
+    const url = req.nextUrl;
+    const hostname = req.headers.get('host') || '';
 
-    // 정적 파일 패스
-    if (pathname.includes('.')) {
-        return NextResponse.next();
-    }
+    // 1. Static Asset 등은 무시 (config.matcher 역할)
+    const isStatic = /\.(.*)$/.test(url.pathname) || url.pathname.startsWith('/_next');
+    if (isStatic) return NextResponse.next();
 
-    const hostname = (request.headers.get('host') || '').split(':')[0];
-    const subdomain = parseSubdomain(hostname);
-    const firstSeg = pathname.split('/').filter(Boolean)[0];
+    // 2. 테넌트 감지
+    const tenant = detectTenant(hostname);
 
-    console.log('🔍 Proxy Debug:', {
-        hostname,
-        subdomain,
-        pathname,
-        firstSeg,
-    });
-
-    // ✅ Case 1: 이미 /[tenant]/xxx 형태
-    if (firstSeg && isKnownTenantKey(firstSeg)) {
-        // Mismatch 감지
-        if (subdomain && subdomain !== firstSeg) {
-            console.log('⚠️ Mismatch! Redirecting...');
-            const cleanPath = pathname.replace(`/${firstSeg}`, '') || '/';
-            return NextResponse.redirect(new URL(cleanPath, request.url));
+    // 3. 유효하지 않은 테넌트 처리
+    if (!tenant) {
+        if (url.pathname.startsWith('/not-found') || url.pathname.startsWith('/error')) {
+            return NextResponse.next();
         }
-        return NextResponse.next();
+        // 404 페이지로 Rewrite
+        const errorUrl = req.nextUrl.clone();
+        errorUrl.pathname = '/not-found';
+        return NextResponse.rewrite(errorUrl);
     }
 
-    // ✅ Case 2: Known tenant subdomain → rewrite
-    if (subdomain && isKnownTenantKey(subdomain)) {
-        const target = pathname === '/' ? `/${subdomain}/dashboard` : `/${subdomain}${pathname}`;
-        console.log('✅ Rewrite to:', target);
-        return NextResponse.rewrite(new URL(target, request.url));
-    }
+    // 4. API 경로는 건너뜀 (선택 사항)
+    if (url.pathname.startsWith('/api')) return NextResponse.next();
 
-    // ✅ Case 3: subdomain 없음 (localhost, IP 등) → demo로 fallback
-    if (!subdomain) {
-        const target = pathname === '/' ? '/demo/dashboard' : `/demo${pathname}`;
-        console.log('✅ Fallback to demo:', target);
-        return NextResponse.rewrite(new URL(target, request.url));
-    }
+    // 5. 이미 Rewrite된 경로인지 확인 (무한 루프 방지)
+    // url.pathname이 이미 /[tenant] 로 시작하면 건너뜀
+    if (url.pathname.startsWith(`/${tenant}`)) return NextResponse.next();
 
-    // ✅ Case 4: 알 수 없는 subdomain → demo로 fallback
-    if (pathname === '/') {
-        console.log('✅ Unknown subdomain, fallback to demo');
-        return NextResponse.rewrite(new URL('/demo/dashboard', request.url));
-    }
+    // 6. Rewrite 실행: /dashboard -> /demo/dashboard
+    const rewriteUrl = req.nextUrl.clone();
+    rewriteUrl.pathname = `/${tenant}${url.pathname}`;
 
-    return NextResponse.next();
+    return NextResponse.rewrite(rewriteUrl);
 }
-
-export const config = {
-    matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
-};

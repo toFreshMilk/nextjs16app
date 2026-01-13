@@ -1,60 +1,52 @@
 buptlebiz_fe/
 │
-├── package.json
-├── pnpm-lock.yaml
-├── next.config.ts
-├── tailwind.config.ts
-├── tsconfig.json
-├── .eslintrc.json
-├── Dockerfile
-│
 └── src/
 │
-├── proxy.ts                                        # Subdomain 감지 및 Tenant 주입
+├── proxy.ts                                # Tenant 감지 및 검증 로직
 │
 ├── app/
-│   ├── layout.tsx                                  # Root Layout
-│   ├── page.tsx                                    # Root Redirector
-│   ├── globals.css                                 # 전역 CSS
+│   ├── layout.tsx                          # Root Layout
+│   ├── globals.css
+│   ├── not-found.tsx                       # Global 404
 │   │
 │   └── [tenant]/
-│       ├── layout.tsx                              # Tenant Config 주입
+│       ├── layout.tsx                      # Tenant Config 주입
+│       ├── error.tsx                       # [추가] Tenant 에러 핸들링
+│       ├── not-found.tsx                   # [추가] Tenant 404
 │       │
 │       ├── login/
-│       │   └── page.tsx                            # lazy(getTenantComponentLoader)
+│       │   └── page.tsx                    # Dynamic Login Page
 │       │
 │       └── (main)/
-│           ├── layout.tsx                          # TopNavbar 포함
+│           ├── layout.tsx                  # Main Layout (Navbar)
 │           ├── dashboard/
-│           │   └── page.tsx
+│           │   └── page.tsx                # Dynamic Dashboard
 │           └── contract/
-│               └── page.tsx
+│               └── page.tsx                # Dynamic Contract
 │
 ├── core/
-│   │
 │   ├── config/
-│   │   ├── tenant.config.ts                        # 핵심 설정 + Component Loader
+│   │   ├── tenant.config.ts                # Config Loader
 │   │   └── tenants/
-│   │       ├── demo.config.ts                      # Demo Config
-│   │       └── apr.config.ts                       # APR Config
+│   │       ├── demo.config.ts              # Demo Config
+│   │       └── apr.config.ts               # APR Config
 │   │
 │   ├── contexts/
-│   │   └── AppConfigContext.tsx                    # Tenant Config Provider
+│   │   └── AppConfigContext.tsx
 │   │
 │   ├── hooks/
 │   │   ├── useObservable.ts
-│   │   └── useTenant.ts
+│   │   └── useTenant.ts                    # Tenant 식별 Hook
 │   │
 │   ├── store/
-│   │   └── global.store.ts                         # RxJS 글로벌 스토어
+│   │   └── global.store.ts
 │   │
 │   └── utils/
 │       ├── object.util.ts
 │       ├── date.util.ts
 │       └── string.util.ts
 │
-├── standard/                                       # 추상 베이스 구현
-│   │
+├── standard/                               # [Base] 기본 구현체
 │   ├── standard.css
 │   │
 │   ├── shared/
@@ -65,32 +57,28 @@ buptlebiz_fe/
 │   │
 │   ├── login/
 │   │   ├── services/
-│   │   │   ├── login.service.ts
-│   │   │   └── auth.validator.ts
+│   │   │   └── login.service.ts            # [통합] API + Validator + Logic
 │   │   ├── store/
 │   │   │   └── login.store.ts
 │   │   ├── components/
 │   │   │   ├── LoginForm.tsx
 │   │   │   └── LoginHeader.tsx
-│   │   ├── LoginPage.tsx
-│   │   └── index.tsx
+│   │   └── LoginPage.tsx
 │   │
 │   ├── dashboard/
 │   │   ├── services/
-│   │   │   ├── dashboard.service.ts
-│   │   │   └── dashboard-api.service.ts
+│   │   │   └── dashboard.service.ts        # [통합] API + Logic
 │   │   ├── store/
 │   │   │   └── dashboard.store.ts
 │   │   ├── components/
 │   │   │   ├── DashboardSummary.tsx
 │   │   │   ├── DashboardChart.tsx
 │   │   │   └── DashboardStats.tsx
-│   │   ├── DashboardPage.tsx
-│   │   └── index.tsx
+│   │   └── DashboardPage.tsx
 │   │
 │   └── contract/
 │       ├── services/
-│       │   ├── contract.service.ts
+│       │   ├── contract.service.ts         # [통합] API + Logic
 │       │   ├── contract.validator.ts
 │       │   └── contract-calculation.service.ts
 │       ├── store/
@@ -99,100 +87,51 @@ buptlebiz_fe/
 │       │   ├── ContractForm.tsx
 │       │   ├── ContractList.tsx
 │       │   └── ContractDetail.tsx
-│       ├── ContractPage.tsx
-│       └── index.tsx
+│       └── ContractPage.tsx
 │
-├── tenants/                                        # Tenant별 Override
-│   │
-│   ├── demo/                                       # Demo Tenant
-│   │   │
+├── tenants/                                # [Override] 실제 오버라이드 파일만 존재
+│   ├── demo/
 │   │   ├── demo.css
-│   │   │
 │   │   ├── login/
 │   │   │   ├── components/
 │   │   │   │   └── DemoLoginBanner.tsx
-│   │   │   ├── DemoLoginPage.tsx
-│   │   │   └── index.tsx
-│   │   │
+│   │   │   └── DemoLoginPage.tsx
 │   │   ├── dashboard/
-│   │   │   ├── services/
-│   │   │   │   └── demo-dashboard.service.ts
-│   │   │   ├── store/
-│   │   │   │   └── demo-dashboard.store.ts
 │   │   │   ├── components/
 │   │   │   │   ├── DemoPromoBanner.tsx
 │   │   │   │   └── DemoFeatureLock.tsx
-│   │   │   ├── DemoDashboardPage.tsx
-│   │   │   └── index.tsx
-│   │   │
+│   │   │   └── DemoDashboardPage.tsx
 │   │   └── contract/
-│   │       ├── services/
-│   │       │   └── demo-contract.service.ts
-│   │       ├── store/
-│   │       │   └── demo-contract.store.ts
 │   │       ├── components/
 │   │       │   └── DemoContractLimit.tsx
-│   │       ├── DemoContractPage.tsx
-│   │       └── index.tsx
+│   │       └── DemoContractPage.tsx
 │   │
-│   └── apr/                                        # APR Tenant
-│       │
+│   └── apr/
 │       ├── apr.css
-│       │
 │       ├── login/
 │       │   ├── services/
-│       │   │   ├── apr-sso.service.ts
-│       │   │   └── apr-login.service.ts
-│       │   ├── store/
-│       │   │   └── apr-login.store.ts
+│       │   │   └── apr-sso.service.ts      # SSO 전용 로직
 │       │   ├── components/
 │       │   │   └── AprSsoButton.tsx
-│       │   ├── AprLoginPage.tsx
-│       │   └── index.tsx
-│       │
-│       ├── dashboard/
-│       │   ├── services/
-│       │   │   ├── apr-dashboard.service.ts
-│       │   │   └── apr-report.service.ts
-│       │   ├── store/
-│       │   │   └── apr-dashboard.store.ts
-│       │   ├── components/
-│       │   │   ├── AprKpiWidget.tsx
-│       │   │   └── AprReportSection.tsx
-│       │   ├── AprDashboardPage.tsx
-│       │   └── index.tsx
-│       │
-│       └── contract/
+│       │   └── AprLoginPage.tsx
+│       └── dashboard/
 │           ├── services/
-│           │   ├── apr-contract.service.ts
-│           │   └── apr-approval.service.ts
-│           ├── store/
-│           │   └── apr-contract.store.ts
+│           │   └── apr-report.service.ts   # Report 생성 로직
 │           ├── components/
-│           │   ├── AprContractWorkflow.tsx
-│           │   └── AprApprovalPanel.tsx
-│           ├── AprContractPage.tsx
-│           └── index.tsx
+│           │   └── AprKpiWidget.tsx
+│           └── AprDashboardPage.tsx
 │
-└── uikit/                                          # Pure UI Components
-│
+└── uikit/
 ├── card/
 │   ├── StatCard.tsx
-│   ├── InfoCard.tsx
-│   └── index.tsx
-│
+│   └── InfoCard.tsx
 ├── chart/
 │   ├── SimpleChart.tsx
-│   ├── BarChart.tsx
-│   └── index.tsx
-│
+│   └── BarChart.tsx
 ├── form/
 │   ├── Input.tsx
 │   ├── Button.tsx
-│   ├── Select.tsx
-│   └── index.tsx
-│
+│   └── Select.tsx
 └── layout/
 ├── PageContainer.tsx
-├── Section.tsx
-└── index.tsx
+└── Section.tsx

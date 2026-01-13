@@ -1,24 +1,37 @@
 import { ReactNode } from 'react';
-import { getClientConfig } from '@/core/config/tenant.config';
-import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
+import { loadTenantConfig } from '@/core/config/tenant.config';
+import { AppConfigProvider, TenantConfigData } from '@/core/contexts/AppConfigContext';
+import { notFound } from 'next/navigation';
 
-type Props = {
+interface LayoutProps {
     children: ReactNode;
     params: Promise<{ tenant: string }>;
-};
+}
 
-export default async function TenantLayout({ children, params }: Props) {
+export default async function TenantLayout({ children, params }: LayoutProps) {
     const { tenant } = await params;
-    const clientConfig = getClientConfig(tenant);
+    let fullConfig;
+
+    try {
+        fullConfig = await loadTenantConfig(tenant);
+    } catch (e) {
+        console.error(`Config load failed: ${tenant}`, e);
+        notFound();
+    }
+
+    // Serialize config for Client Component (remove functions)
+    const configData: TenantConfigData = {
+        id: fullConfig.id,
+        name: fullConfig.name,
+        features: fullConfig.features,
+        theme: fullConfig.theme,
+    };
 
     return (
-        <div data-tenant={clientConfig.key} style={clientConfig.theme.cssVars as React.CSSProperties}>
-            {clientConfig.theme.inlineCss && (
-                <style dangerouslySetInnerHTML={{ __html: clientConfig.theme.inlineCss }} />
-            )}
-            <AppConfigProvider tenant={clientConfig}>
+        <AppConfigProvider tenantConfig={configData}>
+            <div className="min-h-screen bg-gray-50 text-slate-900 font-sans">
                 {children}
-            </AppConfigProvider>
-        </div>
+            </div>
+        </AppConfigProvider>
     );
 }
