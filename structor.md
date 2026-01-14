@@ -100,22 +100,57 @@ buptlebiz_fe/
     │       │   └── ContractList.tsx
     │       └── ContractPage.tsx
     │
-    ├── tenants/                            # [Override] 테넌트별 오버라이드
+    ├── tenants/                            # [Override] 테넌트별 오버라이드 (standard/와 동일한 모듈 구조)
     │   ├── demo/
-    │   │   ├── demo.css
-    │   │   ├── login/
-    │   │   │   └── DemoLoginPage.tsx
-    │   │   └── dashboard/
-    │   │       └── DemoDashboardPage.tsx
+    │   │   ├── demo.css                    # Demo Tenant Styles
+    │   │   │
+    │   │   ├── shared/                     # (optional) shared overrides
+    │   │   │   └── components/
+    │   │   │       └── TopNavbar.tsx       # Demo 전용 TopNavbar override 
+    │   │   │
+    │   │   ├── services/                   # (optional) 공통 service overrides
+    │   │   │
+    │   │   ├── login/                      # standard/login 과 동일한 구조
+    │   │   │   ├── services/               # (optional) Demo Login service override
+    │   │   │   ├── store/                  # (optional) Demo Login store override
+    │   │   │   └── DemoLoginPage.tsx       # Demo Login Page Override
+    │   │   │
+    │   │   ├── dashboard/                  # standard/dashboard 과 동일한 구조
+    │   │   │   ├── services/               # (optional) Demo Dashboard service override
+    │   │   │   ├── store/                  # (optional) Demo Dashboard store override
+    │   │   │   └── DemoDashboardPage.tsx   # Demo Dashboard Page Override
+    │   │   │
+    │   │   └── contract/                   # standard/contract 과 동일한 구조
+    │   │       ├── services/               # (optional) Demo Contract service override
+    │   │       ├── store/                  # (optional) Demo Contract store override
+    │   │       └── components/             # (optional) Demo Contract UI overrides
     │   │
     │   └── apr/
-    │       ├── apr.css
-    │       ├── login/
+    │       ├── apr.css                     # APR Tenant Styles
+    │       │
+    │       ├── shared/                     # (optional) shared overrides
+    │       │   └── components/
+    │       │       └── TopNavbar.tsx       # APR 전용 TopNavbar override (필요 시)
+    │       │
+    │       ├── services/                   # (optional) 공통 service overrides
+    │       │
+    │       ├── login/                      # standard/login 과 동일한 구조
+    │       │   ├── services/               # (optional) APR Login service override
+    │       │   ├── store/                  # (optional) APR Login store override
     │       │   ├── components/
-    │       │   │   └── AprSsoButton.tsx
-    │       │   └── AprLoginPage.tsx
-    │       └── dashboard/
-    │           └── AprDashboardPage.tsx
+    │       │   │   └── AprSsoButton.tsx    # APR 전용 SSO 버튼
+    │       │   └── AprLoginPage.tsx        # APR Login Page Override
+    │       │
+    │       ├── dashboard/                  # standard/dashboard 과 동일한 구조
+    │       │   ├── services/               # (optional) APR Dashboard service override
+    │       │   ├── store/                  # (optional) APR Dashboard store override
+    │       │   └── components/
+    │       │       └── AprDashboardPage.tsx# APR Dashboard Page Override
+    │       │
+    │       └── contract/                   # standard/contract 과 동일한 구조
+    │           ├── services/               # (optional) APR Contract service override
+    │           ├── store/                  # (optional) APR Contract store override
+    │           └── components/             # (optional) APR Contract UI overrides
     │
     └── uikit/                              # UI Kit Components
         ├── card/
