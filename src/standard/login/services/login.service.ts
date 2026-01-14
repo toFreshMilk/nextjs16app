@@ -1,8 +1,10 @@
-import { delay, of } from 'rxjs';
+import { of, delay } from 'rxjs';
 
 export const loginService = {
-    login: (email: string, pass: string) => {
-        // Mock API Call
-        return of({ token: 'abc-123', user: { email } }).pipe(delay(1000));
-    }
+  login: (email: string, pass: string) => {
+    // Mock Logic
+    if (!email.includes('@')) throw new Error('Invalid Email');
+    return of({ token: 'mock-token-abc', user: { email } }).pipe(delay(800));
+  }
 };
+

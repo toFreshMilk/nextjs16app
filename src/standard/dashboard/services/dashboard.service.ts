@@ -1,8 +1,10 @@
-import { of } from 'rxjs';
+import { of, delay } from 'rxjs';
 
 export const dashboardService = {
-    getStats: () => of([
-        { id: 1, title: 'Service Agreement', status: 'draft' },
-        { id: 2, title: 'NDA', status: 'active' }
-    ])
+  getStats: () => of({ 
+    activeContracts: 142, 
+    pendingApprovals: 8, 
+    risks: 2 
+  }).pipe(delay(500))
 };
+

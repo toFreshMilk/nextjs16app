@@ -2,31 +2,42 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export interface GlobalState {
-    tenantId: string;
-    user?: { name: string; role: string };
-    sidebarCollapsed: boolean;
+  tenantId: string;
+  isSidebarOpen: boolean;
+  user?: { name: string; email: string };
 }
 
-const INITIAL: GlobalState = { tenantId: '', sidebarCollapsed: false };
+const INITIAL_STATE: GlobalState = {
+  tenantId: '',
+  isSidebarOpen: true,
+};
 
 export class GlobalStore {
-    private _state$ = new BehaviorSubject<GlobalState>(INITIAL);
+  private _state$ = new BehaviorSubject<GlobalState>(INITIAL_STATE);
 
-    constructor(initial?: Partial<GlobalState>) {
-        if (initial) this._state$.next({ ...INITIAL, ...initial });
+  constructor(initialData?: Partial<GlobalState>) {
+    if (initialData) {
+      this._state$.next({ ...INITIAL_STATE, ...initialData });
     }
+  }
 
-    get state$(): Observable<GlobalState> { return this._state$.asObservable(); }
+  // State Observable
+  get state$(): Observable<GlobalState> {
+    return this._state$.asObservable();
+  }
 
-    select<K extends keyof GlobalState>(key: K): Observable<GlobalState[K]> {
-        return this._state$.pipe(map(s => s[key]));
-    }
+  // Selector
+  select<K extends keyof GlobalState>(key: K): Observable<GlobalState[K]> {
+    return this._state$.pipe(map(state => state[key]));
+  }
 
-    setState(update: Partial<GlobalState>) {
-        this._state$.next({ ...this._state$.value, ...update });
-    }
+  // Actions
+  setState(newState: Partial<GlobalState>) {
+    this._state$.next({ ...this._state$.value, ...newState });
+  }
 
-    toggleSidebar() {
-        this.setState({ sidebarCollapsed: !this._state$.value.sidebarCollapsed });
-    }
+  toggleSidebar() {
+    this.setState({ isSidebarOpen: !this._state$.value.isSidebarOpen });
+  }
 }
+

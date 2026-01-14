@@ -1,8 +1,13 @@
 'use client';
+
 export default function AprSsoButton() {
-    return (
-        <button className="w-full py-3 border-2 border-slate-200 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-gray-50">
-            <span>🔒</span> Login with SSO
-        </button>
-    );
+  return (
+    <button 
+      onClick={() => window.location.href = '/apr/dashboard'}
+      className="w-full py-3 bg-slate-900 text-white font-bold rounded-lg flex items-center justify-center gap-3 hover:bg-slate-800 transition"
+    >
+      <span>🔐</span> APR 그룹웨어로 로그인
+    </button>
+  );
 }
+

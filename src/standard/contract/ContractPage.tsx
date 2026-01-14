@@ -1,11 +1,23 @@
 'use client';
+
+import { ContractList } from './components/ContractList';
+import { Button } from '@/uikit/form/Button';
+import { useAppConfig } from '@/core/contexts/AppConfigContext';
+
 export default function ContractPage() {
-    return (
-        <div className="p-6 bg-white rounded-xl shadow-sm">
-            <h2 className="text-xl font-bold mb-4">Contract List</h2>
-            <div className="text-gray-500 text-center py-10">
-                Standard Contract List Implementation
-            </div>
-        </div>
-    );
+  const { config } = useAppConfig();
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-slate-900">계약 관리</h1>
+        <Button style={{ backgroundColor: config.theme.primaryColor }}>
+          + 새 계약 작성
+        </Button>
+      </div>
+
+      <ContractList />
+    </div>
+  );
 }
+

@@ -1,19 +1,28 @@
 'use client';
+
 import { Button } from '@/uikit/form/Button';
 
 export default function DemoLoginPage() {
-    return (
-        <div className="min-h-screen bg-blue-50 flex flex-col items-center justify-center">
-            <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold text-blue-900">Buptle Biz Demo</h1>
-                <p className="text-blue-600">Experience the future of legal tech.</p>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-xl w-96">
-                <div className="bg-yellow-100 p-3 rounded mb-4 text-sm text-yellow-800">
-                    Tip: You can use to login.
-                </div>
-                <Button fullWidth>Quick Demo Access</Button>
-            </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center p-4">
+      <div className="bg-white/10 backdrop-blur-lg p-8 rounded-2xl shadow-2xl border border-white/20 w-full max-w-sm text-center text-white">
+        <h1 className="text-3xl font-bold mb-2">Buptle Demo</h1>
+        <p className="mb-8 opacity-90">체험판 환경에 오신 것을 환영합니다.</p>
+        
+        <div className="bg-white/20 p-4 rounded-lg mb-6 text-sm text-left">
+          <p>🧪 <strong>Test Account:</strong></p>
+          <p>ID: admin / PW: admin</p>
         </div>
-    );
+
+        <Button 
+          fullWidth 
+          className="bg-white text-violet-600 hover:bg-gray-100"
+          onClick={() => window.location.href = '/demo/dashboard'}
+        >
+          체험 시작하기 🚀
+        </Button>
+      </div>
+    </div>
+  );
 }
+

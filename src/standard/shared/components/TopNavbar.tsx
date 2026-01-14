@@ -5,37 +5,58 @@ import { usePathname } from 'next/navigation';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 
 export function TopNavbar() {
-    const { config } = useAppConfig();
-    const pathname = usePathname(); // 여기엔 실제 브라우저 경로(/dashboard)가 들어옴
+  const { config } = useAppConfig();
+  const pathname = usePathname();
 
-    // [수정] 링크에는 테넌트 ID를 포함하지 않음 (Proxy가 처리함)
-    const root = '';
+  const isActive = (path: string) => pathname.startsWith(path);
+  const primaryColor = config.theme.primaryColor;
 
-    const isActive = (href: string) => pathname.startsWith(href);
+  return (
+    <nav className="h-16 px-4 sm:px-8 flex items-center justify-between border-b border-slate-200 bg-white">
+      {/* Logo & Brand */}
+      <div className="flex items-center gap-10">
+        <Link href="/dashboard" className="flex items-center gap-2 group">
+          <div 
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-md transition-transform group-hover:scale-105"
+            style={{ backgroundColor: primaryColor }}
+          >
+            B
+          </div>
+          <span className="text-xl font-bold tracking-tight text-slate-900">
+            Buptle<span style={{ color: primaryColor }}>Biz</span>
+          </span>
+        </Link>
 
-    const linkClass = (href: string) =>
-        isActive(href)
-            ? 'text-slate-900 font-semibold border-b-2 border-slate-900'
-            : 'text-gray-500 hover:text-slate-700';
+        {/* Navigation Links */}
+        <div className="hidden md:flex gap-1 h-10 bg-slate-100 p-1 rounded-lg">
+          {[
+            { name: '대시보드', href: '/dashboard' },
+            { name: '계약 관리', href: '/contract' },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`px-4 flex items-center text-sm font-medium rounded-md transition-all ${
+                isActive(item.href)
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/50'
+              }`}
+            >
+              {item.name}
+            </Link>
+          ))}
+        </div>
+      </div>
 
-    return (
-        <header className="bg-white border-b border-gray-200 h-16 px-6 flex items-center justify-between">
-            <div className="flex items-center gap-8">
-                <Link href="/dashboard" className="text-xl font-bold">
-                    Buptle<span style={{ color: config.theme.primaryColor }}>Biz</span>
-                </Link>
-                <nav className="flex gap-6 h-16">
-                    <Link href="/dashboard" className={`flex items-center px-1 ${linkClass('/dashboard')}`}>
-                        대시보드
-                    </Link>
-                    <Link href="/contract" className={`flex items-center px-1 ${linkClass('/contract')}`}>
-                        계약 관리
-                    </Link>
-                </nav>
-            </div>
-            <div>
-                <span className="text-sm text-gray-500">{config.name} Workspace</span>
-            </div>
-        </header>
-    );
+      {/* User Profile & Tenant Info */}
+      <div className="flex items-center gap-4">
+        <div className="text-right hidden sm:block">
+          <p className="text-sm font-semibold text-slate-900">{config.name}</p>
+          <p className="text-xs text-slate-500">Administrator</p>
+        </div>
+        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-slate-200 to-slate-300 border-2 border-white shadow-sm" />
+      </div>
+    </nav>
+  );
 }
+
