@@ -1,4 +1,4 @@
-import { getTenantComponent } from '@/core/utils/component-loader';
+import { getTenantComponent } from '@/core/config/tenant.config';
 
 interface PageProps { params: Promise<{ tenant: string }> }
 

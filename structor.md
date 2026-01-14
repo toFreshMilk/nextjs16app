@@ -6,13 +6,14 @@ buptlebiz_fe/
 │
 ├── app/
 │   ├── layout.tsx                          # Root Layout
-│   ├── globals.css
+│   ├── page.tsx                            # Root Page
+│   ├── globals.css                         # Global Styles
 │   ├── not-found.tsx                       # Global 404
 │   │
 │   └── [tenant]/
 │       ├── layout.tsx                      # Tenant Config 주입
-│       ├── error.tsx                       # [추가] Tenant 에러 핸들링
-│       ├── not-found.tsx                   # [추가] Tenant 404
+│       ├── page.tsx                        # Tenant Root Page
+│       ├── error.tsx                       # Tenant 에러 핸들링
 │       │
 │       ├── login/
 │       │   └── page.tsx                    # Dynamic Login Page
@@ -32,106 +33,85 @@ buptlebiz_fe/
 │   │       └── apr.config.ts               # APR Config
 │   │
 │   ├── contexts/
-│   │   └── AppConfigContext.tsx
+│   │   └── AppConfigContext.tsx            # App Config Context
 │   │
 │   ├── hooks/
-│   │   ├── useObservable.ts
+│   │   ├── useObservable.ts                # Observable Hook
 │   │   └── useTenant.ts                    # Tenant 식별 Hook
 │   │
 │   ├── store/
-│   │   └── global.store.ts
+│   │   └── global.store.ts                 # Global Store
 │   │
 │   └── utils/
-│       ├── object.util.ts
-│       ├── date.util.ts
-│       └── string.util.ts
+│       ├── component-loader.ts             # Component Loader Utility
+│       ├── object.util.ts                  # Object Utilities
+│       ├── date.util.ts                    # Date Utilities
+│       └── string.util.ts                  # String Utilities
 │
 ├── standard/                               # [Base] 기본 구현체
-│   ├── standard.css
+│   ├── standard.css                        # Standard Styles
 │   │
 │   ├── shared/
-│   │   ├── components/
-│   │   │   └── TopNavbar.tsx
-│   │   └── services/
-│   │       └── navbar.service.ts
+│   │   └── components/
+│   │       └── TopNavbar.tsx               # Shared TopNavbar Component
+│   │
+│   ├── services/
+│   │   └── TopNavbar.tsx                   # TopNavbar Service
 │   │
 │   ├── login/
 │   │   ├── services/
 │   │   │   └── login.service.ts            # [통합] API + Validator + Logic
 │   │   ├── store/
-│   │   │   └── login.store.ts
+│   │   │   └── login.store.ts              # Login Store
 │   │   ├── components/
-│   │   │   ├── LoginForm.tsx
-│   │   │   └── LoginHeader.tsx
-│   │   └── LoginPage.tsx
+│   │   │   ├── LoginForm.tsx               # Login Form Component
+│   │   │   └── LoginHeader.tsx             # Login Header Component
+│   │   └── LoginPage.tsx                   # Login Page Component
 │   │
 │   ├── dashboard/
 │   │   ├── services/
 │   │   │   └── dashboard.service.ts        # [통합] API + Logic
 │   │   ├── store/
-│   │   │   └── dashboard.store.ts
+│   │   │   └── dashboard.store.ts          # Dashboard Store
 │   │   ├── components/
-│   │   │   ├── DashboardSummary.tsx
-│   │   │   ├── DashboardChart.tsx
-│   │   │   └── DashboardStats.tsx
-│   │   └── DashboardPage.tsx
+│   │   │   └── DashboardChart.tsx         # Dashboard Chart Component
+│   │   └── DashboardPage.tsx               # Dashboard Page Component
 │   │
 │   └── contract/
 │       ├── services/
-│       │   ├── contract.service.ts         # [통합] API + Logic
-│       │   ├── contract.validator.ts
-│       │   └── contract-calculation.service.ts
+│       │   └── contract.service.ts         # [통합] API + Logic
 │       ├── store/
-│       │   └── contract.store.ts
+│       │   └── contract.store.ts           # Contract Store
 │       ├── components/
-│       │   ├── ContractForm.tsx
-│       │   ├── ContractList.tsx
-│       │   └── ContractDetail.tsx
-│       └── ContractPage.tsx
+│       │   └── ContractList.tsx            # Contract List Component
+│       └── ContractPage.tsx                # Contract Page Component
 │
 ├── tenants/                                # [Override] 실제 오버라이드 파일만 존재
 │   ├── demo/
-│   │   ├── demo.css
+│   │   ├── demo.css                        # Demo Tenant Styles
 │   │   ├── login/
-│   │   │   ├── components/
-│   │   │   │   └── DemoLoginBanner.tsx
-│   │   │   └── DemoLoginPage.tsx
-│   │   ├── dashboard/
-│   │   │   ├── components/
-│   │   │   │   ├── DemoPromoBanner.tsx
-│   │   │   │   └── DemoFeatureLock.tsx
-│   │   │   └── AprDashboardPage.tsx
-│   │   └── contract/
-│   │       ├── components/
-│   │       │   └── DemoContractLimit.tsx
-│   │       └── DemoContractPage.tsx
+│   │   │   └── DemoLoginPage.tsx           # Demo Login Page Override
+│   │   └── dashboard/
+│   │       └── DemoDashboardPage.tsx       # Demo Dashboard Page Override
 │   │
 │   └── apr/
-│       ├── apr.css
+│       ├── apr.css                         # APR Tenant Styles
 │       ├── login/
-│       │   ├── services/
-│       │   │   └── apr-sso.service.ts      # SSO 전용 로직
 │       │   ├── components/
-│       │   │   └── AprSsoButton.tsx
-│       │   └── AprLoginPage.tsx
+│       │   │   └── AprSsoButton.tsx        # APR SSO Button Component
+│       │   └── AprLoginPage.tsx            # APR Login Page Override
 │       └── dashboard/
-│           ├── services/
-│           │   └── apr-report.service.ts   # Report 생성 로직
-│           ├── components/
-│           │   └── AprKpiWidget.tsx
-│           └── AprDashboardPage.tsx
+│           └── AprDashboardPage.tsx        # APR Dashboard Page Override
 │
-└── uikit/
-├── card/
-│   ├── StatCard.tsx
-│   └── InfoCard.tsx
-├── chart/
-│   ├── SimpleChart.tsx
-│   └── BarChart.tsx
-├── form/
-│   ├── Input.tsx
-│   ├── Button.tsx
-│   └── Select.tsx
-└── layout/
-├── PageContainer.tsx
-└── Section.tsx
+└── uikit/                                  # UI Kit Components
+    ├── card/
+    │   └── StatCard.tsx                    # Stat Card Component
+    ├── chart/
+    │   └── BarChart.tsx                    # Bar Chart Component
+    ├── form/
+    │   ├── Button.tsx                      # Button Component
+    │   ├── Input.tsx                       # Input Component
+    │   └── Select.tsx                      # Select Component
+    └── layout/
+        ├── PageContainer.tsx               # Page Container Component
+        └── Section.tsx                     # Section Component
