@@ -2,6 +2,15 @@ import { ReactNode } from 'react';
 import { loadTenantConfig } from '@/core/config/tenant.config';
 import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
 
+export async function generateMetadata({ params }: { params: Promise<{ tenant: string }> }) {
+  const { tenant } = await params;
+  return {
+    icons: {
+      icon: `/favicons/${tenant}.svg`,
+    },
+  };
+}
+
 export default async function TenantLayout({ 
   children, 
   params 
