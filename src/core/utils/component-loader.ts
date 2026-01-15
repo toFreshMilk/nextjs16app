@@ -5,7 +5,8 @@ export type PageName = 'LoginPage' | 'DashboardPage' | 'ContractPage';
 
 // [수정] any -> unknown (혹은 구체적인 Props 타입이 있다면 그것을 사용)
 // Next.js 페이지 컴포넌트는 보통 동적 타입이므로 unknown이 적절합니다.
-type PageComponent = ComponentType<unknown>;
+// 이 프로젝트에서는 서버 라우트에서 슬롯/데이터 props를 주입하므로 any로 둡니다.
+type PageComponent = ComponentType<any>;
 
 // Standard 컴포넌트 매핑
 const StandardComponents: Record<PageName, () => Promise<{ default: PageComponent }>> = {

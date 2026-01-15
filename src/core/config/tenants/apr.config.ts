@@ -5,10 +5,11 @@ const config: TenantConfig = {
   name: 'APR Corp',
   features: { i18n: true, ai: false, sso: false }, // AI 미사용
   theme: { primaryColor: '#e11d48' },
-  
-  pages: {
-    // APR은 대시보드만 바꿈 (나머진 Standard 사용)
-    DashboardPage: () => import('@/tenants/apr/dashboard/AprDashboardPage'),
+ 
+  // APR은 Standard 페이지를 유지하고, 리포트/배너 같은 일부만 교체
+  components: {
+    WorkspaceBanner: () => import('@/tenants/apr/components/WorkspaceBanner'),
+    DashboardChart: () => import('@/tenants/apr/dashboard/components/DashboardChart'),
   },
   
   // APR은 계약 서비스 로직만 바꿈 (나머진 Standard 사용)

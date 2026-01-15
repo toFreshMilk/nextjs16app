@@ -1,5 +1,14 @@
-export function ContractList() {
-  const contracts = [
+type ContractRow = {
+  id: number | string;
+  title: string;
+  partner?: string;
+  status: string;
+  date?: string;
+  amount?: string;
+};
+
+export function ContractList({ contracts }: { contracts?: ContractRow[] }) {
+  const rows: ContractRow[] = contracts ?? [
     { id: 101, title: '2026년도 소프트웨어 유지보수 계약', partner: '(주)테크솔루션', status: 'Active', date: '2026-01-14', amount: '₩150,000,000' },
     { id: 102, title: '비밀유지서약서 (NDA)', partner: '스타트업 A', status: 'Draft', date: '2026-01-13', amount: '-' },
     { id: 103, title: '클라우드 서비스 이용 약관', partner: 'AWS Korea', status: 'Review', date: '2026-01-10', amount: '$5,000' },
@@ -32,20 +41,20 @@ export function ContractList() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {contracts.map((item) => (
+            {rows.map((item) => (
               <tr key={item.id} className="group hover:bg-slate-50/80 transition-colors cursor-pointer">
                 <td className="px-6 py-4 text-slate-400 font-mono">#{item.id}</td>
                 <td className="px-6 py-4 font-medium text-slate-900 group-hover:text-blue-600 transition-colors">
                   {item.title}
                 </td>
-                <td className="px-6 py-4 text-slate-600">{item.partner}</td>
+                <td className="px-6 py-4 text-slate-600">{item.partner ?? '-'}</td>
                 <td className="px-6 py-4">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ring-1 ring-inset ${getStatusBadge(item.status)}`}>
                     {item.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-slate-600 font-medium">{item.amount}</td>
-                <td className="px-6 py-4 text-slate-400 text-right">{item.date}</td>
+                <td className="px-6 py-4 text-slate-600 font-medium">{item.amount ?? '-'}</td>
+                <td className="px-6 py-4 text-slate-400 text-right">{item.date ?? '-'}</td>
               </tr>
             ))}
           </tbody>
@@ -62,4 +71,6 @@ export function ContractList() {
     </div>
   );
 }
+
+export default ContractList;
 

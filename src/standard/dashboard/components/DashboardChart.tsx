@@ -1,7 +1,9 @@
+'use client';
+
 import { BarChart } from '@/uikit/chart/BarChart';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 
-export function DashboardChart() {
+export default function DashboardChart() {
   const { config } = useAppConfig();
   
   return (

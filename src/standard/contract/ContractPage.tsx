@@ -1,20 +1,140 @@
-// Server Component 예시
-import { getTenantService } from '@/core/config/tenant.config';
+'use client';
 
-export default async function ContractPage({ params }: any) {
-  // 실제 런타임에는 config 주입된 params가 아닐 수 있으므로 주의 필요하지만 구조상 예시
-  // 상위 layout이나 page에서 tenant를 context나 props로 넘겨야 함. 
-  // 여기서는 클라이언트 컴포넌트 전환이 낫지만 Server Component Logic 보여주기 위함.
-  
-  // 실제로는:
+import { ReactNode, useMemo, useState } from 'react';
+import { useAppConfig } from '@/core/contexts/AppConfigContext';
+import { Button } from '@/uikit/form/Button';
+import { Input } from '@/uikit/form/Input';
+
+type ContractRow = {
+  id: number | string;
+  title: string;
+  status: string;
+};
+
+export default function ContractPage({
+  contracts,
+  list,
+}: {
+  contracts?: ContractRow[];
+  list?: ReactNode;
+}) {
+  const { config } = useAppConfig();
+  const [query, setQuery] = useState('');
+  const [tab, setTab] = useState<'all' | 'draft' | 'review' | 'active'>('all');
+
+  const filtered = useMemo(() => {
+    const rows = contracts ?? [];
+    const q = query.trim().toLowerCase();
+    return rows.filter((c) => {
+      const matchQ = !q || c.title.toLowerCase().includes(q);
+      const matchTab =
+        tab === 'all' ||
+        (tab === 'draft' && c.status.toLowerCase() === 'draft') ||
+        (tab === 'review' && c.status.toLowerCase() === 'review') ||
+        (tab === 'active' && c.status.toLowerCase() === 'active');
+      return matchQ && matchTab;
+    });
+  }, [contracts, query, tab]);
+
   return (
-    <div className="p-6">
-       <h1 className="text-2xl font-bold mb-4">계약 관리 (Standard)</h1>
-       <div className="bg-white p-4 rounded shadow">
-         <div className="border-b py-2 font-bold">목록</div>
-         <div className="py-2">표준 계약서 A</div>
-         <div className="py-2">비밀 유지 서약서</div>
-       </div>
+    <div className="flex gap-6 -m-10 p-10 bg-slate-50 min-h-[calc(100vh-64px)]">
+      {/* Sidebar */}
+      <aside className="w-72 shrink-0 space-y-4">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+          <div className="text-lg font-black text-slate-900 mb-3">계약</div>
+          <Button
+            className="w-full"
+            style={{ backgroundColor: config.theme.primaryColor }}
+            onClick={() => alert('새 계약 작성 (데모)')}
+          >
+            계약 생성
+          </Button>
+
+          <div className="mt-4">
+            <Input
+              label="계약명"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="검색어를 입력하세요"
+            />
+          </div>
+
+          <button
+            className="mt-3 w-full py-2 rounded-lg border border-slate-200 bg-amber-300 font-bold"
+            onClick={() => {
+              setQuery('');
+              setTab('all');
+            }}
+          >
+            검색 초기화
+          </button>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+          <div className="flex items-center justify-between">
+            <div className="font-bold text-slate-900">카테고리</div>
+            <button className="text-slate-400 hover:text-slate-900">⚙</button>
+          </div>
+          <div className="mt-3 space-y-2 text-sm">
+            {['전체', '회사 템플릿', '마케팅/홍보 계약', '테스트용도', '보안'].map((label) => (
+              <button
+                key={label}
+                className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700"
+                onClick={() => alert(`카테고리: ${label} (데모)`)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      {/* Main */}
+      <section className="flex-1 space-y-4">
+        <div className="flex items-end justify-between">
+          <div>
+            <div className="text-sm text-slate-500">
+              전체 : <span className="font-bold text-slate-900">{filtered.length}</span> 건
+            </div>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">계약</h1>
+          </div>
+
+          <div className="flex items-center gap-2 text-sm">
+            <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">필드 표시</button>
+            <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">10개씩 보기</button>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 flex gap-2">
+          {[
+            { k: 'all', label: '전체' },
+            { k: 'draft', label: '초안' },
+            { k: 'review', label: '검토' },
+            { k: 'active', label: '서명 및 회수' },
+          ].map((t) => (
+            <button
+              key={t.k}
+              className={`px-4 py-2 rounded-xl font-bold text-sm ${
+                tab === (t.k as any) ? 'text-white' : 'text-slate-600 hover:bg-slate-50'
+              }`}
+              style={tab === (t.k as any) ? { backgroundColor: config.theme.primaryColor } : undefined}
+              onClick={() => setTab(t.k as any)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* List */}
+        <div className="space-y-3">
+          {list ?? (
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+              <div className="text-sm text-slate-500">목록 슬롯이 비어있습니다.</div>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 }
