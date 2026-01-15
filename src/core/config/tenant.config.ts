@@ -36,8 +36,8 @@ const StandardComponents: Record<ComponentKey, () => Promise<{ default: Componen
 export async function getTenantComponent(tenantId: string, key: ComponentKey): Promise<ComponentType<any>> {
   const config = await loadTenantConfig(tenantId);
   const loader = config.components?.[key] || StandardComponents[key];
-  const module = await loader();
-  return module.default;
+  const moduleData = await loader();
+  return moduleData.default;
 }
 
 // === 3. 서비스 로더 ===
@@ -52,6 +52,6 @@ const StandardServices: Record<ServiceKey, () => Promise<{ default: any }>> = {
 export async function getTenantService<T = any>(tenantId: string, key: ServiceKey): Promise<T> {
   const config = await loadTenantConfig(tenantId);
   const loader = config.services?.[key] || StandardServices[key];
-  const module = await loader();
-  return module.default;
+  const moduleData = await loader();
+  return moduleData.default;
 }
