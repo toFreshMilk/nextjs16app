@@ -1,3 +1,4 @@
+// src/core/utils/object.util.ts
 export const isEmpty = (obj: any): boolean => {
   if (obj === null || obj === undefined) return true;
   return Object.keys(obj).length === 0;

@@ -1,3 +1,4 @@
+// src/app/[tenant]/(main)/dashboard/page.tsx
 import { getTenantPage } from '@/core/config/tenant.config';
 
 export default async function DashboardPage({ params }: { params: Promise<{ tenant: string }> }) {

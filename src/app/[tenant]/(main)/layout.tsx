@@ -1,3 +1,4 @@
+// src/app/[tenant]/(main)/layout.tsx
 import { ReactNode } from 'react';
 import { getTenantComponent } from '@/core/config/tenant.config';
 

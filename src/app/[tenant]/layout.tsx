@@ -1,3 +1,4 @@
+// src/app/[tenant]/layout.tsx
 import { ReactNode } from 'react';
 import { loadTenantConfig } from '@/core/config/tenant.config';
 import { AppConfigProvider } from '@/core/contexts/AppConfigContext';

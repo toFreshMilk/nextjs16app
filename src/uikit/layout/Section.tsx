@@ -1,3 +1,4 @@
+// src/uikit/layout/Section.tsx
 import { ReactNode } from 'react';
 
 interface Props {

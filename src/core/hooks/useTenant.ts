@@ -1,3 +1,4 @@
+// src/core/hooks/useTenant.ts
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 
 export function useTenant() {

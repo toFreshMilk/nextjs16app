@@ -1,3 +1,4 @@
+// src/tenants/apr/shared/components/WorkspaceBanner.tsx
 'use client';
 
 export default function WorkspaceBanner() {

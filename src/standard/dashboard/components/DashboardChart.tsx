@@ -1,3 +1,4 @@
+// src/standard/dashboard/components/DashboardChart.tsx
 'use client';
 
 import { BarChart } from '@/uikit/chart/BarChart';

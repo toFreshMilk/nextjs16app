@@ -1,3 +1,4 @@
+// src/core/config/tenant.config.ts
 import { ComponentType } from 'react';
 
 type ModuleWithDefault<T> = { default: T };

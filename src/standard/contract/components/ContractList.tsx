@@ -1,3 +1,4 @@
+// src/standard/contract/components/ContractList.tsx
 type ContractRow = {
   id: number | string;
   title: string;

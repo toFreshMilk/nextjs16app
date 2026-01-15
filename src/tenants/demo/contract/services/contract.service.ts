@@ -1,3 +1,4 @@
+// src/tenants/demo/contract/services/contract.service.ts
 export default {
   async getContracts() {
     // Demo용 가짜 데이터

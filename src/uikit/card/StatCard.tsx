@@ -1,3 +1,4 @@
+// src/uikit/card/StatCard.tsx
 export function StatCard({ title, value, highlight, alert }: any) {
   return (
     <div className={`p-6 rounded-xl border shadow-sm ${

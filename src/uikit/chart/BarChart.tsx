@@ -1,3 +1,4 @@
+// src/uikit/chart/BarChart.tsx
 export function BarChart({ data, labels, color }: any) {
   const max = Math.max(...data);
   return (

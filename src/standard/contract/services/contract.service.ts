@@ -1,3 +1,4 @@
+// src/standard/contract/services/contract.service.ts
 export default {
   async getContracts() {
     return [

@@ -1,3 +1,4 @@
+// src/standard/login/LoginPage.tsx
 'use client';
 import Link from 'next/link';
 import { ComponentType, useEffect, useState } from 'react';

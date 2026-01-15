@@ -1,3 +1,4 @@
+// src/tenants/demo/dashboard/DemoDashboardPage.tsx
 'use client';
 import { StatCard } from '@/uikit/card/StatCard';
 

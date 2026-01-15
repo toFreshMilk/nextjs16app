@@ -1,3 +1,4 @@
+// src/standard/dashboard/store/dashboard.store.ts
 import { BehaviorSubject } from 'rxjs';
 
 interface DashboardState {

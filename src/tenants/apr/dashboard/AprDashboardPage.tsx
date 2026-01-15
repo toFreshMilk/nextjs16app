@@ -1,3 +1,4 @@
+// src/tenants/apr/dashboard/AprDashboardPage.tsx
 'use client';
 import { StatCard } from '@/uikit/card/StatCard';
 

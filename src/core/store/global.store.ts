@@ -1,3 +1,4 @@
+// src/core/store/global.store.ts
 import { BehaviorSubject } from 'rxjs';
 
 export interface GlobalState {

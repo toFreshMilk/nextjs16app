@@ -1,3 +1,4 @@
+// src/standard/dashboard/DashboardPage.tsx
 'use client';
 import Link from 'next/link';
 import { ComponentType, ReactNode, useEffect, useState } from 'react';

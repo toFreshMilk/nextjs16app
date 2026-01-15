@@ -1,3 +1,4 @@
+// src/tenants/demo/contract/DemoContractPage.tsx
 'use client';
 export default function DemoContractPage() {
   return (

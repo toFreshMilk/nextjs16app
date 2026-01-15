@@ -1,3 +1,4 @@
+// src/app/[tenant]/error.tsx
 'use client';
 
 import { useEffect } from 'react';

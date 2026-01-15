@@ -1,3 +1,4 @@
+// src/tenants/demo/shared/components/TopNavbar.tsx
 'use client';
 import { TopNavbar as StandardNavbar } from '@/standard/shared/components/TopNavbar';
 

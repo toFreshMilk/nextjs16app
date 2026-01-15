@@ -1,3 +1,4 @@
+// src/standard/login/store/login.store.ts
 import { BehaviorSubject } from 'rxjs';
 
 export const loginStore = {

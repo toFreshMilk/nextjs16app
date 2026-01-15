@@ -1,3 +1,4 @@
+// src/tenants/apr/dashboard/components/DashboardChart.tsx
 'use client';
 
 import StandardDashboardChart from '@/standard/dashboard/components/DashboardChart';

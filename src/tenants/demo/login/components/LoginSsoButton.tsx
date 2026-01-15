@@ -1,3 +1,4 @@
+// src/tenants/demo/login/components/LoginSsoButton.tsx
 'use client';
 
 export default function LoginSsoButton() {

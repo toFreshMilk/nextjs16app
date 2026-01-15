@@ -1,3 +1,4 @@
+// src/core/config/tenants/demo.config.ts
 import { TenantConfig } from '../tenant.config';
 
 const config: TenantConfig = {

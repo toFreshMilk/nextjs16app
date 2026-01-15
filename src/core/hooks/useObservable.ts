@@ -1,3 +1,4 @@
+// src/core/hooks/useObservable.ts
 import { useEffect, useState } from 'react';
 import { Observable } from 'rxjs';
 

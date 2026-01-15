@@ -1,3 +1,4 @@
+// src/proxy.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 const VALID_TENANTS = new Set(['demo', 'apr', 'handok', 'iic']);
