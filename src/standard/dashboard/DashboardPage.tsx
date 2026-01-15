@@ -1,7 +1,9 @@
 'use client';
 import Link from 'next/link';
-import { ReactNode } from 'react';
+import { ComponentType, ReactNode, useEffect, useState } from 'react';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
+import { useTenant } from '@/core/hooks/useTenant';
+import { getTenantComponent, getTenantService } from '@/core/config/tenant.config';
 import { StatCard } from '@/uikit/card/StatCard';
 
 type DashboardStats = {
@@ -11,13 +13,42 @@ type DashboardStats = {
 };
 
 export default function DashboardPage({
-  stats,
-  chart,
+  stats: initialStats,
+  chart: initialChart,
 }: {
-  stats?: DashboardStats;
-  chart?: ReactNode;
+  stats?: DashboardStats; // (선택) SSR/프리패치 시 주입 가능
+  chart?: ReactNode; // (선택) SSR/슬롯 주입 시 사용 가능
 }) {
   const { config } = useAppConfig();
+  const { tenantId } = useTenant();
+
+  const [stats, setStats] = useState<DashboardStats | undefined>(initialStats);
+  const [ChartComp, setChartComp] = useState<ComponentType<any> | null>(null);
+  const [loading, setLoading] = useState<boolean>(!initialStats);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        setLoading(true);
+
+        const dashboardService = await getTenantService<any>(tenantId, 'DashboardService');
+        const nextStats: DashboardStats = await dashboardService.getStats();
+        if (!cancelled) setStats(nextStats);
+
+        const Comp = await getTenantComponent(tenantId, 'DashboardChart');
+        if (!cancelled) setChartComp(() => Comp);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [tenantId]);
 
   const safeStats = stats ?? { contracts: 0, pending: 0, risks: 0 };
 
@@ -83,11 +114,13 @@ export default function DashboardPage({
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
         <div className="xl:col-span-9 space-y-6">
           {/* Chart slot (tenant component override target) */}
-          {chart ?? (
+          {initialChart ?? (ChartComp ? (
+            <ChartComp />
+          ) : (
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-              <div className="text-sm text-slate-500">차트 슬롯이 비어있습니다.</div>
+              <div className="text-sm text-slate-500">{loading ? '데이터를 불러오는 중…' : '차트 로딩 실패'}</div>
             </div>
-          )}
+          ))}
 
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
             <div className="flex items-center justify-between mb-4">

@@ -1,7 +1,9 @@
 'use client';
 
-import { ReactNode, useMemo, useState } from 'react';
+import { ComponentType, useEffect, useMemo, useState } from 'react';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
+import { useTenant } from '@/core/hooks/useTenant';
+import { getTenantComponent, getTenantService } from '@/core/config/tenant.config';
 import { Button } from '@/uikit/form/Button';
 import { Input } from '@/uikit/form/Input';
 
@@ -11,21 +13,44 @@ type ContractRow = {
   status: string;
 };
 
-export default function ContractPage({
-  contracts,
-  list,
-}: {
-  contracts?: ContractRow[];
-  list?: ReactNode;
-}) {
+export default function ContractPage() {
   const { config } = useAppConfig();
+  const { tenantId } = useTenant();
+
+  const [contracts, setContracts] = useState<ContractRow[]>([]);
+  const [ListComp, setListComp] = useState<ComponentType<any> | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState<'all' | 'draft' | 'review' | 'active'>('all');
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        setLoading(true);
+
+        const contractService = await getTenantService<any>(tenantId, 'ContractService');
+        const data: ContractRow[] = await contractService.getContracts();
+        if (!cancelled) setContracts(data ?? []);
+
+        const Comp = await getTenantComponent(tenantId, 'ContractList');
+        if (!cancelled) setListComp(() => Comp);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [tenantId]);
+
   const filtered = useMemo(() => {
-    const rows = contracts ?? [];
     const q = query.trim().toLowerCase();
-    return rows.filter((c) => {
+    return contracts.filter((c) => {
       const matchQ = !q || c.title.toLowerCase().includes(q);
       const matchTab =
         tab === 'all' ||
@@ -128,9 +153,11 @@ export default function ContractPage({
 
         {/* List */}
         <div className="space-y-3">
-          {list ?? (
+          {ListComp ? (
+            <ListComp contracts={filtered} />
+          ) : (
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-              <div className="text-sm text-slate-500">목록 슬롯이 비어있습니다.</div>
+              <div className="text-sm text-slate-500">{loading ? '데이터를 불러오는 중…' : '목록 로딩 실패'}</div>
             </div>
           )}
         </div>
