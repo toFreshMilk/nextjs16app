@@ -1,30 +1,30 @@
 import { ReactNode } from 'react';
 import { loadTenantConfig } from '@/core/config/tenant.config';
-import { AppConfigProvider, TenantConfigData } from '@/core/contexts/AppConfigContext';
+import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
 import { notFound } from 'next/navigation';
 
-interface LayoutProps {
+export default async function TenantLayout({ 
+  children, 
+  params 
+}: { 
   children: ReactNode;
   params: Promise<{ tenant: string }>;
-}
-
-export default async function TenantLayout({ children, params }: LayoutProps) {
+}) {
   const { tenant } = await params;
-  let fullConfig;
+  let config;
 
   try {
-    fullConfig = await loadTenantConfig(tenant);
-  } catch (e) {
-    console.error(`Config load failed: ${tenant}`, e);
+    config = await loadTenantConfig(tenant);
+  } catch {
     notFound();
   }
 
-  // Client Component로 넘길 데이터 (함수 제외 순수 데이터)
-  const configData: TenantConfigData = {
-    id: fullConfig.id,
-    name: fullConfig.name,
-    features: fullConfig.features,
-    theme: fullConfig.theme,
+  // 함수 제외한 순수 데이터만 클라이언트로 전달
+  const configData = {
+    id: config.id,
+    name: config.name,
+    features: config.features,
+    theme: config.theme,
   };
 
   return (

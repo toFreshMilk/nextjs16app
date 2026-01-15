@@ -1,78 +1,57 @@
 import { ComponentType } from 'react';
 
-// ==========================================
-// 1. 순수 설정 데이터 (Config Data)
-// ==========================================
+// === 1. 설정 데이터 ===
 export interface TenantConfig {
-    id: string;
-    name: string;
-    features: {
-        i18n: boolean;
-        ai: boolean;
-    };
-    theme: {
-        primaryColor: string;
-    };
+  id: string;
+  name: string;
+  features: { i18n: boolean; ai: boolean; };
+  theme: { primaryColor: string; };
+  // Overrides Map
+  components?: Partial<Record<ComponentKey, () => Promise<{ default: ComponentType<any> }>>>;
+  services?: Partial<Record<ServiceKey, () => Promise<{ default: any }>>>;
 }
 
 export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> {
-    switch (tenantId) {
-        case 'demo':
-            return (await import('./tenants/demo.config')).default;
-        case 'apr':
-            return (await import('./tenants/apr.config')).default;
-        default:
-            return {
-                id: tenantId,
-                name: 'Unknown Workspace',
-                features: { i18n: false, ai: false },
-                theme: { primaryColor: '#64748b' },
-            };
-    }
+  switch (tenantId) {
+    case 'demo': return (await import('./tenants/demo.config')).default;
+    case 'apr': return (await import('./tenants/apr.config')).default;
+    default: return {
+      id: tenantId,
+      name: 'Unknown',
+      features: { i18n: false, ai: false },
+      theme: { primaryColor: '#64748b' }
+    };
+  }
 }
 
-// ==========================================
-// 2. 컴포넌트 로더 로직 (Component Loader)
-// ==========================================
+// === 2. 컴포넌트 로더 ===
+export type ComponentKey = 'LoginPage' | 'DashboardPage' | 'ContractPage';
 
-export type PageName = 'LoginPage' | 'DashboardPage' | 'ContractPage';
-type PageComponent = ComponentType<unknown>;
-
-// Standard Loaders
-const StandardComponents: Record<PageName, () => Promise<{ default: PageComponent }>> = {
-    LoginPage: () => import('@/standard/login/LoginPage'),
-    DashboardPage: () => import('@/standard/dashboard/DashboardPage'),
-    ContractPage: () => import('@/standard/contract/ContractPage'),
+const StandardComponents: Record<ComponentKey, () => Promise<{ default: ComponentType<any> }>> = {
+  LoginPage: () => import('@/standard/login/LoginPage'),
+  DashboardPage: () => import('@/standard/dashboard/DashboardPage'),
+  ContractPage: () => import('@/standard/contract/ContractPage'),
 };
 
-// Tenant Overrides Registry
-const TenantOverrides: Record<string, Partial<Record<PageName, () => Promise<{ default: PageComponent }>>>> = {
-    demo: {
-        LoginPage: () => import('@/tenants/demo/login/DemoLoginPage'),
-        DashboardPage: () => import('@/tenants/demo/dashboard/DemoDashboardPage'),
-    },
-    apr: {
-        LoginPage: () => import('@/tenants/apr/login/AprLoginPage'),
-        DashboardPage: () => import('@/tenants/apr/dashboard/AprDashboardPage'),
-    },
+export async function getTenantComponent(tenantId: string, key: ComponentKey): Promise<ComponentType<any>> {
+  const config = await loadTenantConfig(tenantId);
+  const loader = config.components?.[key] || StandardComponents[key];
+  const module = await loader();
+  return module.default;
+}
+
+// === 3. 서비스 로더 ===
+export type ServiceKey = 'LoginService' | 'DashboardService' | 'ContractService';
+
+const StandardServices: Record<ServiceKey, () => Promise<{ default: any }>> = {
+  LoginService: () => import('@/standard/login/services/login.service'),
+  DashboardService: () => import('@/standard/dashboard/services/dashboard.service'),
+  ContractService: () => import('@/standard/contract/services/contract.service'),
 };
 
-/**
- * 테넌트별 컴포넌트를 로드합니다. (Config와 같은 파일에 위치하여 응집도 향상)
- */
-export async function getTenantComponent(tenantId: string, pageName: PageName): Promise<PageComponent> {
-    const overrides = TenantOverrides[tenantId];
-    const loader = overrides?.[pageName] || StandardComponents[pageName];
-
-    if (!loader) {
-        throw new Error(`Component loader not found for page: ${pageName}`);
-    }
-
-    try {
-        const loadedModule = await loader();
-        return loadedModule.default;
-    } catch (error) {
-        console.error(`Failed to load component ${pageName} for tenant ${tenantId}`, error);
-        throw error;
-    }
+export async function getTenantService<T = any>(tenantId: string, key: ServiceKey): Promise<T> {
+  const config = await loadTenantConfig(tenantId);
+  const loader = config.services?.[key] || StandardServices[key];
+  const module = await loader();
+  return module.default;
 }
