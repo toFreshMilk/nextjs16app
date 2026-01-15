@@ -1,45 +1,10 @@
-/* ✅ @reference 추가 */
-@reference "tailwindcss";
-
-/* APR 전용 스타일 (data-tenant="apr"로 스코핑) */
-
-[data-tenant="apr"] .page-title {
-    border-left: 4px solid #EA002C;
-    padding-left: 16px;
-    animation: slideInLeft 0.3s ease-out;
+.apr-brand-text {
+  color: #e11d48;
+  letter-spacing: -0.05em;
 }
 
-[data-tenant="apr"] .custom-badge {
-    background: linear-gradient(135deg, #EA002C 0%, #C40023 100%);
-    box-shadow: 0 4px 12px rgba(234, 0, 44, 0.3);
-    animation: pulse 2s infinite;
-}
-
-[data-tenant="apr"] .std-card {
-    border-color: rgba(234, 0, 44, 0.2);
-}
-
-[data-tenant="apr"] .std-card:hover {
-    border-color: rgba(234, 0, 44, 0.4);
-    box-shadow: 0 8px 24px rgba(234, 0, 44, 0.15);
-}
-
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes pulse {
-    0%, 100% {
-        box-shadow: 0 4px 12px rgba(234, 0, 44, 0.3);
-    }
-    50% {
-        box-shadow: 0 4px 20px rgba(234, 0, 44, 0.5);
-    }
+.apr-glass-panel {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(225, 29, 72, 0.1);
 }

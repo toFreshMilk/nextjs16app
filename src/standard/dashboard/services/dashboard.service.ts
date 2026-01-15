@@ -1,10 +1,6 @@
-import { of, delay } from 'rxjs';
-
-export const dashboardService = {
-  getStats: () => of({ 
-    activeContracts: 142, 
-    pendingApprovals: 8, 
-    risks: 2 
-  }).pipe(delay(500))
+export default {
+  async getStats() {
+    return { contracts: 10, pending: 2, risks: 0 };
+  }
 };
 

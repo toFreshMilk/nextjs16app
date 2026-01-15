@@ -1,5 +1,9 @@
-/* Standard component specific styles */
+/* Standard Design Tokens */
 .std-card {
-  @apply bg-white rounded-xl shadow-sm border border-gray-100;
+  @apply bg-white rounded-lg border border-gray-200 shadow-sm p-4;
+}
+
+.std-table-header {
+  @apply bg-gray-50 text-gray-500 font-medium text-sm;
 }
 

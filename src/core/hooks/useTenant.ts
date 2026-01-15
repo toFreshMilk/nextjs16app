@@ -1,10 +1,11 @@
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 
 export function useTenant() {
-    const { config } = useAppConfig();
-    return {
-        tenantId: config.id,
-        tenantName: config.name,
-        isDemo: config.id === 'demo',
-    };
+  const { config } = useAppConfig();
+  return {
+    tenantId: config.id,
+    tenantName: config.name,
+    features: config.features,
+    theme: config.theme,
+  };
 }

@@ -1,43 +1,42 @@
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 
 export interface GlobalState {
-  tenantId: string;
   isSidebarOpen: boolean;
-  user?: { name: string; email: string };
+  activeMenu: string;
 }
 
-const INITIAL_STATE: GlobalState = {
-  tenantId: '',
+const initialState: GlobalState = {
   isSidebarOpen: true,
+  activeMenu: 'dashboard',
 };
 
-export class GlobalStore {
-  private _state$ = new BehaviorSubject<GlobalState>(INITIAL_STATE);
+class GlobalStore {
+  private _state$ = new BehaviorSubject<GlobalState>(initialState);
 
-  constructor(initialData?: Partial<GlobalState>) {
-    if (initialData) {
-      this._state$.next({ ...INITIAL_STATE, ...initialData });
-    }
-  }
-
-  // State Observable
-  get state$(): Observable<GlobalState> {
+  get state$() {
     return this._state$.asObservable();
   }
 
-  // Selector
-  select<K extends keyof GlobalState>(key: K): Observable<GlobalState[K]> {
-    return this._state$.pipe(map(state => state[key]));
-  }
-
-  // Actions
-  setState(newState: Partial<GlobalState>) {
-    this._state$.next({ ...this._state$.value, ...newState });
+  get currentState() {
+    return this._state$.getValue();
   }
 
   toggleSidebar() {
-    this.setState({ isSidebarOpen: !this._state$.value.isSidebarOpen });
+    const current = this.currentState;
+    this._state$.next({
+      ...current,
+      isSidebarOpen: !current.isSidebarOpen,
+    });
+  }
+
+  setActiveMenu(menu: string) {
+    const current = this.currentState;
+    this._state$.next({
+      ...current,
+      activeMenu: menu,
+    });
   }
 }
+
+export const globalStore = new GlobalStore();
 

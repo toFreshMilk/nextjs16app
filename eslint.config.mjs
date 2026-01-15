@@ -8,6 +8,7 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "react-hooks/static-components": "off",
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
   globalIgnores([
