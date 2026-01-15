@@ -1,5 +1,8 @@
 import { ComponentType } from 'react';
 
+type ModuleWithDefault<T> = { default: T };
+type ComponentLoader<T = ComponentType<any>> = () => Promise<ModuleWithDefault<T>>;
+
 // === 1. 설정 데이터 ===
 export interface TenantConfig {
   id: string;
@@ -7,8 +10,9 @@ export interface TenantConfig {
   features: { i18n: boolean; ai: boolean; };
   theme: { primaryColor: string; };
   // Overrides Map
-  components?: Partial<Record<ComponentKey, () => Promise<{ default: ComponentType<any> }>>>;
-  services?: Partial<Record<ServiceKey, () => Promise<{ default: any }>>>;
+  pages?: Partial<Record<PageKey, ComponentLoader>>;
+  components?: Partial<Record<UiComponentKey, ComponentLoader>>;
+  services?: Partial<Record<ServiceKey, () => Promise<ModuleWithDefault<any>>>>;
 }
 
 export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> {
@@ -24,18 +28,35 @@ export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> 
   }
 }
 
-// === 2. 컴포넌트 로더 ===
-export type ComponentKey = 'LoginPage' | 'DashboardPage' | 'ContractPage';
+// === 2. 페이지 로더 ===
+export type PageKey = 'LoginPage' | 'DashboardPage' | 'ContractPage';
 
-const StandardComponents: Record<ComponentKey, () => Promise<{ default: ComponentType<any> }>> = {
+const StandardPages: Record<PageKey, ComponentLoader> = {
   LoginPage: () => import('@/standard/login/LoginPage'),
   DashboardPage: () => import('@/standard/dashboard/DashboardPage'),
   ContractPage: () => import('@/standard/contract/ContractPage'),
 };
 
-export async function getTenantComponent(tenantId: string, key: ComponentKey): Promise<ComponentType<any>> {
+export async function getTenantPage(tenantId: string, key: PageKey): Promise<ComponentType<any>> {
   const config = await loadTenantConfig(tenantId);
-  const loader = config.components?.[key] || StandardComponents[key];
+  // 하위호환: 과거에는 pages 대신 components에 라우트 페이지 오버라이드가 들어있었음
+  const legacyPages = (config as unknown as { components?: Partial<Record<PageKey, ComponentLoader>> }).components;
+  const loader = config.pages?.[key] || legacyPages?.[key] || StandardPages[key];
+  const moduleData = await loader();
+  return moduleData.default;
+}
+
+// === 3. UI 컴포넌트 로더 (부분 교체용) ===
+export type UiComponentKey = 'TopNavbar' | 'WorkspaceBanner';
+
+const StandardUiComponents: Record<UiComponentKey, ComponentLoader> = {
+  TopNavbar: () => import('@/standard/shared/components/TopNavbar'),
+  WorkspaceBanner: () => import('@/standard/shared/components/WorkspaceBanner'),
+};
+
+export async function getTenantComponent(tenantId: string, key: UiComponentKey): Promise<ComponentType<any>> {
+  const config = await loadTenantConfig(tenantId);
+  const loader = config.components?.[key] || StandardUiComponents[key];
   const moduleData = await loader();
   return moduleData.default;
 }

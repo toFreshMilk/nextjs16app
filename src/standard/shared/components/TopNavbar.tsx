@@ -24,3 +24,5 @@ export function TopNavbar() {
   );
 }
 
+export default TopNavbar;
+

@@ -1,8 +1,8 @@
-import { getTenantComponent } from '@/core/config/tenant.config';
+import { getTenantPage } from '@/core/config/tenant.config';
 
 export default async function ContractPage({ params }: { params: Promise<{ tenant: string }> }) {
   const { tenant } = await params;
-  const Component = await getTenantComponent(tenant, 'ContractPage');
-  return <Component />;
+  const Page = await getTenantPage(tenant, 'ContractPage');
+  return <Page />;
 }
 

@@ -1,11 +1,22 @@
 import { ReactNode } from 'react';
-import { TopNavbar } from '@/standard/shared/components/TopNavbar';
+import { getTenantComponent } from '@/core/config/tenant.config';
 
-export default function MainLayout({ children }: { children: ReactNode }) {
+export default async function MainLayout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ tenant: string }>;
+}) {
+  const { tenant } = await params;
+  const WorkspaceBanner = await getTenantComponent(tenant, 'WorkspaceBanner');
+  const TopNavbar = await getTenantComponent(tenant, 'TopNavbar');
+
   return (
     <div className="flex flex-col min-h-screen bg-slate-50">
       {/* Sticky Header */}
       <div className="sticky top-0 z-50 shadow-sm bg-white/80 backdrop-blur-md">
+        <WorkspaceBanner />
         <TopNavbar />
       </div>
       

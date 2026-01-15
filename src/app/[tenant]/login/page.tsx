@@ -1,8 +1,14 @@
-import { getTenantComponent } from '@/core/config/tenant.config';
+import { getTenantComponent, getTenantPage } from '@/core/config/tenant.config';
 
 export default async function LoginPage({ params }: { params: Promise<{ tenant: string }> }) {
   const { tenant } = await params;
-  const Component = await getTenantComponent(tenant, 'LoginPage');
-  return <Component />;
+  const WorkspaceBanner = await getTenantComponent(tenant, 'WorkspaceBanner');
+  const Page = await getTenantPage(tenant, 'LoginPage');
+  return (
+    <>
+      <WorkspaceBanner />
+      <Page />
+    </>
+  );
 }
 

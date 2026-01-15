@@ -6,7 +6,7 @@ const config: TenantConfig = {
   features: { i18n: true, ai: false }, // AI 미사용
   theme: { primaryColor: '#e11d48' },
   
-  components: {
+  pages: {
     // APR은 대시보드만 바꿈 (나머진 Standard 사용)
     DashboardPage: () => import('@/tenants/apr/dashboard/AprDashboardPage'),
   },
