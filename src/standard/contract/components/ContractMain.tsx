@@ -84,7 +84,6 @@ export default function ContractMain() {
           <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">10개씩 보기</button>
         </div>
       </div>
-fffffffff
       {/* Tabs */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 flex gap-2">
         {[

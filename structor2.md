@@ -34,9 +34,6 @@ buptlebiz_fe/
     │       ├── page.tsx                    # Tenant Root (redirect to /{tenant}/dashboard)
     │       ├── error.tsx                   # Tenant 에러 핸들링
     │       │
-    │       ├── login/
-    │       │   └── page.tsx                # Dynamic Login Page (getTenantPage)
-    │       │
     │       └── (main)/
     │           ├── layout.tsx              # Main Layout (TopNavbar, WorkspaceBanner)
     │           ├── dashboard/
@@ -70,32 +67,10 @@ buptlebiz_fe/
     │   │       ├── TopNavbar.tsx           # Shared TopNavbar
     │   │       └── WorkspaceBanner.tsx     # Shared WorkspaceBanner (default: null)
     │   │
-    │   ├── login/
-    │   │   ├── LoginPage.tsx               # Standard Login Page
-    │   │   ├── services/
-    │   │   │   └── login.service.ts        # Standard Login Service
-    │   │   ├── store/
-    │   │   │   └── login.store.ts          # Standard Login Store
-    │   │   └── components/
-    │   │       ├── LoginSsoButton.tsx      # Standard SSO Button
-    │   │       ├── LoginForm.tsx            # (optional) Login Form
-    │   │       └── LoginHeader.tsx         # (optional) Login Header
-    │   │
-    │   ├── dashboard/
-    │   │   ├── DashboardPage.tsx           # Standard Dashboard Page
-    │   │   ├── services/
-    │   │   │   └── dashboard.service.ts    # Standard Dashboard Service
-    │   │   ├── store/
-    │   │   │   └── dashboard.store.ts     # Standard Dashboard Store
-    │   │   └── components/
-    │   │       └── DashboardChart.tsx      # Standard Dashboard Chart
-    │   │
     │   └── contract/
     │       ├── ContractPage.tsx            # Standard Contract Page
     │       ├── services/
     │       │   └── contract.service.ts     # Standard Contract Service
-    │       ├── store/
-    │       │   └── contract.store.ts      # Standard Contract Store
     │       └── components/
     │           └── ContractList.tsx        # Standard Contract List
     │
@@ -111,18 +86,6 @@ buptlebiz_fe/
     │   │   │   └── components/
     │   │   │       └── TopNavbar.tsx       # Demo 전용 TopNavbar override
     │   │   │
-    │   │   ├── login/                      # standard/login 과 동일한 구조
-    │   │   │   ├── DemoLoginPage.tsx       # Demo Login Page Override
-    │   │   │   └── components/
-    │   │   │       └── LoginSsoButton.tsx  # Demo Login SSO Button Override
-    │   │   │
-    │   │   ├── dashboard/                  # standard/dashboard 과 동일한 구조
-    │   │   │   ├── DemoDashboardPage.tsx   # Demo Dashboard Page Override
-    │   │   │   ├── services/
-    │   │   │   │   └── dashboard.service.ts # Demo Dashboard Service Override
-    │   │   │   └── components/
-    │   │   │       └── DashboardChart.tsx   # Demo Dashboard Chart Override
-    │   │   │
     │   │   └── contract/                   # standard/contract 과 동일한 구조
     │   │       ├── DemoContractPage.tsx    # Demo Contract Page Override
     │   │       └── services/
@@ -134,16 +97,6 @@ buptlebiz_fe/
     │       ├── shared/                     # APR shared overrides
     │       │   └── components/
     │       │       └── WorkspaceBanner.tsx  # APR 전용 WorkspaceBanner override
-    │       │
-    │       ├── login/                      # standard/login 과 동일한 구조
-    │       │   ├── AprLoginPage.tsx        # APR Login Page Override
-    │       │   └── components/
-    │       │       └── AprSsoButton.tsx    # APR 전용 SSO 버튼
-    │       │
-    │       ├── dashboard/                  # standard/dashboard 과 동일한 구조
-    │       │   ├── AprDashboardPage.tsx    # APR Dashboard Page Override
-    │       │   └── components/
-    │       │       └── DashboardChart.tsx # APR Dashboard Chart Override
     │       │
     │       └── contract/                   # standard/contract 과 동일한 구조
     │           └── services/

@@ -11,6 +11,8 @@ const config: TenantConfig = {
   components: {
     WorkspaceBanner: () => import('@/tenants/apr/shared/components/WorkspaceBanner'),
     ContractSidebar: () => import('@/tenants/apr/contract/components/ContractSidebar'),
+    // APR은 계약 메인 UI를 크게 다르게 가져감
+    ContractMain: () => import('@/tenants/apr/contract/components/ContractMain'),
   },
   
   // APR은 계약 서비스 로직만 바꿈 (나머진 Standard 사용)
