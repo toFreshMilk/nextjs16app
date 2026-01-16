@@ -9,7 +9,7 @@ export default function ContractPage() {
     <div className="flex gap-6 -m-10 p-10 bg-slate-50 min-h-[calc(100vh-64px)]">
       {/* Sidebar */}
       <ContractSidebar />
-      {/* Main */}
+      {/* Main */}cccccccccccccccc
       <ContractMain />
     </div>
   );
