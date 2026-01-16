@@ -1,5 +1,13 @@
 // src/uikit/chart/BarChart.tsx
-export function BarChart({ data, labels, color }: any) {
+export function BarChart({
+  data,
+  labels,
+  color,
+}: {
+  data: number[];
+  labels: string[];
+  color: string;
+}) {
   const max = Math.max(...data);
   return (
     <div className="flex items-end gap-2 h-32 mt-4">

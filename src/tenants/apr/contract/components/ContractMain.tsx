@@ -5,12 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useTenant } from '@/core/hooks/useTenant';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { getTenantService } from '@/core/config/tenant.config';
-
-type ContractRow = {
-  id: number | string;
-  title: string;
-  status: string;
-};
+import type { ContractRow, ContractService } from '@/core/types/contract.types';
 
 function normalizeStatus(s: string) {
   return (s ?? '').trim().toLowerCase();
@@ -97,7 +92,7 @@ export default function AprContractMain() {
     async function load() {
       try {
         setLoading(true);
-        const service = await getTenantService<any>(tenantId, 'ContractService');
+        const service = await getTenantService<ContractService>(tenantId, 'ContractService');
         const data: ContractRow[] = await service.getContracts();
         if (!cancelled) setContracts(Array.isArray(data) ? data : []);
       } finally {

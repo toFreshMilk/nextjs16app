@@ -1,5 +1,15 @@
 // src/uikit/card/StatCard.tsx
-export function StatCard({ title, value, highlight, alert }: any) {
+export function StatCard({
+  title,
+  value,
+  highlight,
+  alert,
+}: {
+  title: string;
+  value: string | number;
+  highlight?: boolean;
+  alert?: boolean;
+}) {
   return (
     <div className={`p-6 rounded-xl border shadow-sm ${
       alert ? 'bg-red-50 border-red-100 text-red-700' :

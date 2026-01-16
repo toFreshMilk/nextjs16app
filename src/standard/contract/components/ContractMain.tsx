@@ -6,17 +6,14 @@ import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { useTenant } from '@/core/hooks/useTenant';
 import { getTenantComponent, getTenantService } from '@/core/config/tenant.config';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import type { ContractRow, ContractService } from '@/core/types/contract.types';
 
 function buildUrl(pathname: string, params: URLSearchParams) {
   const qs = params.toString();
   return qs ? `${pathname}?${qs}` : pathname;
 }
 
-type ContractRow = {
-  id: number | string;
-  title: string;
-  status: string;
-};
+type TabKey = 'all' | 'draft' | 'review' | 'active';
 
 export default function ContractMain() {
   const { config } = useAppConfig();
@@ -26,10 +23,10 @@ export default function ContractMain() {
   const searchParams = useSearchParams();
 
   const query = searchParams.get('q') ?? '';
-  const tab = (searchParams.get('tab') ?? 'all') as any;
+  const tab = (searchParams.get('tab') ?? 'all') as TabKey;
 
   const [contracts, setContracts] = useState<ContractRow[]>([]);
-  const [ListComp, setListComp] = useState<ComponentType<any> | null>(null);
+  const [ListComp, setListComp] = useState<ComponentType<{ contracts: ContractRow[] }> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,11 +36,11 @@ export default function ContractMain() {
       try {
         setLoading(true);
 
-        const contractService = await getTenantService<any>(tenantId, 'ContractService');
+        const contractService = await getTenantService<ContractService>(tenantId, 'ContractService');
         const data: ContractRow[] = await contractService.getContracts();
         if (!cancelled) setContracts(data ?? []);
 
-        const Comp = await getTenantComponent(tenantId, 'ContractList');
+        const Comp = (await getTenantComponent(tenantId, 'ContractList')) as ComponentType<{ contracts: ContractRow[] }>;
         if (!cancelled) setListComp(() => Comp);
       } finally {
         if (!cancelled) setLoading(false);
@@ -95,9 +92,9 @@ export default function ContractMain() {
           <button
             key={t.k}
             className={`px-4 py-2 rounded-xl font-bold text-sm ${
-              tab === (t.k as any) ? 'text-white' : 'text-slate-600 hover:bg-slate-50'
+              tab === t.k ? 'text-white' : 'text-slate-600 hover:bg-slate-50'
             }`}
-            style={tab === (t.k as any) ? { backgroundColor: config.theme.primaryColor } : undefined}
+            style={tab === t.k ? { backgroundColor: config.theme.primaryColor } : undefined}
             onClick={() => {
               const next = new URLSearchParams(searchParams.toString());
               next.set('tab', t.k);

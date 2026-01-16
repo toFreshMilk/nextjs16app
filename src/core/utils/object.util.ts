@@ -1,6 +1,8 @@
 // src/core/utils/object.util.ts
-export const isEmpty = (obj: any): boolean => {
+export const isEmpty = (obj: unknown): boolean => {
   if (obj === null || obj === undefined) return true;
+  if (typeof obj !== 'object') return true;
+  if (Array.isArray(obj)) return obj.length === 0;
   return Object.keys(obj).length === 0;
 };
 

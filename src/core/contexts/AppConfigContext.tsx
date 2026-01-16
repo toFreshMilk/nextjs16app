@@ -1,10 +1,11 @@
 // src/core/contexts/AppConfigContext.tsx
 'use client';
 import { createContext, useContext, ReactNode } from 'react';
+import type { AppConfigContextValue, TenantConfigData } from '@/core/types/app-config.types';
 
-const AppConfigContext = createContext<any>(null);
+const AppConfigContext = createContext<AppConfigContextValue | null>(null);
 
-export function AppConfigProvider({ tenantConfig, children }: { tenantConfig: any, children: ReactNode }) {
+export function AppConfigProvider({ tenantConfig, children }: { tenantConfig: TenantConfigData; children: ReactNode }) {
   return (
     <AppConfigContext.Provider value={{ config: tenantConfig }}>
       {children}

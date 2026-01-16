@@ -2,12 +2,12 @@
 import { ComponentType } from 'react';
 
 type ModuleWithDefault<T> = { default: T };
-type PageModule = ModuleWithDefault<ComponentType<any>>;
+type PageModule = ModuleWithDefault<ComponentType<unknown>>;
 type PageLoader = () => Promise<PageModule>;
-type ComponentModule = ModuleWithDefault<ComponentType<any>>;
+type ComponentModule = ModuleWithDefault<ComponentType<unknown>>;
 type ComponentLoader = () => Promise<ComponentModule>;
-type ServiceModule<T = any> = ModuleWithDefault<T>;
-type ServiceLoader<T = any> = () => Promise<ServiceModule<T>>;
+type ServiceModule<T> = ModuleWithDefault<T>;
+type ServiceLoader<T = unknown> = () => Promise<ServiceModule<T>>;
 
 // 키 정의 분리
 export type PageKey = 'ContractPage';
@@ -52,7 +52,7 @@ const StandardPages: Record<PageKey, PageLoader> = {
   ContractPage: () => import('@/standard/contract/ContractPage'),
 };
 
-export async function getTenantPage(tenantId: string, key: PageKey): Promise<ComponentType<any>> {
+export async function getTenantPage(tenantId: string, key: PageKey): Promise<ComponentType<unknown>> {
   const config = await loadTenantConfig(tenantId);
   // 하위호환: 과거에는 pages 대신 components에 라우트 페이지 오버라이드가 들어있었음
   const deprecatedPageLoaders = (config as unknown as { components?: Partial<Record<PageKey, PageLoader>> }).components;
@@ -70,7 +70,7 @@ const StandardComponents: Record<ComponentKey, ComponentLoader> = {
   ContractList: () => import('@/standard/contract/components/ContractList'),
 };
 
-export async function getTenantComponent(tenantId: string, key: ComponentKey): Promise<ComponentType<any>> {
+export async function getTenantComponent(tenantId: string, key: ComponentKey): Promise<ComponentType<unknown>> {
   const config = await loadTenantConfig(tenantId);
   const loader = config.components?.[key] || StandardComponents[key];
   const moduleData = await loader();
@@ -78,11 +78,11 @@ export async function getTenantComponent(tenantId: string, key: ComponentKey): P
 }
 
 // === 4. 서비스 로더 ===
-const StandardServices: Record<ServiceKey, () => Promise<{ default: any }>> = {
+const StandardServices: Record<ServiceKey, ServiceLoader> = {
   ContractService: () => import('@/standard/contract/services/contract.service'),
 };
 
-export async function getTenantService<T = any>(tenantId: string, key: ServiceKey): Promise<T> {
+export async function getTenantService<T>(tenantId: string, key: ServiceKey): Promise<T> {
   const config = await loadTenantConfig(tenantId);
   const loader = config.services?.[key] || StandardServices[key];
   const moduleData = await loader();

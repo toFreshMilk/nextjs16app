@@ -1,10 +1,16 @@
 // src/tenants/apr/contract/services/contract.service.ts
-export default {
-  async getContracts() {
-    console.log('[APR] Fetching from Groupware...');
-    return [
-      { id: 901, title: '[APR] 뷰티 디바이스 공급 계약', status: 'Active' },
-      { id: 902, title: '[APR] 해외 법인 설립 건', status: 'Review' },
-    ];
-  }
+import type { ContractService } from '@/core/types/contract.types';
+
+export async function getContracts() {
+  console.log('[APR] Fetching from Groupware...');
+  return [
+    { id: 901, title: '[APR] 뷰티 디바이스 공급 계약', status: 'Active' },
+    { id: 902, title: '[APR] 해외 법인 설립 건', status: 'Review' },
+  ];
+}
+
+const contractService: ContractService = {
+  getContracts,
 };
+
+export default contractService;
