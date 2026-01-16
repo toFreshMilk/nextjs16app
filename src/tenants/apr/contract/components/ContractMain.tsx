@@ -92,7 +92,7 @@ export default function AprContractMain() {
     async function load() {
       try {
         setLoading(true);
-        const service = await getTenantService<ContractService>(tenantId, 'ContractService');
+        const service = await getTenantService(tenantId, 'ContractService');
         const data: ContractRow[] = await service.getContracts();
         if (!cancelled) setContracts(Array.isArray(data) ? data : []);
       } finally {

@@ -26,7 +26,7 @@ export default function ContractMain() {
   const tab = (searchParams.get('tab') ?? 'all') as TabKey;
 
   const [contracts, setContracts] = useState<ContractRow[]>([]);
-  const [ListComp, setListComp] = useState<ComponentType<{ contracts: ContractRow[] }> | null>(null);
+  const [ListComp, setListComp] = useState<ComponentType<{ contracts?: ContractRow[] }> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,11 +36,11 @@ export default function ContractMain() {
       try {
         setLoading(true);
 
-        const contractService = await getTenantService<ContractService>(tenantId, 'ContractService');
+        const contractService = await getTenantService(tenantId, 'ContractService');
         const data: ContractRow[] = await contractService.getContracts();
         if (!cancelled) setContracts(data ?? []);
 
-        const Comp = (await getTenantComponent(tenantId, 'ContractList')) as ComponentType<{ contracts: ContractRow[] }>;
+        const Comp = await getTenantComponent(tenantId, 'ContractList');
         if (!cancelled) setListComp(() => Comp);
       } finally {
         if (!cancelled) setLoading(false);

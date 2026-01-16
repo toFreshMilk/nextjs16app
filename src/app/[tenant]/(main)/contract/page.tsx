@@ -1,5 +1,4 @@
 // src/app/[tenant]/(main)/contract/page.tsx
-import { ComponentType } from 'react';
 import { getTenantComponent, getTenantPage, loadTenantConfig } from '@/core/config/tenant.config';
 
 export default async function ContractPage({ params }: { params: Promise<{ tenant: string }> }) {
@@ -17,8 +16,8 @@ export default async function ContractPage({ params }: { params: Promise<{ tenan
   }
 
   // 2) 없으면 슬롯 단위( Sidebar / Main ) 조합
-  const Sidebar = (await getTenantComponent(tenant, 'ContractSidebar')) as ComponentType<Record<string, never>>;
-  const Main = (await getTenantComponent(tenant, 'ContractMain')) as ComponentType<Record<string, never>>;
+  const Sidebar = await getTenantComponent(tenant, 'ContractSidebar');
+  const Main = await getTenantComponent(tenant, 'ContractMain');
 
   return (
     <div className="flex gap-6 -m-10 p-10 bg-slate-50 min-h-[calc(100vh-64px)]">
