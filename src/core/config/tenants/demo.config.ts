@@ -10,13 +10,10 @@ const config: TenantConfig = {
   // Demo는 Standard를 유지하고, 눈에 띄는 "부분 UI"만 교체하여 데모임을 표시
   components: {
     WorkspaceBanner: () => import('@/tenants/demo/components/WorkspaceBanner'),
-    DashboardChart: () => import('@/tenants/demo/dashboard/components/DashboardChart'),
-    LoginSsoButton: () => import('@/tenants/demo/login/components/LoginSsoButton'),
   },
   
   // Demo는 데이터도 가짜 데이터를 보여주기 위해 서비스도 오버라이드
   services: {
-    DashboardService: () => import('@/tenants/demo/dashboard/services/dashboard.service'),
     ContractService: () => import('@/tenants/demo/contract/services/contract.service'),
   }
 };

@@ -10,14 +10,12 @@ type ServiceModule<T = any> = ModuleWithDefault<T>;
 type ServiceLoader<T = any> = () => Promise<ServiceModule<T>>;
 
 // 키 정의 분리
-export type PageKey = 'LoginPage' | 'DashboardPage' | 'ContractPage';
+export type PageKey = 'ContractPage';
 export type ComponentKey =
   | 'TopNavbar'
   | 'WorkspaceBanner'
-  | 'DashboardChart'
-  | 'ContractList'
-  | 'LoginSsoButton';
-export type ServiceKey = 'LoginService' | 'DashboardService' | 'ContractService';
+  | 'ContractList';
+export type ServiceKey = 'ContractService';
 
 // === 1. 설정 데이터 ===
 export interface TenantConfig {
@@ -49,8 +47,6 @@ export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> 
 
 // === 2. 페이지 로더 ===
 const StandardPages: Record<PageKey, PageLoader> = {
-  LoginPage: () => import('@/standard/login/LoginPage'),
-  DashboardPage: () => import('@/standard/dashboard/DashboardPage'),
   ContractPage: () => import('@/standard/contract/ContractPage'),
 };
 
@@ -67,9 +63,7 @@ export async function getTenantPage(tenantId: string, key: PageKey): Promise<Com
 const StandardComponents: Record<ComponentKey, ComponentLoader> = {
   TopNavbar: () => import('@/standard/shared/components/TopNavbar'),
   WorkspaceBanner: () => import('@/standard/shared/components/WorkspaceBanner'),
-  DashboardChart: () => import('@/standard/dashboard/components/DashboardChart'),
   ContractList: () => import('@/standard/contract/components/ContractList'),
-  LoginSsoButton: () => import('@/standard/login/components/LoginSsoButton'),
 };
 
 export async function getTenantComponent(tenantId: string, key: ComponentKey): Promise<ComponentType<any>> {
@@ -79,10 +73,8 @@ export async function getTenantComponent(tenantId: string, key: ComponentKey): P
   return moduleData.default;
 }
 
-// === 3. 서비스 로더 ===
+// === 4. 서비스 로더 ===
 const StandardServices: Record<ServiceKey, () => Promise<{ default: any }>> = {
-  LoginService: () => import('@/standard/login/services/login.service'),
-  DashboardService: () => import('@/standard/dashboard/services/dashboard.service'),
   ContractService: () => import('@/standard/contract/services/contract.service'),
 };
 
