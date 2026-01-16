@@ -1,5 +1,4 @@
 // src/tenants/apr/contract/services/contract.service.ts
-// Standard 로직을 아예 안 쓰고, 완전히 새로 구현
 export default {
   async getContracts() {
     console.log('[APR] Fetching from Groupware...');
