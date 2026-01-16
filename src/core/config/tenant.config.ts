@@ -51,7 +51,6 @@ export interface TenantConfig {
   features: { i18n: boolean; ai: boolean; sso: boolean };
   theme: { primaryColor: string; };
   // Overrides Map
-  pages?: Partial<Record<PageKey, PageLoader>>;
   components?: Partial<{ [K in ComponentKey]: ComponentLoader<K> }>;
   services?: Partial<{ [K in ServiceKey]: ServiceLoader<K> }>;
 }
