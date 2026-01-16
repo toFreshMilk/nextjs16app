@@ -1,15 +1,16 @@
 2. 특정 고객사가 app/ 과 standard/ 에는 없는 페이지나 기능을 추가한다면 어떻게 대응해야하나? 
 슬러지로
 
-
+ghp_GmrKiokwgmIP9
 
 3. api 호출 방식
 2. 전역상태 관리,
 1. 다국어
 2. ui kit 정리하기. 외부저장소로 올려도 되지 않나? pnpm에 올리기?
 3. 타입 정리
-
-
+4. usememo usecallback 제거 / usecache / ppr / Parallel Routes (Slot)
+5. 
+ClQIVDRDARcvMV3kt31Ja9H
 
 
 아래 글은 내 소스코드는 모르고 구조도만 보고 답변한 내용이니 참고만해서 방향을 잡고 적용해줘.
