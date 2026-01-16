@@ -9,7 +9,7 @@ buptlebiz_fe/
 ├── postcss.config.mjs                      # PostCSS config
 ├── eslint.config.mjs                       # ESLint config
 ├── README.md                               # Project docs
-├── structor.md                             # Project structure doc
+├── structor.md                            # Project structure doc
 │
 ├── public/                                 # Static assets
 │   ├── favicons/
@@ -23,131 +23,84 @@ buptlebiz_fe/
 └── src/
     ├── proxy.ts                            # Tenant 감지 및 검증 로직
     │
-    ├── app/                                # Next.js App Router
+    ├── app/                                # Next.js App Router (조립 레이어)
     │   ├── layout.tsx                      # Root Layout (Inter Font)
-    │   ├── page.tsx                        # Root Page (redirect to /demo/dashboard)
+    │   ├── page.tsx                        # Root Page (redirect to /demo/contract)
     │   ├── globals.css                     # Global Styles (Tailwind v4 theme vars)
-    │   ├── not-found.tsx                   # Global 404
+    │   ├── not-found.tsx                  # Global 404
     │   │
     │   └── [tenant]/                       # Tenant Dynamic Routes
     │       ├── layout.tsx                  # Tenant Config 주입 (AppConfigProvider)
-    │       ├── page.tsx                    # Tenant Root (redirect to /{tenant}/dashboard)
+    │       ├── page.tsx                    # Tenant Root (redirect to /{tenant}/contract)
     │       ├── error.tsx                   # Tenant 에러 핸들링
     │       │
-    │       ├── login/
-    │       │   └── page.tsx                # Dynamic Login Page (getTenantPage)
-    │       │
     │       └── (main)/
-    │           ├── layout.tsx              # Main Layout (TopNavbar, WorkspaceBanner)
-    │           ├── dashboard/
-    │           │   └── page.tsx            # Dynamic Dashboard (getTenantPage)
+    │           ├── layout.tsx              # Main Layout (TopNavbar, WorkspaceBanner 주입)
     │           └── contract/
-    │               └── page.tsx            # Dynamic Contract (getTenantPage)
+    │               └── page.tsx            # Contract Page (Sidebar + Main 조립)
     │
     ├── core/
     │   ├── config/
-    │   │   ├── tenant.config.ts            # Config Loader (loadTenantConfig, getTenantPage, getTenantComponent, getTenantService)
+    │   │   ├── tenant.config.ts            # Config Loader + 타입 정의
+    │   │   │                                # - ContractRow, ContractService 타입
+    │   │   │                                # - loadTenantConfig, getTenantComponent, getTenantService
     │   │   └── tenants/
-    │   │       ├── demo.config.ts          # Demo Config
-    │   │       └── apr.config.ts           # APR Config
+    │   │       ├── demo.config.ts          # Demo Config (WorkspaceBanner, ContractService 오버라이드)
+    │   │       └── apr.config.ts          # APR Config (WorkspaceBanner, ContractSidebar, ContractMain, ContractService 오버라이드)
     │   │
     │   ├── contexts/
-    │   │   └── AppConfigContext.tsx        # App Config Context (useAppConfig)
+    │   │   └── AppConfigContext.tsx        # App Config Context (TenantConfigData, AppConfigContextValue 타입 포함)
     │   │
     │   ├── hooks/
     │   │   └── useTenant.ts                # Tenant 식별 Hook
     │   │
     │   └── utils/
     │       ├── date.util.ts                # Date utilities (formatDate)
-    │       ├── object.util.ts             # Object utilities (isEmpty, deepClone)
-    │       └── string.util.ts             # String utilities (capitalize, truncate)
+    │       ├── object.util.ts              # Object utilities (isEmpty, deepClone)
+    │       └── string.util.ts              # String utilities (capitalize, truncate)
     │
-    ├── standard/                           # [Base] 기본 구현체
+    ├── standard/                            # [Base] 기본 구현체 (파일 보관소)
     │   ├── standard.css                    # Standard Styles
     │   │
     │   ├── shared/
     │   │   └── components/
-    │   │       ├── TopNavbar.tsx           # Shared TopNavbar
-    │   │       └── WorkspaceBanner.tsx     # Shared WorkspaceBanner (default: null)
-    │   │
-    │   ├── login/
-    │   │   ├── LoginPage.tsx               # Standard Login Page
-    │   │   ├── services/
-    │   │   │   └── login.service.ts        # Standard Login Service
-    │   │   ├── store/
-    │   │   │   └── login.store.ts          # Standard Login Store
-    │   │   └── components/
-    │   │       ├── LoginSsoButton.tsx      # Standard SSO Button
-    │   │       ├── LoginForm.tsx            # (optional) Login Form
-    │   │       └── LoginHeader.tsx         # (optional) Login Header
-    │   │
-    │   ├── dashboard/
-    │   │   ├── DashboardPage.tsx           # Standard Dashboard Page
-    │   │   ├── services/
-    │   │   │   └── dashboard.service.ts    # Standard Dashboard Service
-    │   │   ├── store/
-    │   │   │   └── dashboard.store.ts     # Standard Dashboard Store
-    │   │   └── components/
-    │   │       └── DashboardChart.tsx      # Standard Dashboard Chart
+    │   │       ├── TopNavbar.tsx           # Standard TopNavbar
+    │   │       └── WorkspaceBanner.tsx     # Standard WorkspaceBanner (default: null)
     │   │
     │   └── contract/
-    │       ├── ContractPage.tsx            # Standard Contract Page
-    │       ├── services/
-    │       │   └── contract.service.ts     # Standard Contract Service
-    │       ├── store/
-    │       │   └── contract.store.ts      # Standard Contract Store
-    │       └── components/
-    │           └── ContractList.tsx        # Standard Contract List
+    │       ├── components/
+    │       │   ├── ContractSidebar.tsx     # Standard Contract Sidebar
+    │       │   ├── ContractMain.tsx        # Standard Contract Main
+    │       │   └── ContractList.tsx         # Standard Contract List
+    │       └── services/
+    │           └── contract.service.ts     # Standard Contract Service
     │
-    ├── tenants/                            # [Override] 테넌트별 오버라이드 (standard/와 동일한 모듈 구조)
+    ├── tenants/                             # [Override] 테넌트별 오버라이드 (파일 보관소)
     │   │
     │   ├── demo/
     │   │   ├── demo.css                    # Demo Tenant Styles
     │   │   │
-    │   │   ├── components/                 # Demo 전용 컴포넌트
-    │   │   │   └── WorkspaceBanner.tsx     # Demo WorkspaceBanner Override
-    │   │   │
-    │   │   ├── shared/                     # Demo shared overrides
+    │   │   ├── shared/
     │   │   │   └── components/
-    │   │   │       └── TopNavbar.tsx       # Demo 전용 TopNavbar override
+    │   │   │       └── WorkspaceBanner.tsx # Demo WorkspaceBanner Override
     │   │   │
-    │   │   ├── login/                      # standard/login 과 동일한 구조
-    │   │   │   ├── DemoLoginPage.tsx       # Demo Login Page Override
-    │   │   │   └── components/
-    │   │   │       └── LoginSsoButton.tsx  # Demo Login SSO Button Override
-    │   │   │
-    │   │   ├── dashboard/                  # standard/dashboard 과 동일한 구조
-    │   │   │   ├── DemoDashboardPage.tsx   # Demo Dashboard Page Override
-    │   │   │   ├── services/
-    │   │   │   │   └── dashboard.service.ts # Demo Dashboard Service Override
-    │   │   │   └── components/
-    │   │   │       └── DashboardChart.tsx   # Demo Dashboard Chart Override
-    │   │   │
-    │   │   └── contract/                   # standard/contract 과 동일한 구조
-    │   │       ├── DemoContractPage.tsx    # Demo Contract Page Override
+    │   │   └── contract/
     │   │       └── services/
-    │   │           └── contract.service.ts  # Demo Contract Service Override
+    │   │           └── contract.service.ts  # Demo Contract Service Override (콘솔 로그 포함)
     │   │
     │   └── apr/
     │       ├── apr.css                     # APR Tenant Styles
     │       │
-    │       ├── shared/                     # APR shared overrides
+    │       ├── shared/
     │       │   └── components/
-    │       │       └── WorkspaceBanner.tsx  # APR 전용 WorkspaceBanner override
+    │       │       └── WorkspaceBanner.tsx # APR WorkspaceBanner Override
     │       │
-    │       ├── login/                      # standard/login 과 동일한 구조
-    │       │   ├── AprLoginPage.tsx        # APR Login Page Override
-    │       │   └── components/
-    │       │       └── AprSsoButton.tsx    # APR 전용 SSO 버튼
-    │       │
-    │       ├── dashboard/                  # standard/dashboard 과 동일한 구조
-    │       │   ├── AprDashboardPage.tsx    # APR Dashboard Page Override
-    │       │   └── components/
-    │       │       └── DashboardChart.tsx # APR Dashboard Chart Override
-    │       │
-    │       └── contract/                   # standard/contract 과 동일한 구조
+    │       └── contract/
+    │           ├── components/
+    │           │   ├── ContractSidebar.tsx  # APR Contract Sidebar Override
+    │           │   └── ContractMain.tsx     # APR Contract Main Override (워크보드 스타일)
     │           └── services/
-    │               └── contract.service.ts  # APR Contract Service Override
+    │               └── contract.service.ts   # APR Contract Service Override
     │
     └── uikit/                              # UI Kit Components (재사용 가능한 공통 컴포넌트)
         ├── card/
@@ -161,3 +114,26 @@ buptlebiz_fe/
         └── layout/
             ├── PageContainer.tsx           # 페이지 컨테이너
             └── Section.tsx                 # 섹션 컴포넌트
+
+## 아키텍처 원칙
+
+### 1. app/ 레이어: 조립(Composition)
+- `app/` 디렉토리는 **1차 뎁스 레이아웃(레이아웃 뼈대)**을 책임집니다.
+- `app/[tenant]/(main)/layout.tsx`: TopNavbar, WorkspaceBanner를 테넌트 설정에 따라 주입
+- `app/[tenant]/(main)/contract/page.tsx`: ContractSidebar + ContractMain을 조립
+- **페이지 단위 override는 사용하지 않음** (슬롯 조립 방식만 사용)
+
+### 2. standard/ & tenants/: 파일 보관소
+- `standard/`: 기본 구현체 보관소
+- `tenants/`: 테넌트별 오버라이드 파일 보관소
+- 실제 사용은 `core/config/tenant.config.ts`의 설정을 통해 결정됨
+
+### 3. 타입 정의 위치
+- **Contract 관련 타입**: `core/config/tenant.config.ts`에 정의
+  - `ContractStatus`, `ContractRow`, `ContractService`
+- **App Config 관련 타입**: `core/contexts/AppConfigContext.tsx`에 정의
+  - `TenantConfigData`, `AppConfigContextValue`
+
+### 4. 테넌트별 차별화 포인트
+- **Demo**: WorkspaceBanner + ContractService (데모 데이터 + 콘솔 로그)
+- **APR**: WorkspaceBanner + ContractSidebar + ContractMain (완전히 다른 UI) + ContractService
