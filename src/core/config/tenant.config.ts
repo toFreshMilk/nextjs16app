@@ -14,6 +14,8 @@ export type PageKey = 'ContractPage';
 export type ComponentKey =
   | 'TopNavbar'
   | 'WorkspaceBanner'
+  | 'ContractSidebar'
+  | 'ContractMain'
   | 'ContractList';
 export type ServiceKey = 'ContractService';
 
@@ -63,6 +65,8 @@ export async function getTenantPage(tenantId: string, key: PageKey): Promise<Com
 const StandardComponents: Record<ComponentKey, ComponentLoader> = {
   TopNavbar: () => import('@/standard/shared/components/TopNavbar'),
   WorkspaceBanner: () => import('@/standard/shared/components/WorkspaceBanner'),
+  ContractSidebar: () => import('@/standard/contract/components/ContractSidebar'),
+  ContractMain: () => import('@/standard/contract/components/ContractMain'),
   ContractList: () => import('@/standard/contract/components/ContractList'),
 };
 

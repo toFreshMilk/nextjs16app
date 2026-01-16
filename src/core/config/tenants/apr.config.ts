@@ -10,6 +10,7 @@ const config: TenantConfig = {
   // APR은 Standard 페이지를 유지하고, 리포트/배너 같은 일부만 교체
   components: {
     WorkspaceBanner: () => import('@/tenants/apr/shared/components/WorkspaceBanner'),
+    ContractSidebar: () => import('@/tenants/apr/contract/components/ContractSidebar'),
   },
   
   // APR은 계약 서비스 로직만 바꿈 (나머진 Standard 사용)
