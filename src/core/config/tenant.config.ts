@@ -1,5 +1,6 @@
 // src/core/config/tenant.config.ts
 import { ComponentType } from 'react';
+import {getContractsDetail} from "@/tenants/demo/contract/services/contract.service";
 
 // === Contract Types ===
 export type ContractStatus = 'Active' | 'Draft' | 'Review' | (string & {});
@@ -8,15 +9,23 @@ export interface ContractRow {
   id: number | string;
   title: string;
   status: ContractStatus;
+  partner?: string;
+  date?: string;
+  amount?: string;
+  category?: string;
+  templateName?: string;
+  requester?: string;
+  reviewer?: string;
+  documentCode?: string;
 }
 
 export interface ContractService {
   getContracts(): Promise<ContractRow[]>;
+  getContractsDetail(): Promise<ContractRow[]>;
+  getContractsDetail2(): Promise<ContractRow[]>;
 }
 
 type ModuleWithDefault<T> = { default: T };
-type PageModule = ModuleWithDefault<ComponentType<unknown>>;
-type PageLoader = () => Promise<PageModule>;
 
 // 컴포넌트별 props 타입 매핑
 type ComponentPropsMap = {
@@ -25,10 +34,12 @@ type ComponentPropsMap = {
   ContractSidebar: Record<string, never>;
   ContractMain: Record<string, never>;
   ContractList: { contracts?: ContractRow[] };
+  ContractDetailTop: Record<string, never>;
+  ContractDetailLeft: Record<string, never>;
+  ContractDetailRight: Record<string, never>;
 };
 
 // 키 정의 분리
-export type PageKey = 'ContractPage';
 export type ComponentKey = keyof ComponentPropsMap;
 export type ServiceKey = 'ContractService';
 
@@ -78,6 +89,9 @@ const StandardComponents: { [K in ComponentKey]: ComponentLoader<K> } = {
   ContractSidebar: () => import('@/standard/contract/components/ContractSidebar'),
   ContractMain: () => import('@/standard/contract/components/ContractMain'),
   ContractList: () => import('@/standard/contract/components/ContractList'),
+  ContractDetailTop: () => import('@/standard/contract/components/ContractDetailTop'),
+  ContractDetailLeft: () => import('@/standard/contract/components/ContractDetailLeft'),
+  ContractDetailRight: () => import('@/standard/contract/components/ContractDetailRight'),
 };
 
 export async function getTenantComponent<K extends ComponentKey>(

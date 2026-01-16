@@ -1,4 +1,8 @@
 // src/standard/contract/components/ContractList.tsx
+'use client';
+
+import { usePathname, useRouter } from 'next/navigation';
+
 type ContractRow = {
   id: number | string;
   title: string;
@@ -9,6 +13,9 @@ type ContractRow = {
 };
 
 export function ContractList({ contracts }: { contracts?: ContractRow[] }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const rows: ContractRow[] = contracts ?? [
     { id: 101, title: '2026년도 소프트웨어 유지보수 계약', partner: '(주)테크솔루션', status: 'Active', date: '2026-01-14', amount: '₩150,000,000' },
     { id: 102, title: '비밀유지서약서 (NDA)', partner: '스타트업 A', status: 'Draft', date: '2026-01-13', amount: '-' },
@@ -43,7 +50,11 @@ export function ContractList({ contracts }: { contracts?: ContractRow[] }) {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {rows.map((item) => (
-              <tr key={item.id} className="group hover:bg-slate-50/80 transition-colors cursor-pointer">
+              <tr
+                key={item.id}
+                className="group hover:bg-slate-50/80 transition-colors cursor-pointer"
+                onClick={() => router.push(`${pathname}/${item.id}`)}
+              >
                 <td className="px-6 py-4 text-slate-400 font-mono">#{item.id}</td>
                 <td className="px-6 py-4 font-medium text-slate-900 group-hover:text-blue-600 transition-colors">
                   {item.title}

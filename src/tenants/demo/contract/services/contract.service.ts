@@ -9,9 +9,27 @@ export async function getContracts() {
     { id: 998, title: '[데모] 샘플 계약서 2', status: 'Draft' },
   ];
 }
+export async function getContractsDetail() {
+  console.log('[Demo] Contract detail Service - 가짜 데이터 반환');
+
+  return [
+    { id: 999, title: '[데모] 샘플 계약서 1', status: 'Active' },
+    { id: 998, title: '[데모] 샘플 계약서 2', status: 'Draft' },
+  ];
+}
+export async function getContractsDetail2() {
+  console.log('[Demo] Contract detail Service 2222 - 가짜 데이터 반환');
+
+  return [
+    { id: 999, title: '[데모] 샘플 계약서 1', status: 'Active' },
+    { id: 998, title: '[데모] 샘플 계약서 2', status: 'Draft' },
+  ];
+}
 
 const contractService: ContractService = {
   getContracts,
+  getContractsDetail,
+  getContractsDetail2,
 };
 
 export default contractService;
