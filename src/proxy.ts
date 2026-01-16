@@ -22,7 +22,10 @@ export default function proxy(req: NextRequest) {
   const url = req.nextUrl;
   const hostname = req.headers.get('host') || '';
 
-  if (/\.(.*)$/.test(url.pathname) || url.pathname.startsWith('/_next')) return NextResponse.next();
+  // API 라우트와 정적 파일, Next.js 내부 경로는 그대로 통과
+  if (/\.(.*)$/.test(url.pathname) || url.pathname.startsWith('/_next') || url.pathname.startsWith('/api')) {
+    return NextResponse.next();
+  }
 
   const tenant = detectTenant(hostname);
 

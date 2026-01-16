@@ -1,16 +1,24 @@
 // src/standard/contract/services/contract.service.ts
 import type { ContractService } from '@/core/config/tenant.config';
+import type { ContractRow } from '@/core/config/tenant.config';
+import { apiGet } from '@/core/services/apiClient';
 
-export async function getContracts() {
+export async function getContracts(): Promise<ContractRow[]> {
+  return await apiGet<ContractRow[]>('/api/contracts', { tenant: 'standard' });
+}
 
-  return [
-    { id: 1, title: '표준 계약서 A', status: 'Active' },
-    { id: 2, title: '비밀 유지 서약서', status: 'Draft' },
-  ];
+export async function getContractsDetail(): Promise<ContractRow[]> {
+  return await apiGet<ContractRow[]>('/api/contracts/detail', { tenant: 'standard' });
+}
+
+export async function getContractsDetail2(): Promise<ContractRow[]> {
+  return await apiGet<ContractRow[]>('/api/contracts/detail2', { tenant: 'standard' });
 }
 
 const contractService: ContractService = {
   getContracts,
+  getContractsDetail,
+  getContractsDetail2,
 };
 
 export default contractService;

@@ -6,7 +6,6 @@ import { useTenant } from '@/core/hooks/useTenant';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { getTenantService } from '@/core/config/tenant.config';
 import type { ContractRow } from '@/core/config/tenant.config';
-import {getContractsDetail2} from "@/tenants/demo/contract/services/contract.service";
 
 function safeText(v?: string) {
   return v && String(v).trim() ? v : '-';

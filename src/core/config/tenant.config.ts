@@ -1,6 +1,5 @@
 // src/core/config/tenant.config.ts
 import { ComponentType } from 'react';
-import {getContractsDetail} from "@/tenants/demo/contract/services/contract.service";
 
 // === Contract Types ===
 export type ContractStatus = 'Active' | 'Draft' | 'Review' | (string & {});

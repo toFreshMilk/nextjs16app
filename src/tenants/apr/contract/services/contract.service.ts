@@ -1,16 +1,24 @@
 // src/tenants/apr/contract/services/contract.service.ts
 import type { ContractService } from '@/core/config/tenant.config';
+import type { ContractRow } from '@/core/config/tenant.config';
+import { apiGet } from '@/core/services/apiClient';
 
-export async function getContracts() {
-  console.log('[APR] Fetching from Groupware...');
-  return [
-    { id: 901, title: '[APR] 뷰티 디바이스 공급 계약', status: 'Active' },
-    { id: 902, title: '[APR] 해외 법인 설립 건', status: 'Review' },
-  ];
+export async function getContracts(): Promise<ContractRow[]> {
+  return await apiGet<ContractRow[]>('/api/contracts', { tenant: 'apr' });
+}
+
+export async function getContractsDetail(): Promise<ContractRow[]> {
+  return await apiGet<ContractRow[]>('/api/contracts/detail', { tenant: 'apr' });
+}
+
+export async function getContractsDetail2(): Promise<ContractRow[]> {
+  return await apiGet<ContractRow[]>('/api/contracts/detail2', { tenant: 'apr' });
 }
 
 const contractService: ContractService = {
   getContracts,
+  getContractsDetail,
+  getContractsDetail2,
 };
 
 export default contractService;

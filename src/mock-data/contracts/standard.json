@@ -1,0 +1,55 @@
+[
+  {
+    "id": 101,
+    "title": "2026년도 소프트웨어 유지보수 계약",
+    "status": "Active",
+    "partner": "(주)테크솔루션",
+    "date": "2026-01-14",
+    "amount": "₩150,000,000",
+    "category": "회사 템플릿",
+    "templateName": "유지보수 표준계약서",
+    "requester": "법률_생성자",
+    "reviewer": "법률_검토자",
+    "documentCode": "STD-2026-001"
+  },
+  {
+    "id": 102,
+    "title": "비밀유지서약서 (NDA)",
+    "status": "Draft",
+    "partner": "스타트업 A",
+    "date": "2026-01-13",
+    "amount": "-",
+    "category": "보안",
+    "templateName": "NDA 템플릿",
+    "requester": "법률_생성자",
+    "reviewer": "법률_검토자",
+    "documentCode": "STD-2026-002"
+  },
+  {
+    "id": 103,
+    "title": "클라우드 서비스 이용 약관",
+    "status": "Review",
+    "partner": "AWS Korea",
+    "date": "2026-01-10",
+    "amount": "$5,000",
+    "category": "마케팅/홍보 계약",
+    "templateName": "서비스 약관",
+    "requester": "법률_생성자",
+    "reviewer": "법률_검토자",
+    "documentCode": "STD-2026-003"
+  },
+  {
+    "id": 104,
+    "title": "마케팅 대행 용역 계약",
+    "status": "Expired",
+    "partner": "애드에이전시",
+    "date": "2025-12-31",
+    "amount": "₩30,000,000",
+    "category": "마케팅/홍보 계약",
+    "templateName": "용역 계약서",
+    "requester": "법률_생성자",
+    "reviewer": "법률_검토자",
+    "documentCode": "STD-2025-099"
+  }
+]
+
