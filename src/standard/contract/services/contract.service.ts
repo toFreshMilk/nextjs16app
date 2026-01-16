@@ -1,5 +1,5 @@
 // src/standard/contract/services/contract.service.ts
-import type { ContractService } from '@/core/types/contract.types';
+import type { ContractService } from '@/core/config/tenant.config';
 
 export async function getContracts() {
 

@@ -6,7 +6,7 @@ import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { useTenant } from '@/core/hooks/useTenant';
 import { getTenantComponent, getTenantService } from '@/core/config/tenant.config';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import type { ContractRow, ContractService } from '@/core/types/contract.types';
+import type { ContractRow, ContractService } from '@/core/config/tenant.config';
 
 function buildUrl(pathname: string, params: URLSearchParams) {
   const qs = params.toString();

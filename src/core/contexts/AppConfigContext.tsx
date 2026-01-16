@@ -1,7 +1,14 @@
 // src/core/contexts/AppConfigContext.tsx
 'use client';
 import { createContext, useContext, ReactNode } from 'react';
-import type { AppConfigContextValue, TenantConfigData } from '@/core/types/app-config.types';
+import type { TenantConfig } from '@/core/config/tenant.config';
+
+// === App Config Types ===
+export type TenantConfigData = Pick<TenantConfig, 'id' | 'name' | 'features' | 'theme'>;
+
+export interface AppConfigContextValue {
+  config: TenantConfigData;
+}
 
 const AppConfigContext = createContext<AppConfigContextValue | null>(null);
 

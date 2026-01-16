@@ -1,6 +1,18 @@
 // src/core/config/tenant.config.ts
 import { ComponentType } from 'react';
-import type { ContractRow } from '@/core/types/contract.types';
+
+// === Contract Types ===
+export type ContractStatus = 'Active' | 'Draft' | 'Review' | (string & {});
+
+export interface ContractRow {
+  id: number | string;
+  title: string;
+  status: ContractStatus;
+}
+
+export interface ContractService {
+  getContracts(): Promise<ContractRow[]>;
+}
 
 type ModuleWithDefault<T> = { default: T };
 type PageModule = ModuleWithDefault<ComponentType<unknown>>;
@@ -26,7 +38,7 @@ type ComponentLoader<K extends ComponentKey> = () => Promise<ComponentModule<K>>
 
 // 서비스별 타입 매핑
 type ServiceTypeMap = {
-  ContractService: import('@/core/types/contract.types').ContractService;
+  ContractService: ContractService;
 };
 
 type ServiceModule<T> = ModuleWithDefault<T>;

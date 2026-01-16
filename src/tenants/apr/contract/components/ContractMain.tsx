@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useTenant } from '@/core/hooks/useTenant';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { getTenantService } from '@/core/config/tenant.config';
-import type { ContractRow, ContractService } from '@/core/types/contract.types';
+import type { ContractRow, ContractService } from '@/core/config/tenant.config';
 
 function normalizeStatus(s: string) {
   return (s ?? '').trim().toLowerCase();
