@@ -37,12 +37,15 @@ buptlebiz_fe/
     │       └── (main)/
     │           ├── layout.tsx              # Main Layout (TopNavbar, WorkspaceBanner 주입)
     │           └── contract/
-    │               └── page.tsx            # Contract Page (Sidebar + Main 조립)
+    │               ├── page.tsx            # Contract Page (Sidebar + Main 조립)
+    │               └── [id]/
+    │                   └── page.tsx        # Contract Detail Page (Top + Left + Right 조립)
     │
     ├── core/
     │   ├── config/
     │   │   ├── tenant.config.ts            # Config Loader + 타입 정의
     │   │   │                                # - ContractRow, ContractService 타입
+    │   │   │                                # - ContractService: getContracts(), getContractsDetail(), getContractsDetail2()
     │   │   │                                # - loadTenantConfig, getTenantComponent, getTenantService
     │   │   └── tenants/
     │   │       ├── demo.config.ts          # Demo Config (WorkspaceBanner, ContractService 오버라이드)
@@ -71,7 +74,10 @@ buptlebiz_fe/
     │       ├── components/
     │       │   ├── ContractSidebar.tsx     # Standard Contract Sidebar
     │       │   ├── ContractMain.tsx        # Standard Contract Main
-    │       │   └── ContractList.tsx         # Standard Contract List
+    │       │   ├── ContractList.tsx        # Standard Contract List (행 클릭 시 상세 페이지 이동)
+    │       │   ├── ContractDetailTop.tsx    # Standard Contract Detail Top (제목/버튼/상태표시/프로그레스바)
+    │       │   ├── ContractDetailLeft.tsx   # Standard Contract Detail Left (기본정보/유저정보/기타정보/계약서 카드)
+    │       │   └── ContractDetailRight.tsx  # Standard Contract Detail Right (버튼박스/공유카드/진행상황 흐름도)
     │       └── services/
     │           └── contract.service.ts     # Standard Contract Service
     │
@@ -121,6 +127,7 @@ buptlebiz_fe/
 - `app/` 디렉토리는 **1차 뎁스 레이아웃(레이아웃 뼈대)**을 책임집니다.
 - `app/[tenant]/(main)/layout.tsx`: TopNavbar, WorkspaceBanner를 테넌트 설정에 따라 주입
 - `app/[tenant]/(main)/contract/page.tsx`: ContractSidebar + ContractMain을 조립
+- `app/[tenant]/(main)/contract/[id]/page.tsx`: ContractDetailTop + ContractDetailLeft + ContractDetailRight를 조립
 - **페이지 단위 override는 사용하지 않음** (슬롯 조립 방식만 사용)
 
 ### 2. standard/ & tenants/: 파일 보관소
@@ -131,9 +138,24 @@ buptlebiz_fe/
 ### 3. 타입 정의 위치
 - **Contract 관련 타입**: `core/config/tenant.config.ts`에 정의
   - `ContractStatus`, `ContractRow`, `ContractService`
+  - `ContractService` 인터페이스: `getContracts()`, `getContractsDetail()`, `getContractsDetail2()` 메서드 포함
 - **App Config 관련 타입**: `core/contexts/AppConfigContext.tsx`에 정의
   - `TenantConfigData`, `AppConfigContextValue`
 
 ### 4. 테넌트별 차별화 포인트
 - **Demo**: WorkspaceBanner + ContractService (데모 데이터 + 콘솔 로그)
+  - ContractService에 `getContractsDetail()`, `getContractsDetail2()` 메서드 오버라이드 가능
 - **APR**: WorkspaceBanner + ContractSidebar + ContractMain (완전히 다른 UI) + ContractService
+  - ContractDetailTop/Left/Right는 오버라이드하지 않으면 Standard 구현체 사용
+
+### 5. 계약 상세 페이지 구조
+- **URL**: `/[tenant]/contract/[id]`
+- **3분할 컴포넌트 조립**:
+  - `ContractDetailTop`: 상단부 (제목, 버튼, 상태표시, 상태 프로그레스바)
+  - `ContractDetailLeft`: 좌측 (기본정보, 유저정보, 기타정보, 계약서 카드)
+  - `ContractDetailRight`: 우측 (버튼박스, 공유카드, 진행상황 흐름도)
+- **데이터 로딩**: 각 컴포넌트가 자체적으로 `ContractService`를 호출하여 데이터를 가져옴
+  - `ContractDetailTop`: `getContractsDetail()` 사용
+  - `ContractDetailLeft`: `getContracts()` 사용
+  - `ContractDetailRight`: `getContractsDetail2()` 사용
+- **목록에서 상세로 이동**: `ContractList` 컴포넌트에서 행 클릭 시 현재 pathname 기준으로 `/${id}` 경로로 이동
