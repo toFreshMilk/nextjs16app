@@ -72,20 +72,6 @@ export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> 
   return { ...moduleData.default, id: tenantId };
 }
 
-// === 2. 페이지 로더 ===
-const StandardPages: Record<PageKey, PageLoader> = {
-  ContractPage: () => import('@/standard/contract/ContractPage'),
-};
-
-export async function getTenantPage(tenantId: string, key: PageKey): Promise<ComponentType<unknown>> {
-  const config = await loadTenantConfig(tenantId);
-  // 하위호환: 과거에는 pages 대신 components에 라우트 페이지 오버라이드가 들어있었음
-  const deprecatedPageLoaders = (config as unknown as { components?: Partial<Record<PageKey, PageLoader>> }).components;
-  const loader = config.pages?.[key] || deprecatedPageLoaders?.[key] || StandardPages[key];
-  const moduleData = await loader();
-  return moduleData.default;
-}
-
 // === 3. UI 컴포넌트 로더 (부분 교체용) ===
 const StandardComponents: { [K in ComponentKey]: ComponentLoader<K> } = {
   TopNavbar: () => import('@/standard/shared/components/TopNavbar'),
