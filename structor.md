@@ -47,14 +47,13 @@ buptlebiz_fe/
     │       └── (main)/
     │           ├── layout.tsx              # Main Layout (TopNavbar, WorkspaceBanner 주입)
     │           └── contract/
+    │               ├── actions/
+    │                   └── contract.actions.ts         # Server Actions (approveContractAction 등)
     │               ├── page.tsx            # Contract Page (Sidebar + Main 조립)
     │               └── [id]/
     │                   └── page.tsx        # Contract Detail Page (Top + Left + Right 조립)
     │
     ├── core/
-    │   ├── actions/
-    │   │   └── contract.actions.ts         # Server Actions (approveContractAction 등)
-    │   │
     │   ├── config/
     │   │   ├── tenant.config.ts            # Config Loader + 타입 정의
     │   │   │                                # - ContractRow, ContractService 타입
@@ -177,8 +176,14 @@ buptlebiz_fe/
   - `ContractDetailTop`: 상단부 (제목, 버튼, 상태표시, 상태 프로그레스바)
   - `ContractDetailLeft`: 좌측 (기본정보, 유저정보, 기타정보, 계약서 카드)
   - `ContractDetailRight`: 우측 (버튼박스, 공유카드, 진행상황 흐름도)
-- **데이터 로딩**: 각 컴포넌트가 자체적으로 `ContractService`를 호출하여 데이터를 가져옴
-  - `ContractDetailTop`: `getContractsDetail()` 사용
-  - `ContractDetailLeft`: `getContracts()` 사용
-  - `ContractDetailRight`: `getContractsDetail2()` 사용
+- **데이터 로딩**: RSC(서버 컴포넌트)에서 1회 데이터 로드 후 props로 전달 (워터폴/중복 호출 제거)
+  - `app/[tenant]/(main)/contract/[id]/page.tsx`에서 `ContractService.getContractsDetail()` 호출
+  - 로드된 데이터를 `contract` props로 Top/Left/Right 컴포넌트에 전달
+  - 클라이언트 컴포넌트는 props로 받은 데이터만 렌더링 (서비스 호출 없음)
+- **목록 페이지 데이터 로딩**: 
+  - `app/[tenant]/(main)/contract/page.tsx`에서 `ContractService.getContracts()` 호출
+  - URL search params(`q`, `tab`) 기반 서버 측 필터링 후 `ContractMain`에 `contracts` props로 전달
+- **상태 업데이트**: Server Action + revalidatePath 사용
+  - `core/actions/contract.actions.ts`의 `approveContractAction`으로 승인 처리
+  - `revalidatePath`로 상세/목록 페이지 동시 최신화
 - **목록에서 상세로 이동**: `ContractList` 컴포넌트에서 행 클릭 시 현재 pathname 기준으로 `/${id}` 경로로 이동
