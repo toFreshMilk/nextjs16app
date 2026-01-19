@@ -1,42 +1,41 @@
 [
   {
-    "id": 901,
-    "title": "[APR] 뷰티 디바이스 공급 계약",
+    "id": 201,
+    "title": "[APR] 2024 글로벌 뷰티 파트너십",
     "status": "Active",
-    "partner": "APR 해외법인",
-    "date": "2026-01-12",
-    "amount": "₩231,213,000",
-    "category": "공급계약",
-    "templateName": "APR 공급계약서",
-    "requester": "APR_기안자",
-    "reviewer": "APR_검토자",
-    "documentCode": "APR-2026-001"
+    "partner": "Global Beauty Inc.",
+    "date": "2024-01-20",
+    "amount": "$500,000",
+    "category": "해외영업",
+    "templateName": "Partnership Agreement En",
+    "requester": "James Kim",
+    "reviewer": "Sarah Lee",
+    "documentCode": "APR-2024-001"
   },
   {
-    "id": 902,
-    "title": "[APR] 해외 법인 설립 건",
+    "id": 202,
+    "title": "[APR] 메디큐브 광고 모델 계약",
+    "status": "Done",
+    "partner": "스타 엔터테인먼트",
+    "date": "2024-02-28",
+    "amount": "300,000,000",
+    "category": "마케팅",
+    "templateName": "모델출연계약서",
+    "requester": "Marketing Team",
+    "reviewer": "Legal Team",
+    "documentCode": "APR-2024-002"
+  },
+  {
+    "id": 203,
+    "title": "[APR] 물류 창고 확장 공사 계약",
     "status": "Review",
-    "partner": "APR Global",
-    "date": "2026-01-10",
-    "amount": "-",
-    "category": "해외법인",
-    "templateName": "해외법인 설립 검토",
-    "requester": "APR_기안자",
-    "reviewer": "APR_검토자",
-    "documentCode": "APR-2026-002"
-  },
-  {
-    "id": 903,
-    "title": "[APR] 광고/마케팅 대행 계약",
-    "status": "Draft",
-    "partner": "APR Marketing",
-    "date": "2026-01-08",
-    "amount": "₩30,000,000",
-    "category": "광고/마케팅",
-    "templateName": "마케팅 용역 계약서",
-    "requester": "APR_기안자",
-    "reviewer": "APR_검토자",
-    "documentCode": "APR-2026-003"
+    "partner": "건설사 A",
+    "date": "2024-03-10",
+    "amount": "1,500,000,000",
+    "category": "시설",
+    "templateName": "공사도급계약서",
+    "requester": "Facility Mgr",
+    "reviewer": "Finance Mgr",
+    "documentCode": "APR-2024-003"
   }
 ]
-

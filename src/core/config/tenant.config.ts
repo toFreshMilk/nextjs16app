@@ -31,11 +31,13 @@ type ComponentPropsMap = {
   TopNavbar: Record<string, never>;
   WorkspaceBanner: Record<string, never>;
   ContractSidebar: Record<string, never>;
-  ContractMain: Record<string, never>;
+  // [변경] Main은 데이터를 받아야 함
+  ContractMain: { contracts: ContractRow[]; ListComponent: ComponentType<{ contracts?: ContractRow[] }> };
   ContractList: { contracts?: ContractRow[] };
-  ContractDetailTop: Record<string, never>;
-  ContractDetailLeft: Record<string, never>;
-  ContractDetailRight: Record<string, never>;
+  // [변경] 상세 컴포넌트들은 데이터를 받아야 함
+  ContractDetailTop: { data: ContractRow };
+  ContractDetailLeft: { data: ContractRow[] }; // 예시: 목록 데이터
+  ContractDetailRight: { data: ContractRow[] }; // 예시: 상세2 데이터
 };
 
 // 키 정의 분리
@@ -43,7 +45,8 @@ export type ComponentKey = keyof ComponentPropsMap;
 export type ServiceKey = 'ContractService';
 
 // 제네릭 컴포넌트 모듈/로더 타입
-type ComponentModule<K extends ComponentKey> = ModuleWithDefault<ComponentType<ComponentPropsMap[K]>>;
+// any 사용은 동적 임포트 타입 추론의 복잡성을 피하기 위함 (실무에선 엄격하게 가능)
+type ComponentModule<K extends ComponentKey> = ModuleWithDefault<ComponentType<any>>;
 type ComponentLoader<K extends ComponentKey> = () => Promise<ComponentModule<K>>;
 
 // 서비스별 타입 매핑
@@ -77,7 +80,6 @@ export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> 
   }
 
   const moduleData = await loader();
-  // tenantId를 신뢰하고 id도 tenantId로 강제하여 일관성 유지
   return { ...moduleData.default, id: tenantId };
 }
 
@@ -94,8 +96,8 @@ const StandardComponents: { [K in ComponentKey]: ComponentLoader<K> } = {
 };
 
 export async function getTenantComponent<K extends ComponentKey>(
-  tenantId: string,
-  key: K
+    tenantId: string,
+    key: K
 ): Promise<ComponentType<ComponentPropsMap[K]>> {
   const config = await loadTenantConfig(tenantId);
   const loader = (config.components?.[key] || StandardComponents[key]) as ComponentLoader<K>;
@@ -109,8 +111,8 @@ const StandardServices: { [K in ServiceKey]: ServiceLoader<K> } = {
 };
 
 export async function getTenantService<K extends ServiceKey>(
-  tenantId: string,
-  key: K
+    tenantId: string,
+    key: K
 ): Promise<ServiceTypeMap[K]> {
   const config = await loadTenantConfig(tenantId);
   const loader = (config.services?.[key] || StandardServices[key]) as ServiceLoader<K>;

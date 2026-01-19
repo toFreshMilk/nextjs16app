@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
-import { useTenant } from '@/core/hooks/useTenant';
-import { getTenantService } from '@/core/config/tenant.config';
 import type { ContractRow } from '@/core/config/tenant.config';
 
 type StepKey = 'draft' | 'review' | 'active' | 'done';
@@ -22,47 +20,19 @@ function statusToStep(status: string): StepKey {
   return 'active';
 }
 
-export default function ContractDetailTop() {
+interface Props {
+  data: ContractRow;
+}
+
+export default function ContractDetailTop({ data: contract }: Props) {
   const router = useRouter();
-  const params = useParams<{ tenant: string; id: string }>();
   const { config } = useAppConfig();
-  const { tenantId } = useTenant();
 
-  const contractId = params?.id;
-
-  const [contract, setContract] = useState<ContractRow | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      try {
-        setLoading(true);
-        const service = await getTenantService(tenantId, 'ContractService');
-        const rows = await service.getContractsDetail();
-        const found = (rows ?? []).find((r) => String(r.id) === String(contractId));
-        if (!cancelled) {
-          setContract(
-            found ?? {
-              id: contractId ?? '-',
-              title: '계약 상세',
-              status: 'Active',
-            }
-          );
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [tenantId, contractId]);
+  // useEffect 및 useState 로딩 제거 -> props 데이터 즉시 사용
 
   const step = useMemo(() => statusToStep(contract?.status ?? ''), [contract?.status]);
   const stepIndex = useMemo(() => ({ draft: 0, review: 1, active: 2, done: 3 }[step]), [step]);
-  const title = contract?.title ?? (loading ? '불러오는 중…' : '계약 상세');
+  const title = contract?.title ?? '계약 상세';
 
   const statusLabel = useMemo(() => {
     const s = normalizeStatus(contract?.status ?? '');
@@ -75,82 +45,81 @@ export default function ContractDetailTop() {
   }, [contract?.status]);
 
   const steps = useMemo(
-    () => [
-      { key: 'draft', label: '초안' },
-      { key: 'review', label: '검토' },
-      { key: 'active', label: '서명 및 회수' },
-      { key: 'done', label: '완료' },
-    ],
-    []
+      () => [
+        { key: 'draft', label: '초안' },
+        { key: 'review', label: '검토' },
+        { key: 'active', label: '서명 및 회수' },
+        { key: 'done', label: '완료' },
+      ],
+      []
   );
 
   return (
-    <section className="space-y-4">
-      <div className="flex items-start justify-between gap-4">
-        <div className="space-y-2 min-w-0">
-          <button
-            className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900"
-            onClick={() => router.back()}
-          >
-            <span aria-hidden>←</span>
-            <span>목록으로</span>
-          </button>
+      <section className="space-y-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-2 min-w-0">
+            <button
+                className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900"
+                onClick={() => router.back()}
+            >
+              <span aria-hidden>←</span>
+              <span>목록으로</span>
+            </button>
 
-          <div className="flex items-center gap-3 min-w-0">
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight truncate">{title}</h1>
+            <div className="flex items-center gap-3 min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight truncate">{title}</h1>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button className="px-3 py-2 rounded-lg border border-slate-200 bg-amber-300 font-bold text-slate-900">
+              삭제하기
+            </button>
+            <button className="px-3 py-2 rounded-lg border border-rose-200 bg-rose-500 font-bold text-white">
+              계약 종료
+            </button>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <button className="px-3 py-2 rounded-lg border border-slate-200 bg-amber-300 font-bold text-slate-900">
-            삭제하기
-          </button>
-          <button className="px-3 py-2 rounded-lg border border-rose-200 bg-rose-500 font-bold text-white">
-            계약 종료
-          </button>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-100">
-          <div className="text-center font-bold text-slate-900">
-            본 계약은 <span className="text-rose-500">{statusLabel}</span> 상태입니다.
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100">
+            <div className="text-center font-bold text-slate-900">
+              본 계약은 <span className="text-rose-500">{statusLabel}</span> 상태입니다.
+            </div>
           </div>
-        </div>
 
-        <div className="px-6 py-6">
-          <div className="relative">
-            <div className="h-[2px] bg-slate-200" />
-            <div
-              className="h-[2px] absolute top-0 left-0"
-              style={{
-                width: `${(stepIndex / 3) * 100}%`,
-                backgroundColor: config.theme.primaryColor,
-              }}
-            />
+          <div className="px-6 py-6">
+            <div className="relative">
+              <div className="h-[2px] bg-slate-200" />
+              <div
+                  className="h-[2px] absolute top-0 left-0"
+                  style={{
+                    width: `${(stepIndex / 3) * 100}%`,
+                    backgroundColor: config.theme.primaryColor,
+                  }}
+              />
 
-            <div className="mt-6 grid grid-cols-4 gap-4">
-              {steps.map((s, idx) => {
-                const active = idx <= stepIndex;
-                return (
-                  <div key={s.key} className="text-center">
-                    <div
-                      className="mx-auto h-2 w-2 rounded-full"
-                      style={{
-                        backgroundColor: active ? config.theme.primaryColor : '#cbd5e1',
-                      }}
-                    />
-                    <div className={`mt-2 text-sm font-bold ${active ? 'text-slate-900' : 'text-slate-400'}`}>
-                      {s.label}
-                    </div>
-                  </div>
-                );
-              })}
+              <div className="mt-6 grid grid-cols-4 gap-4">
+                {steps.map((s, idx) => {
+                  const active = idx <= stepIndex;
+                  return (
+                      <div key={s.key} className="text-center">
+                        <div
+                            className="mx-auto h-2 w-2 rounded-full"
+                            style={{
+                              backgroundColor: active ? config.theme.primaryColor : '#cbd5e1',
+                            }}
+                        />
+                        <div className={`mt-2 text-sm font-bold ${active ? 'text-slate-900' : 'text-slate-400'}`}>
+                          {s.label}
+                        </div>
+                      </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
   );
 }
-
