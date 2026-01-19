@@ -1,3 +1,4 @@
+// src/standard/contract/components/ContractDetailTop.tsx
 'use client';
 
 import { useMemo } from 'react';

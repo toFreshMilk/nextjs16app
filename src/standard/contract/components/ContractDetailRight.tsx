@@ -1,3 +1,4 @@
+// src/standard/contract/components/ContractDetailRight.tsx
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
