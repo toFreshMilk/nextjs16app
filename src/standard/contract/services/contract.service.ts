@@ -4,15 +4,15 @@ import type { ContractRow } from '@/core/config/tenant.config';
 import { apiGet } from '@/core/services/apiClient';
 
 export async function getContracts(): Promise<ContractRow[]> {
-  return await apiGet<ContractRow[]>('/api/contracts', { tenant: 'standard' });
+  return await apiGet<ContractRow[]>('/contracts');
 }
 
 export async function getContractsDetail(): Promise<ContractRow[]> {
-  return await apiGet<ContractRow[]>('/api/contracts/detail', { tenant: 'standard' });
+  return await apiGet<ContractRow[]>('/contracts/detail');
 }
 
 export async function getContractsDetail2(): Promise<ContractRow[]> {
-  return await apiGet<ContractRow[]>('/api/contracts/detail2', { tenant: 'standard' });
+  return await apiGet<ContractRow[]>('/contracts/detail2');
 }
 
 const contractService: ContractService = {
