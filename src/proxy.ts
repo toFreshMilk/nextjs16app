@@ -1,7 +1,7 @@
 // src/proxy.ts
 import { NextRequest, NextResponse } from 'next/server';
 
-const VALID_TENANTS = new Set(['demo', 'apr', 'handok', 'iic']);
+const VALID_TENANTS = new Set(['demo', 'apr']);
 const VALID_ROOT_DOMAINS = ['buptle.com', 'buptlestg.com', 'localhost.com', 'localhost'];
 
 function detectTenant(hostname: string): string | null {
