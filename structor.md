@@ -29,6 +29,16 @@ buptlebiz_fe/
     │   ├── globals.css                     # Global Styles (Tailwind v4 theme vars)
     │   ├── not-found.tsx                  # Global 404
     │   │
+    │   ├── api/                            # API Routes
+    │   │   └── contracts/
+    │   │       ├── route.ts                # GET /api/contracts
+    │   │       ├── detail/
+    │   │       │   └── route.ts            # GET /api/contracts/detail
+    │   │       ├── detail2/
+    │   │       │   └── route.ts            # GET /api/contracts/detail2
+    │   │       └── approve/
+    │   │           └── route.ts            # POST /api/contracts/approve
+    │   │
     │   └── [tenant]/                       # Tenant Dynamic Routes
     │       ├── layout.tsx                  # Tenant Config 주입 (AppConfigProvider)
     │       ├── page.tsx                    # Tenant Root (redirect to /{tenant}/contract)
@@ -42,6 +52,9 @@ buptlebiz_fe/
     │                   └── page.tsx        # Contract Detail Page (Top + Left + Right 조립)
     │
     ├── core/
+    │   ├── actions/
+    │   │   └── contract.actions.ts         # Server Actions (approveContractAction 등)
+    │   │
     │   ├── config/
     │   │   ├── tenant.config.ts            # Config Loader + 타입 정의
     │   │   │                                # - ContractRow, ContractService 타입
@@ -57,10 +70,20 @@ buptlebiz_fe/
     │   ├── hooks/
     │   │   └── useTenant.ts                # Tenant 식별 Hook
     │   │
+    │   ├── services/
+    │   │   └── apiClient.ts                # API Client (apiGet, apiPost, resolveFetchUrl)
+    │   │
     │   └── utils/
     │       ├── date.util.ts                # Date utilities (formatDate)
     │       ├── object.util.ts              # Object utilities (isEmpty, deepClone)
     │       └── string.util.ts              # String utilities (capitalize, truncate)
+    │
+    ├── mock-data/                           # Mock Data
+    │   └── contracts/
+    │       ├── contracts.ts                # Mock Contract Data Loader (getMockContracts, setMockContractOverride)
+    │       ├── standard.json               # Standard Tenant Mock Data
+    │       ├── demo.json                   # Demo Tenant Mock Data
+    │       └── apr.json                    # APR Tenant Mock Data
     │
     ├── standard/                            # [Base] 기본 구현체 (파일 보관소)
     │   ├── standard.css                    # Standard Styles
