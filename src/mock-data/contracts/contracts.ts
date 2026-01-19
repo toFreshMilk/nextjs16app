@@ -1,3 +1,4 @@
+// src/mock-data/contracts/contracts.ts
 import standardData from './standard.json';
 import demoData from './demo.json';
 import aprData from './apr.json';
