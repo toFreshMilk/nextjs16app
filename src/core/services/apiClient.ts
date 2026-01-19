@@ -1,3 +1,4 @@
+// src/core/services/apiClient.ts
 type QueryValue = string | number | boolean | null | undefined;
 
 export function buildQuery(params?: Record<string, QueryValue>) {
