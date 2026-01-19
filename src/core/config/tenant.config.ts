@@ -19,9 +19,9 @@ export interface ContractRow {
 }
 
 export interface ContractService {
-  getContracts(): Promise<ContractRow[]>;
-  getContractsDetail(): Promise<ContractRow[]>;
-  getContractsDetail2(): Promise<ContractRow[]>;
+  getContracts(tenant: string): Promise<ContractRow[]>;
+  getContractsDetail(tenant: string): Promise<ContractRow[]>;
+  getContractsDetail2(tenant: string): Promise<ContractRow[]>;
 }
 
 type ModuleWithDefault<T> = { default: T };

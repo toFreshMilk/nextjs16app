@@ -19,9 +19,9 @@ export default async function ContractDetailPage({
 
   // 2. 3가지 데이터 병렬 요청 (Waterfall 제거)
   const [detailList, contractsList, detailList2] = await Promise.all([
-    service.getContractsDetail(), // 원래 getDetail(id) 여야 하나 기존 인터페이스 따름
-    service.getContracts(),
-    service.getContractsDetail2(),
+    service.getContractsDetail(tenant), // 원래 getDetail(id) 여야 하나 기존 인터페이스 따름
+    service.getContracts(tenant),
+    service.getContractsDetail2(tenant),
   ]);
 
   // ID로 특정 계약 찾기 (서비스가 리스트를 반환한다고 가정 시)

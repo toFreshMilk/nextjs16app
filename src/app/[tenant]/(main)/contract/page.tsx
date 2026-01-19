@@ -13,7 +13,8 @@ export default async function ContractPage({ params }: { params: Promise<{ tenan
     ]);
 
     // 2. 데이터 페칭 (서버 측 실행)
-    const contracts = await service.getContracts();
+    // 나중에는 테넌트를 안넘길거지만 일단은 넘기게 해둔다.
+    const contracts = await service.getContracts(tenant);
 
     return (
         <div className="flex gap-6 -m-10 p-10 bg-slate-50 min-h-[calc(100vh-64px)]">
