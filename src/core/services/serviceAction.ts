@@ -45,6 +45,7 @@ export async function executeServiceAction(prevState: any, formData: FormData) {
     const result = await service[methodName](...args);
 
     // 6. 성공 시 페이지 갱신
+    //  router.refresh(); // 현재 페이지만 갱신 (빠름) 이거랑 조절해서 써야함.
     if (revalidateUrl) {
       const paths = revalidateUrl
         .split(',')
