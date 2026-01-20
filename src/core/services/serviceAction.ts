@@ -3,7 +3,6 @@
 
 import { revalidatePath } from 'next/cache';
 import { getTenantService } from '@/core/config/tenant.config';
-import type { ServiceKey } from '@/core/config/tenant.types';
 
 // 보안을 위해 실행 가능한 메서드를 제한하고 싶다면 여기에 추가 (선택사항)
 // const ALLOWED_METHODS = new Set(['approve', 'reject', 'create', 'update']);
@@ -11,7 +10,7 @@ import type { ServiceKey } from '@/core/config/tenant.types';
 export async function executeServiceAction(prevState: any, formData: FormData) {
   // 1. FormData 파싱
   const tenantId = formData.get('tenantId') as string;
-  const serviceKey = formData.get('serviceKey') as ServiceKey;
+  const serviceKey = formData.get('serviceKey') as string;
   const methodName = formData.get('methodName') as string;
   const revalidateUrl = formData.get('revalidateUrl') as string;
   const argsJson = formData.get('args') as string;
