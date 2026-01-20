@@ -2,7 +2,7 @@
 import { ComponentType } from 'react';
 
 // === Contract Types ===
-export type ContractStatus = 'Active' | 'Draft' | 'Review' | (string & {});
+export type ContractStatus = 'Active' | 'Draft' | 'Review' | 'APPROVED' | 'REJECTED' | (string & {});
 
 export interface ContractRow {
   id: number | string;
@@ -22,6 +22,8 @@ export interface ContractService {
   getContracts(tenant: string): Promise<ContractRow[]>;
   getContractsDetail(tenant: string): Promise<ContractRow[]>;
   getContractsDetail2(tenant: string): Promise<ContractRow[]>;
+  // [NEW] approve 메서드 추가
+  approve(tenant: string, contractId: string): Promise<void>;
 }
 
 type ModuleWithDefault<T> = { default: T };
@@ -31,13 +33,16 @@ type ComponentPropsMap = {
   TopNavbar: Record<string, never>;
   WorkspaceBanner: Record<string, never>;
   ContractSidebar: Record<string, never>;
-  // [변경] Main은 데이터를 받아야 함
   ContractMain: { contracts: ContractRow[]; ListComponent: ComponentType<{ contracts?: ContractRow[] }> };
   ContractList: { contracts?: ContractRow[] };
-  // [변경] 상세 컴포넌트들은 데이터를 받아야 함
-  ContractDetailTop: { data: ContractRow };
-  ContractDetailLeft: { data: ContractRow[] }; // 예시: 목록 데이터
-  ContractDetailRight: { data: ContractRow[] }; // 예시: 상세2 데이터
+  // [변경] ContractDetailTop에 props 추가
+  ContractDetailTop: {
+    data: ContractRow;
+    tenantId?: string;
+    approveAction?: (prevState: any, formData: FormData) => Promise<any>;
+  };
+  ContractDetailLeft: { data: ContractRow[] };
+  ContractDetailRight: { data: ContractRow[] };
 };
 
 // 키 정의 분리
@@ -45,7 +50,6 @@ export type ComponentKey = keyof ComponentPropsMap;
 export type ServiceKey = 'ContractService';
 
 // 제네릭 컴포넌트 모듈/로더 타입
-// any 사용은 동적 임포트 타입 추론의 복잡성을 피하기 위함 (실무에선 엄격하게 가능)
 type ComponentModule<K extends ComponentKey> = ModuleWithDefault<ComponentType<any>>;
 type ComponentLoader<K extends ComponentKey> = () => Promise<ComponentModule<K>>;
 
@@ -70,8 +74,8 @@ export interface TenantConfig {
 
 export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> {
   const loaders: Record<string, () => Promise<ModuleWithDefault<TenantConfig>>> = {
-    demo: () => import('./tenants/demo.config'),
-    apr: () => import('./tenants/apr.config'),
+    demo: () => import('./tenants/demo.config'), // 경로 수정됨 (호출 위치에 따라 조정 필요)
+    apr: () => import('./tenants/apr.config'),   // 경로 수정됨
   };
 
   const loader = loaders[tenantId];
