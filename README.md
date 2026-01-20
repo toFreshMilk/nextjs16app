@@ -10,6 +10,7 @@ ghp_GmrKiokwgmIP9
 3. 타입 정리
 4. usememo usecallback 제거 / usecache / ppr / Parallel Routes (Slot)
 5. 글로벌 css 고객사껀 어떻게 적용하지
+6. ComponentPropsMap 이거 any로 처리할거면 없어도 되지않나.
 ClQIVDRDARcvMV3kt31Ja9H
 
 
