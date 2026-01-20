@@ -13,6 +13,10 @@ ghp_GmrKiokwgmIP9
 ClQIVDRDARcvMV3kt31Ja9H
 
 
+
+1. action이 1개만 있으면 되지 않나?
+
+
 아래 글은 내 소스코드는 모르고 구조도만 보고 답변한 내용이니 참고만해서 방향을 잡고 적용해줘.
 
 

@@ -18,7 +18,6 @@ export async function getContractsDetail2(tenant: string): Promise<ContractRow[]
 
 // [MISSING PART] 이 함수가 없어서 에러가 발생했습니다.
 export async function approve(tenant: string, contractId: string): Promise<void> {
-  console.log(`[Demo Service] Simulating approval for ${contractId}`);
   // Demo는 실제 API 호출 없이 로그만 찍거나, Mock API 호출
   await apiPost('/contracts/approve', tenant, { contractId, status: 'APPROVED' });
 }

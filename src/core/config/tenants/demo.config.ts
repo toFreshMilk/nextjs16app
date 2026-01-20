@@ -11,11 +11,6 @@ const config: TenantConfig = {
   components: {
     WorkspaceBanner: () => import('@/tenants/demo/shared/components/WorkspaceBanner'),
   },
-  
-  // Demo는 데이터도 가짜 데이터를 보여주기 위해 서비스도 오버라이드
-  services: {
-    ContractService: () => import('@/tenants/demo/contract/services/contract.service'),
-  }
 };
 export default config;
 
