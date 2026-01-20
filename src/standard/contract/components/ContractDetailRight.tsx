@@ -3,7 +3,7 @@
 
 import { useMemo, useState } from 'react';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
-import type { ContractRow } from '@/core/config/tenant.config';
+import type { StandardContractDto } from "@/standard/contract/services/contract.service";
 
 function safeText(v?: string) {
   return v && String(v).trim() ? v : '-';
@@ -28,7 +28,7 @@ function TimelineItem({ title, time }: { title: string; time: string }) {
 
 // [변경] data props 추가 (배열 형태)
 interface Props {
-  data: ContractRow[];
+  data: StandardContractDto[];
 }
 
 export default function ContractDetailRight({ data }: Props) {

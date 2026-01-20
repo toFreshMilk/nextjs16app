@@ -1,11 +1,14 @@
 // src/standard/contract/components/ContractDetailTop.tsx
 'use client';
 
-import { useMemo, useActionState } from 'react'; // [변경] react에서 import
+import { useMemo, useActionState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useFormStatus } from 'react-dom'; // useFormStatus는 여전히 react-dom
+import { useFormStatus } from 'react-dom';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
-import type { ContractRow } from '@/core/config/tenant.config';
+// [변경] 공통 액션 import
+import { executeServiceAction } from '@/core/services/serviceAction';
+// [변경] 서비스 파일에서 타입 import (Colocation)
+import type { StandardContractDto } from '@/standard/contract/services/contract.service';
 
 type StepKey = 'draft' | 'review' | 'active' | 'done';
 
@@ -23,9 +26,10 @@ function statusToStep(status: string): StepKey {
 }
 
 interface Props {
-  data: ContractRow;
-  tenantId?: string;
-  approveAction?: (prevState: any, formData: FormData) => Promise<any>;
+  // [변경] ContractRow -> StandardContractDto (이름 맞춤)
+  data: StandardContractDto;
+  tenantId: string;
+  // [삭제] approveAction prop은 이제 불필요 (Common Action 사용)
 }
 
 // Submit Button Component (로딩 상태 표시)
@@ -44,16 +48,12 @@ function ApproveButton() {
 
 const initialState = { success: false, message: '' };
 
-export default function ContractDetailTop({ data: contract, tenantId, approveAction }: Props) {
+export default function ContractDetailTop({ data: contract, tenantId }: Props) {
   const router = useRouter();
   const { config } = useAppConfig();
 
-  // [변경] useActionState 사용
-  // useActionState는 (action, initialState)를 인자로 받고 [state, formAction, isPending]을 반환합니다.
-  const [state, formAction] = useActionState(
-      approveAction || (async () => initialState),
-      initialState
-  );
+  // [변경] executeServiceAction 연결
+  const [state, formAction] = useActionState(executeServiceAction, initialState);
 
   const step = useMemo(() => statusToStep(contract?.status ?? ''), [contract?.status]);
   const stepIndex = useMemo(() => ({ draft: 0, review: 1, active: 2, done: 3 }[step]), [step]);
@@ -98,10 +98,27 @@ export default function ContractDetailTop({ data: contract, tenantId, approveAct
 
           <div className="flex items-center gap-2 shrink-0">
             {/* 승인 버튼 (상태가 APPROVED가 아닐 때만 표시) */}
-            {contract.status !== 'APPROVED' && tenantId && approveAction && (
+            {contract.status !== 'APPROVED' && (
                 <form action={formAction}>
+                  {/* [핵심] Common Action용 메타데이터 주입 */}
                   <input type="hidden" name="tenantId" value={tenantId} />
-                  <input type="hidden" name="contractId" value={contract.id} />
+                  <input type="hidden" name="serviceKey" value="ContractService" />
+                  <input type="hidden" name="methodName" value="approve" />
+
+                  {/* 인자는 JSON 문자열로 직렬화: [tenantId, contractId] */}
+                  <input
+                      type="hidden"
+                      name="args"
+                      value={JSON.stringify([tenantId, contract.id])}
+                  />
+
+                  {/* 성공 시 갱신할 경로 */}
+                  <input
+                      type="hidden"
+                      name="revalidateUrl"
+                      value={`/${tenantId}/contract, /${tenantId}/contract/${contract.id}`}
+                  />
+
                   <ApproveButton />
                 </form>
             )}
@@ -118,6 +135,13 @@ export default function ContractDetailTop({ data: contract, tenantId, approveAct
         {/* 에러/성공 메시지 표시 */}
         {state?.message && !state?.success && (
             <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm font-bold">
+              {state.message}
+            </div>
+        )}
+
+        {/* 성공 메시지 (옵션) */}
+        {state?.success && state?.message && (
+            <div className="bg-green-100 text-green-700 p-3 rounded-lg text-sm font-bold">
               {state.message}
             </div>
         )}

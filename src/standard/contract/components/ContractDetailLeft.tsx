@@ -3,7 +3,7 @@
 
 import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
-import type { ContractRow } from '@/core/config/tenant.config';
+import type { StandardContractDto } from "@/standard/contract/services/contract.service";
 
 function formatAmount(v?: string) {
   if (!v) return '-';
@@ -42,7 +42,7 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 
 // [변경] data props 추가
 interface Props {
-  data: ContractRow[];
+  data: StandardContractDto[];
 }
 
 export default function ContractDetailLeft({ data }: Props) {
