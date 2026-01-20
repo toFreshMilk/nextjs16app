@@ -3,7 +3,9 @@ buptlebiz_fe/
 ├── package.json # Dependencies / Scripts
 ├── pnpm-lock.yaml # pnpm lockfile
 ├── pnpm-workspace.yaml # pnpm workspace
+├── next-env.d.ts # Next.js TypeScript declarations
 ├── tsconfig.json # TypeScript config
+├── tsconfig.tsbuildinfo # TypeScript incremental build info
 ├── next.config.ts # Next.js config
 ├── tailwind.config.ts # Tailwind config
 ├── postcss.config.mjs # PostCSS config
@@ -47,8 +49,6 @@ buptlebiz_fe/
 │ └── (main)/
 │ ├── layout.tsx # Main Layout (TopNavbar, WorkspaceBanner 조립)
 │ └── contract/
-│ ├── actions/
-│ │ └── contract.actions.ts # Server Actions (예: approveContractAction)
 │ ├── page.tsx # Contract Page (Sidebar + Main 조립)
 │ └── [id]/
 │ └── page.tsx # Contract Detail Page (Top + Left + Right 조립)
@@ -68,7 +68,8 @@ buptlebiz_fe/
 │ │ └── useTenant.ts # Tenant 식별 Hook
 │ │
 │ ├── services/
-│ │ └── apiClient.ts # API Client (apiGet, apiPost 등)
+│ │ ├── apiClient.ts # API Client (apiGet, apiPost 등)
+│ │ └── serviceAction.ts # Common Server Action (executeServiceAction + revalidatePath)
 │ │
 │ └── utils/
 │ ├── date.util.ts # Date utilities
@@ -170,5 +171,8 @@ buptlebiz_fe/
   - 로드된 데이터를 `contract` props로 Top/Left/Right 컴포넌트에 전달
 - **목록 페이지 데이터 로딩**:
   - `app/[tenant]/(main)/contract/page.tsx`에서 `ContractService.getContracts()` 호출
-- **상태 업데이트**: Server Action + revalidatePath 사용
-  - `app/[tenant]/(main)/contract/actions/contract.actions.ts`의 서버 액션에서 승인/변경 처리
+- **상태 업데이트**: Common Server Action + `revalidatePath` 사용
+  - 서버 액션은 `core/services/serviceAction.ts`의 `executeServiceAction()`로 중앙화
+  - 클라이언트 컴포넌트(예: `standard/contract/components/ContractDetailTop.tsx`)에서 `<form action={...}>`로 호출
+  - `FormData`로 `tenantId`, `serviceKey`(예: `ContractService`), `methodName`(예: `approve`), `args`(JSON 배열), `revalidateUrl`(콤마 구분 경로) 전달
+  - 성공 시 `revalidateUrl`에 포함된 경로들을 `revalidatePath()`로 갱신
