@@ -18,7 +18,10 @@ export async function executeServiceAction(prevState: any, formData: FormData) {
 
   // 필수값 검증
   if (!tenantId || !serviceKey || !methodName) {
-    return { success: false, message: 'Missing required parameters (tenantId, serviceKey, methodName)' };
+    return {
+      success: false,
+      message: 'Missing required parameters (tenantId, serviceKey, methodName)',
+    };
   }
 
   try {
@@ -43,7 +46,10 @@ export async function executeServiceAction(prevState: any, formData: FormData) {
 
     // 6. 성공 시 페이지 갱신
     if (revalidateUrl) {
-      const paths = revalidateUrl.split(',').map(p => p.trim()).filter(Boolean);
+      const paths = revalidateUrl
+        .split(',')
+        .map((p) => p.trim())
+        .filter(Boolean);
       for (const path of paths) {
         revalidatePath(path);
       }
@@ -53,15 +59,14 @@ export async function executeServiceAction(prevState: any, formData: FormData) {
     return {
       success: true,
       message: 'Action executed successfully',
-      data: result
+      data: result,
     };
-
   } catch (error) {
     console.error(`[ServiceAction Error] ${serviceKey}.${methodName}:`, error);
     // 보안상 상세 에러는 숨기고 일반적인 메시지만 내려줄 수도 있음
     return {
       success: false,
-      message: error instanceof Error ? error.message : 'Unknown error occurred'
+      message: error instanceof Error ? error.message : 'Unknown error occurred',
     };
   }
 }

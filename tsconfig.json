@@ -3,11 +3,7 @@
     // [최적화 1] 타겟 버전 상향 (ES2017 -> ES2022)
     // 최신 Node.js 및 브라우저 환경에 맞춰 불필요한 트랜스파일링 제거
     "target": "ES2022",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -27,9 +23,7 @@
     ],
     // [경로 별칭] 명확하게 유지
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     // [추가 권장] 사용되지 않는 변수/파라미터 체크 (Strictness 강화)
     "noUnusedLocals": false,
@@ -44,7 +38,5 @@
     "**/*.mts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

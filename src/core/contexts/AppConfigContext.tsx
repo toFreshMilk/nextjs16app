@@ -13,11 +13,7 @@ export interface AppConfigContextValue {
 const AppConfigContext = createContext<AppConfigContextValue | null>(null);
 
 export function AppConfigProvider({ tenantConfig, children }: { tenantConfig: TenantConfigData; children: ReactNode }) {
-  return (
-    <AppConfigContext.Provider value={{ config: tenantConfig }}>
-      {children}
-    </AppConfigContext.Provider>
-  );
+  return <AppConfigContext.Provider value={{ config: tenantConfig }}>{children}</AppConfigContext.Provider>;
 }
 
 export function useAppConfig() {

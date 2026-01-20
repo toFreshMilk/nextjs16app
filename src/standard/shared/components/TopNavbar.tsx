@@ -23,23 +23,39 @@ export function TopNavbar() {
           <div className="leading-tight">
             <div className="text-xs font-black tracking-[0.25em] text-slate-500">GENTLE MONSTER</div>
             <div className="text-lg font-black text-slate-900">
-              Buptle<span style={{ color: config.theme.primaryColor }}>Biz</span>
+              Buptle
+              <span style={{ color: config.theme.primaryColor }}>Biz</span>
             </div>
           </div>
         </Link>
 
         <div className="hidden md:flex items-center gap-6 text-sm font-bold text-slate-600">
-          <Link href={`/${t}/contract`} className={isActive(`/${t}/contract`) ? 'text-slate-900' : 'hover:text-slate-900'}>계약</Link>
-          <Link href={`/${t}/contract`} className="hover:text-slate-900">자문</Link>
-          <Link href={`/${t}/contract`} className="hover:text-slate-900">소송</Link>
-          <Link href={`/${t}/contract`} className="hover:text-slate-900">통계</Link>
+          <Link
+            href={`/${t}/contract`}
+            className={isActive(`/${t}/contract`) ? 'text-slate-900' : 'hover:text-slate-900'}
+          >
+            계약
+          </Link>
+          <Link href={`/${t}/contract`} className="hover:text-slate-900">
+            자문
+          </Link>
+          <Link href={`/${t}/contract`} className="hover:text-slate-900">
+            소송
+          </Link>
+          <Link href={`/${t}/contract`} className="hover:text-slate-900">
+            통계
+          </Link>
         </div>
       </div>
 
       <div className="flex items-center gap-4">
         <div className="hidden lg:flex items-center gap-3 text-sm font-bold text-slate-600">
-          <Link href={`/${t}/contract`} className="hover:text-slate-900">공지사항</Link>
-          <Link href={`/${t}/contract`} className="hover:text-slate-900">관리자</Link>
+          <Link href={`/${t}/contract`} className="hover:text-slate-900">
+            공지사항
+          </Link>
+          <Link href={`/${t}/contract`} className="hover:text-slate-900">
+            관리자
+          </Link>
         </div>
 
         <button className="relative w-10 h-10 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition">
@@ -67,4 +83,3 @@ export function TopNavbar() {
 }
 
 export default TopNavbar;
-

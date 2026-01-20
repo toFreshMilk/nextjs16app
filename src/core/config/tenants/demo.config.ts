@@ -13,4 +13,3 @@ const config: TenantConfig = {
   },
 };
 export default config;
-

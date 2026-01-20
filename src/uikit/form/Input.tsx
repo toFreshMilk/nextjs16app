@@ -20,4 +20,3 @@ export function Input({ label, error, className, ...props }: Props) {
     </div>
   );
 }
-

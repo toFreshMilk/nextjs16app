@@ -6,7 +6,7 @@ const VALID_ROOT_DOMAINS = ['buptle.com', 'buptlestg.com', 'localhost.com', 'loc
 
 function detectTenant(hostname: string): string | null {
   const host = hostname.split(':')[0];
-  const rootDomain = VALID_ROOT_DOMAINS.find(d => host.endsWith(d));
+  const rootDomain = VALID_ROOT_DOMAINS.find((d) => host.endsWith(d));
   if (!rootDomain) return null;
 
   const subdomain = host.slice(0, host.length - rootDomain.length);
@@ -46,6 +46,6 @@ export default function proxy(req: NextRequest) {
 
   const rewriteUrl = req.nextUrl.clone();
   rewriteUrl.pathname = `/${tenant}${url.pathname}`;
-  
+
   return NextResponse.rewrite(rewriteUrl);
 }

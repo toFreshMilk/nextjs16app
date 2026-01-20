@@ -6,7 +6,7 @@ const config: TenantConfig = {
   name: 'APR Corp',
   features: { i18n: true, ai: false, sso: false }, // AI 미사용
   theme: { primaryColor: '#e11d48' },
- 
+
   // APR은 Standard 페이지를 유지하고, 리포트/배너 같은 일부만 교체
   components: {
     WorkspaceBanner: () => import('@/tenants/apr/shared/components/WorkspaceBanner'),
@@ -14,11 +14,10 @@ const config: TenantConfig = {
     // APR은 계약 메인 UI를 크게 다르게 가져감
     ContractMain: () => import('@/tenants/apr/contract/components/ContractMain'),
   },
-  
+
   // APR은 계약 서비스 로직만 바꿈 (나머진 Standard 사용)
   services: {
     ContractService: () => import('@/tenants/apr/contract/services/contract.service'),
-  }
+  },
 };
 export default config;
-

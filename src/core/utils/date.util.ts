@@ -5,7 +5,5 @@ export const formatDate = (date: Date | string, format: string = 'YYYY-MM-DD'): 
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
 
-  return format.replace('YYYY', String(year))
-               .replace('MM', month)
-               .replace('DD', day);
+  return format.replace('YYYY', String(year)).replace('MM', month).replace('DD', day);
 };

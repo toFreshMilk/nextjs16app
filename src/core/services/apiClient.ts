@@ -18,8 +18,11 @@ export async function apiPost<T>(path: string, tenantId: string, body: any): Pro
   console.log(`[API MOCK POST] Path: ${path}, Tenant: ${tenantId}`, body);
 
   // 실제 백엔드가 없으므로, 마치 서버가 처리 후 성공 응답을 준 것처럼 0.5초 대기
-  await new Promise(resolve => setTimeout(resolve, 500));
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
   // 성공 응답 리턴 (제네릭 T가 있다고 가정, 기본값으로 성공 메시지 리턴)
-  return { success: true, message: 'Processed successfully (Mock)' } as unknown as T;
+  return {
+    success: true,
+    message: 'Processed successfully (Mock)',
+  } as unknown as T;
 }

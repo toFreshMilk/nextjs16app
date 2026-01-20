@@ -37,65 +37,65 @@ export default function ContractMain({ contracts, ListComponent }: ContractMainP
     return contracts.filter((c) => {
       const matchQ = !q || c.title.toLowerCase().includes(q);
       const matchTab =
-          tab === 'all' ||
-          (tab === 'draft' && c.status.toLowerCase() === 'draft') ||
-          (tab === 'review' && c.status.toLowerCase() === 'review') ||
-          (tab === 'active' && c.status.toLowerCase() === 'active');
+        tab === 'all' ||
+        (tab === 'draft' && c.status.toLowerCase() === 'draft') ||
+        (tab === 'review' && c.status.toLowerCase() === 'review') ||
+        (tab === 'active' && c.status.toLowerCase() === 'active');
       return matchQ && matchTab;
     });
   }, [contracts, query, tab]);
 
   return (
-      <section className="flex-1 space-y-4">
-        <div className="flex items-end justify-between">
-          <div>
-            <div className="text-sm text-slate-500">
-              전체 : <span className="font-bold text-slate-900">{filtered.length}</span> 건
-            </div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">계약</h1>
+    <section className="flex-1 space-y-4">
+      <div className="flex items-end justify-between">
+        <div>
+          <div className="text-sm text-slate-500">
+            전체 : <span className="font-bold text-slate-900">{filtered.length}</span> 건
           </div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">계약</h1>
+        </div>
 
-          <div className="flex items-center gap-2 text-sm">
-            <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">필드 표시</button>
-            <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">10개씩 보기</button>
+        <div className="flex items-center gap-2 text-sm">
+          <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">필드 표시</button>
+          <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">10개씩 보기</button>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 flex gap-2">
+        {[
+          { k: 'all', label: '전체' },
+          { k: 'draft', label: '초안' },
+          { k: 'review', label: '검토' },
+          { k: 'active', label: '서명 및 회수' },
+        ].map((t) => (
+          <button
+            key={t.k}
+            className={`px-4 py-2 rounded-xl font-bold text-sm ${
+              tab === t.k ? 'text-white' : 'text-slate-600 hover:bg-slate-50'
+            }`}
+            style={tab === t.k ? { backgroundColor: config.theme.primaryColor } : undefined}
+            onClick={() => {
+              const next = new URLSearchParams(searchParams.toString());
+              next.set('tab', t.k);
+              router.replace(buildUrl(pathname, next));
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* List */}
+      <div className="space-y-3">
+        {ListComponent ? (
+          <ListComponent contracts={filtered} />
+        ) : (
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div className="text-sm text-slate-500">목록 컴포넌트 로딩 실패</div>
           </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 flex gap-2">
-          {[
-            { k: 'all', label: '전체' },
-            { k: 'draft', label: '초안' },
-            { k: 'review', label: '검토' },
-            { k: 'active', label: '서명 및 회수' },
-          ].map((t) => (
-              <button
-                  key={t.k}
-                  className={`px-4 py-2 rounded-xl font-bold text-sm ${
-                      tab === t.k ? 'text-white' : 'text-slate-600 hover:bg-slate-50'
-                  }`}
-                  style={tab === t.k ? { backgroundColor: config.theme.primaryColor } : undefined}
-                  onClick={() => {
-                    const next = new URLSearchParams(searchParams.toString());
-                    next.set('tab', t.k);
-                    router.replace(buildUrl(pathname, next));
-                  }}
-              >
-                {t.label}
-              </button>
-          ))}
-        </div>
-
-        {/* List */}
-        <div className="space-y-3">
-          {ListComponent ? (
-              <ListComponent contracts={filtered} />
-          ) : (
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                <div className="text-sm text-slate-500">목록 컴포넌트 로딩 실패</div>
-              </div>
-          )}
-        </div>
-      </section>
+        )}
+      </div>
+    </section>
   );
 }

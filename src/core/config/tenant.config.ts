@@ -7,7 +7,7 @@ import type {
   ComponentLoader,
   ServiceLoader,
   ModuleWithDefault,
-  ComponentPropsMap
+  ComponentPropsMap,
 } from '@/core/config/tenant.types';
 
 // === 1. Loaders ===
@@ -38,13 +38,10 @@ const StandardComponents: { [K in ComponentKey]: ComponentLoader<K> } = {
   ContractDetailRight: () => import('@/standard/contract/components/ContractDetailRight'),
 };
 
-export async function getTenantComponent<T = ComponentType<any>>(
-    tenantId: string,
-    key: ComponentKey
-): Promise<T> {
+export async function getTenantComponent<T = ComponentType<any>>(tenantId: string, key: ComponentKey): Promise<T> {
   const config = await loadTenantConfig(tenantId);
   // 오버라이드 없으면 Standard 사용
-  const loader = (config.components?.[key] || StandardComponents[key]);
+  const loader = config.components?.[key] || StandardComponents[key];
   const moduleData = await loader();
   return moduleData.default as T;
 }
@@ -54,10 +51,7 @@ const StandardServices: { [K in ServiceKey]: ServiceLoader } = {
   ContractService: () => import('@/standard/contract/services/contract.service'),
 };
 
-export async function getTenantService<T = any>(
-    tenantId: string,
-    key: ServiceKey
-): Promise<T> {
+export async function getTenantService<T = any>(tenantId: string, key: ServiceKey): Promise<T> {
   const config = await loadTenantConfig(tenantId);
   const tenantLoader = config.services?.[key];
 

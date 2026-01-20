@@ -17,7 +17,10 @@ async function getContractsDetail2(tenant: string): Promise<StandardContractDto[
 
 async function approve(tenant: string, contractId: string): Promise<void> {
   await apiPost('contracts/validate', tenant, { contractId });
-  await apiPost('contracts/approve', tenant, { contractId, status: 'APPROVED' });
+  await apiPost('contracts/approve', tenant, {
+    contractId,
+    status: 'APPROVED',
+  });
 }
 
 const contractService = {

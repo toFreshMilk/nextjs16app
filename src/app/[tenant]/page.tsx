@@ -5,4 +5,3 @@ export default async function TenantRootPage({ params }: { params: Promise<{ ten
   const { tenant } = await params;
   redirect(`/${tenant}/contract`);
 }
-
