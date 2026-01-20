@@ -1,5 +1,6 @@
 // src/app/[tenant]/(main)/contract/page.tsx
 import { getTenantComponent, getTenantService } from '@/core/config/tenant.config';
+import type { StandardContractService } from '@/standard/contract/services/contract.service';
 
 export default async function ContractPage({ params }: { params: Promise<{ tenant: string }> }) {
     const { tenant } = await params;
@@ -8,19 +9,16 @@ export default async function ContractPage({ params }: { params: Promise<{ tenan
     const [Sidebar, Main, List, service] = await Promise.all([
         getTenantComponent(tenant, 'ContractSidebar'),
         getTenantComponent(tenant, 'ContractMain'),
-        getTenantComponent(tenant, 'ContractList'), // 리스트 컴포넌트도 여기서 로드
-        getTenantService(tenant, 'ContractService'),
+        getTenantComponent(tenant, 'ContractList'),
+        getTenantService<StandardContractService>(tenant, 'ContractService'),
     ]);
 
-    // 2. 데이터 페칭 (서버 측 실행)
-    // 나중에는 테넌트를 안넘길거지만 일단은 넘기게 해둔다.
+    // 2. 데이터 페칭
     const contracts = await service.getContracts(tenant);
 
     return (
         <div className="flex gap-6 -m-10 p-10 bg-slate-50 min-h-[calc(100vh-64px)]">
-            {/* Sidebar는 URL 상태를 쓰므로 props 불필요 */}
             <Sidebar />
-            {/* Main에 데이터와 리스트 컴포넌트를 주입 */}
             <Main contracts={contracts} ListComponent={List} />
         </div>
     );

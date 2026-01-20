@@ -38,15 +38,15 @@ const StandardComponents: { [K in ComponentKey]: ComponentLoader<K> } = {
   ContractDetailRight: () => import('@/standard/contract/components/ContractDetailRight'),
 };
 
-export async function getTenantComponent<K extends ComponentKey>(
+export async function getTenantComponent<T = ComponentType<any>>(
     tenantId: string,
-    key: K
-): Promise<ComponentType<ComponentPropsMap[K]>> {
+    key: ComponentKey
+): Promise<T> {
   const config = await loadTenantConfig(tenantId);
   // 오버라이드 없으면 Standard 사용
-  const loader = (config.components?.[key] || StandardComponents[key]) as ComponentLoader<K>;
+  const loader = (config.components?.[key] || StandardComponents[key]);
   const moduleData = await loader();
-  return moduleData.default;
+  return moduleData.default as T;
 }
 
 // === 3. Service Loader (유연함) ===
@@ -54,7 +54,10 @@ const StandardServices: { [K in ServiceKey]: ServiceLoader } = {
   ContractService: () => import('@/standard/contract/services/contract.service'),
 };
 
-export async function getTenantService(tenantId: string, key: ServiceKey): Promise<any> {
+export async function getTenantService<T = any>(
+    tenantId: string,
+    key: ServiceKey
+): Promise<T> {
   const config = await loadTenantConfig(tenantId);
   const tenantLoader = config.services?.[key];
 
@@ -67,7 +70,7 @@ export async function getTenantService(tenantId: string, key: ServiceKey): Promi
       console.warn(`[Warning] ${tenantId} ContractService missing 'approve' function!`);
     }
 
-    return moduleData.default;
+    return moduleData.default as T;
   }
 
   console.log(`[Service] Standard: ${tenantId}:${key}`);
@@ -75,5 +78,5 @@ export async function getTenantService(tenantId: string, key: ServiceKey): Promi
   if (!standardLoader) throw new Error(`Standard service missing: ${key}`);
 
   const moduleData = await standardLoader();
-  return moduleData.default;
+  return moduleData.default as T;
 }

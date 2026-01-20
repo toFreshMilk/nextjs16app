@@ -3,6 +3,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { getTenantService } from '@/core/config/tenant.config';
+import type { StandardContractService } from '@/standard/contract/services/contract.service';
 
 export async function approveContractAction(prevState: any, formData: FormData) {
     const tenantId = formData.get('tenantId') as string;
@@ -13,10 +14,10 @@ export async function approveContractAction(prevState: any, formData: FormData) 
     }
 
     try {
-        // 1. 테넌트별 서비스 구현체 로드
-        const service = await getTenantService(tenantId, 'ContractService');
+        // 1. 테넌트별 서비스 구현체 로드 (타입 지정)
+        const service = await getTenantService<StandardContractService>(tenantId, 'ContractService');
 
-        // 2. 서비스 실행 (Standard 또는 APR 구현체가 실행됨)
+        // 2. 서비스 실행
         await service.approve(tenantId, contractId);
 
         // 3. 페이지 갱신

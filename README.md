@@ -9,12 +9,14 @@ ghp_GmrKiokwgmIP9
 2. ui kit 정리하기. 외부저장소로 올려도 되지 않나? pnpm에 올리기?
 3. 타입 정리
 4. usememo usecallback 제거 / usecache / ppr / Parallel Routes (Slot)
-5. 
+5. 글로벌 css 고객사껀 어떻게 적용하지
 ClQIVDRDARcvMV3kt31Ja9H
 
 
 
 1. action이 1개만 있으면 되지 않나?
+2. 렌더링 되면서 호출하지 않고 트리거에 의해 호출되는 get은 어떻게?
+3. uri가 진실의 원천
 
 
 아래 글은 내 소스코드는 모르고 구조도만 보고 답변한 내용이니 참고만해서 방향을 잡고 적용해줘.

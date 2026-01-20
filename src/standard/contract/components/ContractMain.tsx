@@ -4,7 +4,6 @@
 import { ComponentType, useMemo } from 'react';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import type { ContractRow } from '@/core/config/tenant.config';
 
 function buildUrl(pathname: string, params: URLSearchParams) {
   const qs = params.toString();
@@ -13,12 +12,18 @@ function buildUrl(pathname: string, params: URLSearchParams) {
 
 type TabKey = 'all' | 'draft' | 'review' | 'active';
 
-interface Props {
-  contracts: ContractRow[];
-  ListComponent: ComponentType<{ contracts?: ContractRow[] }>;
+// [핵심] 컴포넌트가 필요한 데이터 형태 정의
+export interface ContractMainProps {
+  contracts: {
+    id: number | string;
+    title: string;
+    status: string;
+    // 필요한 필드만 정의
+  }[];
+  ListComponent: ComponentType<{ contracts?: any[] }>;
 }
 
-export default function ContractMain({ contracts, ListComponent }: Props) {
+export default function ContractMain({ contracts, ListComponent }: ContractMainProps) {
   const { config } = useAppConfig();
   const router = useRouter();
   const pathname = usePathname();
@@ -26,8 +31,6 @@ export default function ContractMain({ contracts, ListComponent }: Props) {
 
   const query = searchParams.get('q') ?? '';
   const tab = (searchParams.get('tab') ?? 'all') as TabKey;
-
-  // useEffect 데이터 로딩 제거됨 -> 부모가 준 contracts 사용
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
