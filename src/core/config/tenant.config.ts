@@ -7,7 +7,6 @@ import type {
   ComponentLoader,
   ServiceLoader,
   ModuleWithDefault,
-  ComponentPropsMap,
 } from '@/core/config/tenant.types';
 
 // === 1. Loaders ===

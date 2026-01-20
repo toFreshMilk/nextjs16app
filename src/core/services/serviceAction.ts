@@ -28,16 +28,25 @@ export async function executeServiceAction(prevState: any, formData: FormData) {
     // 2. 인자 파싱 (JSON 배열)
     // 예: [tenantId, contractId, { status: 'Active' }]
     const args = argsJson ? JSON.parse(argsJson) : [];
+
+    // [변경점 1] throw 대신 직접 에러 응답 리턴
     if (!Array.isArray(args)) {
-      throw new Error('Arguments must be an array');
+      return {
+        success: false,
+        message: 'Arguments must be an array',
+      };
     }
 
     // 3. 서비스 로드 (타입은 동적이므로 any)
     const service = await getTenantService<any>(tenantId, serviceKey);
 
+    // [변경점 2] throw 대신 직접 에러 응답 리턴
     // 4. 메서드 존재 여부 확인
     if (!service || typeof service[methodName] !== 'function') {
-      throw new Error(`Method '${methodName}' not found in service '${serviceKey}'`);
+      return {
+        success: false,
+        message: `Method '${methodName}' not found in service '${serviceKey}'`,
+      };
     }
 
     // 5. 실제 서비스 메서드 실행
@@ -63,8 +72,10 @@ export async function executeServiceAction(prevState: any, formData: FormData) {
       data: result,
     };
   } catch (error) {
+    // [변경점 3] 검증 로직은 위에서 return으로 처리했으므로,
+    // 여기는 진짜 예측 불가능한 시스템 에러(DB 연결 실패, 내부 로직 에러 등)만 잡힘
     console.error(`[ServiceAction Error] ${serviceKey}.${methodName}:`, error);
-    // 보안상 상세 에러는 숨기고 일반적인 메시지만 내려줄 수도 있음
+
     return {
       success: false,
       message: error instanceof Error ? error.message : 'Unknown error occurred',
