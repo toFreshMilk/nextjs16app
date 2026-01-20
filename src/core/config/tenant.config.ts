@@ -7,11 +7,10 @@ import type {
   ComponentLoader,
   ServiceLoader,
   ModuleWithDefault,
-  ComponentPropsMap,
-  ServiceTypeMap
-} from '@/core/config/tenant.types'; // 타입 import
+  ComponentPropsMap
+} from '@/core/config/tenant.types';
 
-// === 1. Loaders Implementation ===
+// === 1. Loaders ===
 export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> {
   const loaders: Record<string, () => Promise<ModuleWithDefault<TenantConfig>>> = {
     demo: () => import('@/core/config/tenants/demo.config'),
@@ -27,7 +26,7 @@ export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> 
   return { ...moduleData.default, id: tenantId };
 }
 
-// === 2. Component Loader Registry ===
+// === 2. Component Loader ===
 const StandardComponents: { [K in ComponentKey]: ComponentLoader<K> } = {
   TopNavbar: () => import('@/standard/shared/components/TopNavbar'),
   WorkspaceBanner: () => import('@/standard/shared/components/WorkspaceBanner'),
@@ -44,30 +43,34 @@ export async function getTenantComponent<K extends ComponentKey>(
     key: K
 ): Promise<ComponentType<ComponentPropsMap[K]>> {
   const config = await loadTenantConfig(tenantId);
+  // 오버라이드 없으면 Standard 사용
   const loader = (config.components?.[key] || StandardComponents[key]) as ComponentLoader<K>;
   const moduleData = await loader();
   return moduleData.default;
 }
 
-// === 3. Service Loader Registry ===
-const StandardServices: { [K in ServiceKey]: ServiceLoader<K> } = {
+// === 3. Service Loader (유연함) ===
+const StandardServices: { [K in ServiceKey]: ServiceLoader } = {
   ContractService: () => import('@/standard/contract/services/contract.service'),
 };
 
-export async function getTenantService<K extends ServiceKey>(
-    tenantId: string,
-    key: K
-): Promise<ServiceTypeMap[K]> {
+export async function getTenantService(tenantId: string, key: ServiceKey): Promise<any> {
   const config = await loadTenantConfig(tenantId);
   const tenantLoader = config.services?.[key];
 
   if (tenantLoader) {
-    console.log(`[Service] Custom // tenant === ${tenantId}:${key}`);
+    console.log(`[Service] Custom: ${tenantId}:${key}`);
     const moduleData = await tenantLoader();
+
+    // [최소 검증] 개발 편의를 위해 approve 메서드가 있는지 정도만 경고
+    if (key === 'ContractService' && typeof moduleData.default.approve !== 'function') {
+      console.warn(`[Warning] ${tenantId} ContractService missing 'approve' function!`);
+    }
+
     return moduleData.default;
   }
 
-  console.log(`[Service] Standard // tenant === ${tenantId}:${key}`);
+  console.log(`[Service] Standard: ${tenantId}:${key}`);
   const standardLoader = StandardServices[key];
   if (!standardLoader) throw new Error(`Standard service missing: ${key}`);
 

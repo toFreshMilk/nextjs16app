@@ -1,7 +1,7 @@
 // src/core/config/tenant.types.ts
 import { ComponentType } from 'react';
 
-// === Contract Domain Types ===
+// === 데이터 모델 (최소한의 공통 약속) ===
 export type ContractStatus = 'Active' | 'Draft' | 'Review' | 'APPROVED' | 'REJECTED' | (string & {});
 
 export interface ContractRow {
@@ -18,15 +18,7 @@ export interface ContractRow {
     documentCode?: string;
 }
 
-// === Service Interfaces ===
-export interface ContractService {
-    getContracts(tenant: string): Promise<ContractRow[]>;
-    getContractsDetail(tenant: string): Promise<ContractRow[]>;
-    getContractsDetail2(tenant: string): Promise<ContractRow[]>;
-    approve(tenant: string, contractId: string): Promise<void>;
-}
-
-// === Component Registry Types ===
+// === 컴포넌트 맵 (Registry) ===
 export type ComponentPropsMap = {
     TopNavbar: Record<string, never>;
     WorkspaceBanner: Record<string, never>;
@@ -45,23 +37,20 @@ export type ComponentPropsMap = {
 export type ComponentKey = keyof ComponentPropsMap;
 export type ServiceKey = 'ContractService';
 
-// === Loader Helper Types ===
+// === 로더 타입 (유연하게 any 허용) ===
 export type ModuleWithDefault<T> = { default: T };
-export type ComponentModule<K extends ComponentKey> = ModuleWithDefault<ComponentType<any>>;
-export type ComponentLoader<K extends ComponentKey> = () => Promise<ComponentModule<K>>;
+export type ComponentLoader<K extends ComponentKey> = () => Promise<ModuleWithDefault<ComponentType<any>>>;
 
-export type ServiceTypeMap = {
-    ContractService: ContractService;
-};
-export type ServiceModule<T> = ModuleWithDefault<T>;
-export type ServiceLoader<K extends ServiceKey> = () => Promise<ServiceModule<ServiceTypeMap[K]>>;
+// [변경] ServiceLoader는 더 이상 특정 인터페이스를 강제하지 않음 (Duck Typing)
+// 어떤 객체든 default export로 반환하기만 하면 됨
+export type ServiceLoader = () => Promise<ModuleWithDefault<any>>;
 
-// === Config Structure ===
+// === 설정 파일 구조 ===
 export interface TenantConfig {
     id: string;
     name: string;
     features: { i18n: boolean; ai: boolean; sso: boolean };
     theme: { primaryColor: string; };
     components?: Partial<{ [K in ComponentKey]: ComponentLoader<K> }>;
-    services?: Partial<{ [K in ServiceKey]: ServiceLoader<K> }>;
+    services?: Partial<{ [K in ServiceKey]: ServiceLoader }>;
 }
