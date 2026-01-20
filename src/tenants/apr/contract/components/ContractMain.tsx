@@ -2,23 +2,17 @@
 'use client';
 
 import { useMemo } from 'react';
+import Link from 'next/link'; // [NEW] Link import
 import { useSearchParams } from 'next/navigation';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
+import { useTenant } from '@/core/hooks/useTenant'; // [NEW] tenantId 가져오기
 import type { ContractRow } from '@/core/config/tenant.config';
 
 function normalizeStatus(s: string) {
   return (s ?? '').trim().toLowerCase();
 }
 
-function StatCard({
-                    label,
-                    value,
-                    accent,
-                  }: {
-  label: string;
-  value: number;
-  accent: string;
-}) {
+function StatCard({ label, value, accent }: { label: string; value: number; accent: string }) {
   return (
       <div className="rounded-2xl border border-rose-200 bg-white shadow-sm p-4">
         <div className="text-xs font-black tracking-[0.2em] text-rose-500">{label}</div>
@@ -35,11 +29,13 @@ function Column({
                   hint,
                   items,
                   chip,
+                  tenantId, // [NEW] tenantId prop 추가
                 }: {
   title: string;
   hint: string;
   items: ContractRow[];
   chip: { bg: string; text: string; border: string };
+  tenantId: string;
 }) {
   return (
       <section className="min-w-[280px] flex-1 rounded-2xl border border-rose-200 bg-white shadow-sm overflow-hidden">
@@ -58,16 +54,18 @@ function Column({
               <div className="text-sm text-slate-500">표시할 항목이 없습니다.</div>
           ) : (
               items.map((c) => (
-                  <div
+                  // [NEW] Link로 감싸서 상세 페이지 이동 (/[tenant]/contract/[id])
+                  <Link
                       key={String(c.id)}
-                      className="rounded-xl border border-rose-100 bg-rose-50/40 p-3 hover:bg-rose-50 transition"
+                      href={`/${tenantId}/contract/${c.id}`}
+                      className="block rounded-xl border border-rose-100 bg-rose-50/40 p-3 hover:bg-rose-50 transition cursor-pointer"
                   >
                     <div className="text-xs font-black text-rose-700">#{c.id}</div>
                     <div className="mt-1 font-bold text-slate-900 leading-snug">{c.title}</div>
                     <div className="mt-2 text-[11px] font-black text-slate-500">
                       상태: <span className="text-slate-800">{c.status}</span>
                     </div>
-                  </div>
+                  </Link>
               ))
           )}
         </div>
@@ -75,23 +73,20 @@ function Column({
   );
 }
 
-// [변경] contracts props 추가 (ListComponent는 사용하지 않으므로 옵셔널 처리하거나 제거)
 interface Props {
   contracts: ContractRow[];
-  ListComponent?: any; // Standard 패턴과의 호환성을 위해 유지할 수 있음
+  ListComponent?: any;
 }
 
 export default function AprContractMain({ contracts }: Props) {
   const { config } = useAppConfig();
+  const { tenantId } = useTenant(); // [NEW] tenantId 획득
   const searchParams = useSearchParams();
 
   const query = (searchParams.get('q') ?? '').trim().toLowerCase();
   const tab = (searchParams.get('tab') ?? 'all').toLowerCase();
 
-  // [변경] 데이터 로딩 관련 useEffect, useState 제거됨 -> props 'contracts' 즉시 사용
-
   const filtered = useMemo(() => {
-    // contracts가 undefined일 경우를 대비해 빈 배열 처리
     const list = contracts || [];
     return list.filter((c) => {
       const s = normalizeStatus(c.status);
@@ -110,7 +105,6 @@ export default function AprContractMain({ contracts }: Props) {
 
   return (
       <section className="flex-1 space-y-4">
-        {/* APR은 “Contract Desk” 스타일로 전면 구성 (Standard와 체감 차이) */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 text-xs font-black text-rose-700">
@@ -140,7 +134,6 @@ export default function AprContractMain({ contracts }: Props) {
           </div>
         </div>
 
-        {/* 로딩 상태 제거됨 - 데이터가 즉시 렌더링 됨 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <StatCard label="TOTAL" value={filtered.length} accent={config.theme.primaryColor} />
           <StatCard label="ACTIVE" value={by.active.length} accent="#16a34a" />
@@ -154,18 +147,21 @@ export default function AprContractMain({ contracts }: Props) {
               hint="법무 검토/수정 요청"
               items={by.review}
               chip={{ bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-200' }}
+              tenantId={tenantId} // [NEW] Column에 tenantId 전달
           />
           <Column
               title="진행"
               hint="서명/회수/체결 진행"
               items={by.active}
               chip={{ bg: 'bg-emerald-50', text: 'text-emerald-800', border: 'border-emerald-200' }}
+              tenantId={tenantId}
           />
           <Column
               title="초안"
               hint="작성 중인 계약"
               items={by.draft}
               chip={{ bg: 'bg-slate-50', text: 'text-slate-700', border: 'border-slate-200' }}
+              tenantId={tenantId}
           />
         </div>
       </section>
