@@ -1,8 +1,9 @@
 // src/standard/contract/components/ContractDetailTop.tsx
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useActionState } from 'react'; // [변경] react에서 import
 import { useRouter } from 'next/navigation';
+import { useFormStatus } from 'react-dom'; // useFormStatus는 여전히 react-dom
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import type { ContractRow } from '@/core/config/tenant.config';
 
@@ -23,13 +24,36 @@ function statusToStep(status: string): StepKey {
 
 interface Props {
   data: ContractRow;
+  tenantId?: string;
+  approveAction?: (prevState: any, formData: FormData) => Promise<any>;
 }
 
-export default function ContractDetailTop({ data: contract }: Props) {
+// Submit Button Component (로딩 상태 표시)
+function ApproveButton() {
+  const { pending } = useFormStatus();
+  return (
+      <button
+          type="submit"
+          disabled={pending}
+          className="px-3 py-2 rounded-lg border border-blue-200 bg-blue-600 font-bold text-white hover:bg-blue-700 disabled:opacity-50"
+      >
+        {pending ? '처리중...' : '승인하기'}
+      </button>
+  );
+}
+
+const initialState = { success: false, message: '' };
+
+export default function ContractDetailTop({ data: contract, tenantId, approveAction }: Props) {
   const router = useRouter();
   const { config } = useAppConfig();
 
-  // useEffect 및 useState 로딩 제거 -> props 데이터 즉시 사용
+  // [변경] useActionState 사용
+  // useActionState는 (action, initialState)를 인자로 받고 [state, formAction, isPending]을 반환합니다.
+  const [state, formAction] = useActionState(
+      approveAction || (async () => initialState),
+      initialState
+  );
 
   const step = useMemo(() => statusToStep(contract?.status ?? ''), [contract?.status]);
   const stepIndex = useMemo(() => ({ draft: 0, review: 1, active: 2, done: 3 }[step]), [step]);
@@ -73,6 +97,15 @@ export default function ContractDetailTop({ data: contract }: Props) {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            {/* 승인 버튼 (상태가 APPROVED가 아닐 때만 표시) */}
+            {contract.status !== 'APPROVED' && tenantId && approveAction && (
+                <form action={formAction}>
+                  <input type="hidden" name="tenantId" value={tenantId} />
+                  <input type="hidden" name="contractId" value={contract.id} />
+                  <ApproveButton />
+                </form>
+            )}
+
             <button className="px-3 py-2 rounded-lg border border-slate-200 bg-amber-300 font-bold text-slate-900">
               삭제하기
             </button>
@@ -81,6 +114,13 @@ export default function ContractDetailTop({ data: contract }: Props) {
             </button>
           </div>
         </div>
+
+        {/* 에러/성공 메시지 표시 */}
+        {state?.message && !state?.success && (
+            <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm font-bold">
+              {state.message}
+            </div>
+        )}
 
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100">

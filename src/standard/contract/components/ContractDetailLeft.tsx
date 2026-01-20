@@ -1,10 +1,8 @@
 // src/standard/contract/components/ContractDetailLeft.tsx
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
-import { useTenant } from '@/core/hooks/useTenant';
-import { getTenantService } from '@/core/config/tenant.config';
 import type { ContractRow } from '@/core/config/tenant.config';
 
 function formatAmount(v?: string) {
@@ -17,65 +15,44 @@ function safeText(v?: string) {
 }
 
 function Card({
-  title,
-  children,
-}: {
+                title,
+                children,
+              }: {
   title: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-        <div className="font-black text-slate-900">{title}</div>
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div className="font-black text-slate-900">{title}</div>
+        </div>
+        <div className="p-5">{children}</div>
       </div>
-      <div className="p-5">{children}</div>
-    </div>
   );
 }
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-3 gap-3 py-3 border-b border-slate-100 last:border-b-0">
-      <div className="text-sm font-bold text-slate-500">{label}</div>
-      <div className="col-span-2 text-sm text-slate-900">{value}</div>
-    </div>
+      <div className="grid grid-cols-3 gap-3 py-3 border-b border-slate-100 last:border-b-0">
+        <div className="text-sm font-bold text-slate-500">{label}</div>
+        <div className="col-span-2 text-sm text-slate-900">{value}</div>
+      </div>
   );
 }
 
-export default function ContractDetailLeft() {
+// [변경] data props 추가
+interface Props {
+  data: ContractRow[];
+}
+
+export default function ContractDetailLeft({ data }: Props) {
   const params = useParams<{ tenant: string; id: string }>();
-  const { tenantId } = useTenant();
   const contractId = params?.id;
 
-  const [contract, setContract] = useState<ContractRow | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      try {
-        setLoading(true);
-        const service = await getTenantService(tenantId, 'ContractService');
-        const rows = await service.getContracts();
-        const found = (rows ?? []).find((r) => String(r.id) === String(contractId));
-        if (!cancelled) {
-          setContract(
-            found ?? {
-              id: contractId ?? '-',
-              title: '계약 상세',
-              status: 'Active',
-            }
-          );
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [tenantId, contractId]);
+  // [변경] props로 받은 데이터에서 id로 찾기 (클라이언트 측 연산)
+  const contract = useMemo(() => {
+    return (data ?? []).find((r) => String(r.id) === String(contractId)) || null;
+  }, [data, contractId]);
 
   const derived = useMemo(() => {
     const base = contract ?? { id: contractId ?? '-', title: '계약 상세', status: 'Active' };
@@ -93,11 +70,8 @@ export default function ContractDetailLeft() {
   }, [contract, contractId]);
 
   return (
-    <section className="space-y-4">
-      <Card title="기본정보">
-        {loading ? (
-          <div className="text-sm text-slate-500">데이터를 불러오는 중…</div>
-        ) : (
+      <section className="space-y-4">
+        <Card title="기본정보">
           <div>
             <InfoRow label="기안자" value={safeText(derived.requester)} />
             <InfoRow label="계약 상대방" value={safeText(derived.partner)} />
@@ -108,45 +82,43 @@ export default function ContractDetailLeft() {
             <InfoRow label="전자결재 문서코드" value={safeText(derived.documentCode)} />
             <InfoRow label="전자결재 진행상태" value="-" />
           </div>
-        )}
-      </Card>
+        </Card>
 
-      <details className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden" open>
-        <summary className="px-5 py-4 cursor-pointer list-none flex items-center justify-between">
-          <div className="font-black text-slate-900">유저정보</div>
-          <div className="text-slate-400">⌄</div>
-        </summary>
-        <div className="px-5 pb-5">
-          <div className="text-sm text-slate-500">
-            (데모) 유저정보 영역입니다. 실제 필드는 서비스 연동 시 채워집니다.
+        <details className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden" open>
+          <summary className="px-5 py-4 cursor-pointer list-none flex items-center justify-between">
+            <div className="font-black text-slate-900">유저정보</div>
+            <div className="text-slate-400">⌄</div>
+          </summary>
+          <div className="px-5 pb-5">
+            <div className="text-sm text-slate-500">
+              (데모) 유저정보 영역입니다. 실제 필드는 서비스 연동 시 채워집니다.
+            </div>
           </div>
-        </div>
-      </details>
+        </details>
 
-      <details className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <summary className="px-5 py-4 cursor-pointer list-none flex items-center justify-between">
-          <div className="font-black text-slate-900">기타 정보</div>
-          <div className="text-slate-400">⌄</div>
-        </summary>
-        <div className="px-5 pb-5">
-          <div className="text-sm text-slate-500">
-            (데모) 기타 정보 영역입니다.
+        <details className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <summary className="px-5 py-4 cursor-pointer list-none flex items-center justify-between">
+            <div className="font-black text-slate-900">기타 정보</div>
+            <div className="text-slate-400">⌄</div>
+          </summary>
+          <div className="px-5 pb-5">
+            <div className="text-sm text-slate-500">
+              (데모) 기타 정보 영역입니다.
+            </div>
           </div>
-        </div>
-      </details>
+        </details>
 
-      <details className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden" open>
-        <summary className="px-5 py-4 cursor-pointer list-none flex items-center justify-between">
-          <div className="font-black text-slate-900">계약서</div>
-          <div className="text-slate-400">⌄</div>
-        </summary>
-        <div className="px-5 pb-5">
-          <div className="text-sm text-slate-500">
-            (데모) 계약서 본문/첨부 영역입니다.
+        <details className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden" open>
+          <summary className="px-5 py-4 cursor-pointer list-none flex items-center justify-between">
+            <div className="font-black text-slate-900">계약서</div>
+            <div className="text-slate-400">⌄</div>
+          </summary>
+          <div className="px-5 pb-5">
+            <div className="text-sm text-slate-500">
+              (데모) 계약서 본문/첨부 영역입니다.
+            </div>
           </div>
-        </div>
-      </details>
-    </section>
+        </details>
+      </section>
   );
 }
-
