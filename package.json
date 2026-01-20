@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint2": "ghp_GmrKiokwgm",
+    "lint3": "IP9ClQIVDRDARcvMV3kt31Ja9H",
     "build:stg": "cross-env NEXT_PUBLIC_ENV=stg next build",
     "build:prod": "cross-env NEXT_PUBLIC_ENV=prod next build"
   },
