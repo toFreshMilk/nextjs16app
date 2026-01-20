@@ -1,9 +1,12 @@
 // src/app/[tenant]/layout.tsx
 import { ReactNode } from 'react';
+import { Metadata } from 'next';
 import { loadTenantConfig } from '@/core/config/tenant.config';
 import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
 
-export async function generateMetadata({ params }: { params: Promise<{ tenant: string }> }) {
+export async function generateMetadata({ params }: {
+  params: Promise<{ tenant: string }>
+}): Promise<Metadata> {
   const { tenant } = await params;
   return {
     icons: {
@@ -12,10 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ tenant: s
   };
 }
 
-export default async function TenantLayout({ 
-  children, 
-  params 
-}: { 
+export default async function TenantLayout({ children, params }: {
   children: ReactNode;
   params: Promise<{ tenant: string }>;
 }) {
