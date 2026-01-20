@@ -1,9 +1,9 @@
 // src/app/[tenant]/(main)/contract/[id]/page.tsx
 import { getTenantComponent, getTenantService } from '@/core/config/tenant.config';
 import { notFound } from 'next/navigation';
-import { approveContractAction } from '../actions/contract.actions';
 // [중요] Standard 구현체에서 타입을 가져옴 (Service & Props)
 import type { StandardContractService } from '@/standard/contract/services/contract.service';
+import { executeServiceAction } from "@/core/services/serviceAction";
 // ContractDetailTopProps는 실제 컴포넌트 파일이 있어야 import 가능. 여기선 any로 가정하거나 실제 파일에서 export 필요.
 // 여기서는 Duck Typing 설명을 위해 any로 캐스팅하거나, StandardService 타입을 사용
 
@@ -44,7 +44,7 @@ export default async function ContractDetailPage({
             <Top
                 data={contractDetail}
                 tenantId={tenant}
-                approveAction={approveContractAction}
+                approveAction={executeServiceAction}
             />
             <div className="flex gap-6">
                 <div className="flex-1 min-w-0">
