@@ -1,5 +1,5 @@
 // src/core/config/tenants/demo.config.ts
-import { TenantConfig } from '../tenant.config';
+import { TenantConfig } from '../tenant.types';
 
 const config: TenantConfig = {
   id: 'demo',

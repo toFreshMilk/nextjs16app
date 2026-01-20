@@ -1,6 +1,6 @@
 // src/tenants/demo/contract/services/contract.service.ts
 
-import type { ContractService, ContractRow } from '@/core/config/tenant.config';
+import type { ContractService, ContractRow } from '@/core/config/tenant.types';
 import { apiGet, apiPost } from '@/core/services/apiClient';
 
 export async function getContracts(tenant: string): Promise<ContractRow[]> {
