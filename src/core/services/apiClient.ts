@@ -26,3 +26,5 @@ export async function apiPost<T>(path: string, tenantId: string, body: any): Pro
     message: 'Processed successfully (Mock)',
   } as unknown as T;
 }
+
+// ssr이냐 clent냐 를 구별해야되는 이유를 모르겠다.
