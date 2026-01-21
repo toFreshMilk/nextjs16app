@@ -1,7 +1,7 @@
 // src/standard/contract/components/ContractMain.tsx
 'use client';
 
-import { ComponentType, useMemo } from 'react';
+import { ComponentType } from 'react';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
@@ -12,13 +12,11 @@ function buildUrl(pathname: string, params: URLSearchParams) {
 
 type TabKey = 'all' | 'draft' | 'review' | 'active';
 
-// [핵심] 컴포넌트가 필요한 데이터 형태 정의
 export interface ContractMainProps {
   contracts: {
     id: number | string;
     title: string;
     status: string;
-    // 필요한 필드만 정의
   }[];
   ListComponent: ComponentType<{ contracts?: any[] }>;
 }
@@ -32,18 +30,17 @@ export default function ContractMain({ contracts, ListComponent }: ContractMainP
   const query = searchParams.get('q') ?? '';
   const tab = (searchParams.get('tab') ?? 'all') as TabKey;
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return contracts.filter((c) => {
-      const matchQ = !q || c.title.toLowerCase().includes(q);
-      const matchTab =
-        tab === 'all' ||
-        (tab === 'draft' && c.status.toLowerCase() === 'draft') ||
-        (tab === 'review' && c.status.toLowerCase() === 'review') ||
-        (tab === 'active' && c.status.toLowerCase() === 'active');
-      return matchQ && matchTab;
-    });
-  }, [contracts, query, tab]);
+  const q = query.trim().toLowerCase();
+
+  const filtered = contracts.filter((c) => {
+    const matchQ = !q || c.title.toLowerCase().includes(q);
+    const matchTab =
+      tab === 'all' ||
+      (tab === 'draft' && c.status.toLowerCase() === 'draft') ||
+      (tab === 'review' && c.status.toLowerCase() === 'review') ||
+      (tab === 'active' && c.status.toLowerCase() === 'active');
+    return matchQ && matchTab;
+  });
 
   return (
     <section className="flex-1 space-y-4">

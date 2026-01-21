@@ -1,7 +1,6 @@
 // src/tenants/apr/contract/components/ContractMain.tsx
 'use client';
 
-import { useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
@@ -71,7 +70,6 @@ function Column({
   );
 }
 
-// [핵심] APR 컴포넌트 Props
 interface AprContractMainProps {
   contracts: {
     id: number | string;
@@ -86,32 +84,29 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
   const { tenantId } = useTenant();
   const searchParams = useSearchParams();
 
+  // [React 19] 그냥 변수에 할당하면 끝. 컴파일러가 알아서 메모이제이션함.
   const query = (searchParams.get('q') ?? '').trim().toLowerCase();
   const tab = (searchParams.get('tab') ?? 'all').toLowerCase();
+  const list = contracts || [];
 
-  const filtered = useMemo(() => {
-    const list = contracts || [];
-    return list.filter((c) => {
-      const s = normalizeStatus(c.status);
-      const matchQ =
-        !query ||
-        String(c.title ?? '')
-          .toLowerCase()
-          .includes(query);
-      const matchTab = tab === 'all' || s === tab;
-      return matchQ && matchTab;
-    });
-  }, [contracts, query, tab]);
+  const filtered = list.filter((c) => {
+    const s = normalizeStatus(c.status);
+    const matchQ =
+      !query ||
+      String(c.title ?? '')
+        .toLowerCase()
+        .includes(query);
+    const matchTab = tab === 'all' || s === tab;
+    return matchQ && matchTab;
+  });
 
-  const by = useMemo(() => {
-    const active = filtered.filter((c) => normalizeStatus(c.status) === 'active');
-    const review = filtered.filter((c) => normalizeStatus(c.status) === 'review');
-    const draft = filtered.filter((c) => normalizeStatus(c.status) === 'draft');
-    return { active, review, draft };
-  }, [filtered]);
+  const active = filtered.filter((c) => normalizeStatus(c.status) === 'active');
+  const review = filtered.filter((c) => normalizeStatus(c.status) === 'review');
+  const draft = filtered.filter((c) => normalizeStatus(c.status) === 'draft');
 
   return (
     <section className="flex-1 space-y-4">
+      {/* ... (UI 부분은 동일하므로 생략하지 않고 그대로 유지) */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="inline-flex items-center gap-2 text-xs font-black text-rose-700">
@@ -141,16 +136,16 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard label="TOTAL" value={filtered.length} accent={config.theme.primaryColor} />
-        <StatCard label="ACTIVE" value={by.active.length} accent="#16a34a" />
-        <StatCard label="REVIEW" value={by.review.length} accent="#f59e0b" />
-        <StatCard label="DRAFT" value={by.draft.length} accent="#64748b" />
+        <StatCard label="ACTIVE" value={active.length} accent="#16a34a" />
+        <StatCard label="REVIEW" value={review.length} accent="#f59e0b" />
+        <StatCard label="DRAFT" value={draft.length} accent="#64748b" />
       </div>
 
       <div className="flex flex-col lg:flex-row gap-4">
         <Column
           title="검토"
           hint="법무 검토/수정 요청"
-          items={by.review}
+          items={review}
           chip={{
             bg: 'bg-amber-50',
             text: 'text-amber-800',
@@ -161,7 +156,7 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
         <Column
           title="진행"
           hint="서명/회수/체결 진행"
-          items={by.active}
+          items={active}
           chip={{
             bg: 'bg-emerald-50',
             text: 'text-emerald-800',
@@ -172,7 +167,7 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
         <Column
           title="초안"
           hint="작성 중인 계약"
-          items={by.draft}
+          items={draft}
           chip={{
             bg: 'bg-slate-50',
             text: 'text-slate-700',

@@ -1,7 +1,6 @@
 // src/standard/contract/components/ContractDetailLeft.tsx
 'use client';
 
-import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import type { StandardContractDto } from '@/standard/contract/services/contract.service';
 
@@ -34,7 +33,6 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-// [변경] data props 추가
 interface Props {
   data: StandardContractDto[];
 }
@@ -43,29 +41,25 @@ export default function ContractDetailLeft({ data }: Props) {
   const params = useParams<{ tenant: string; id: string }>();
   const contractId = params?.id;
 
-  // [변경] props로 받은 데이터에서 id로 찾기 (클라이언트 측 연산)
-  const contract = useMemo(() => {
-    return (data ?? []).find((r) => String(r.id) === String(contractId)) || null;
-  }, [data, contractId]);
+  const contract = (data ?? []).find((r) => String(r.id) === String(contractId)) || null;
 
-  const derived = useMemo(() => {
-    const base = contract ?? {
-      id: contractId ?? '-',
-      title: '계약 상세',
-      status: 'Active',
-    };
-    return {
-      ...base,
-      partner: base.partner ?? 'Apple',
-      category: base.category ?? '테스트',
-      templateName: base.templateName ?? '법률QA체결계약서',
-      requester: base.requester ?? '법률_생성자',
-      reviewer: base.reviewer ?? '법률_검토자',
-      documentCode: base.documentCode ?? '-',
-      date: base.date ?? '26/01/12',
-      amount: base.amount ?? '231,213',
-    };
-  }, [contract, contractId]);
+  const base = contract ?? {
+    id: contractId ?? '-',
+    title: '계약 상세',
+    status: 'Active',
+  };
+
+  const derived = {
+    ...base,
+    partner: base.partner ?? 'Apple',
+    category: base.category ?? '테스트',
+    templateName: base.templateName ?? '법률QA체결계약서',
+    requester: base.requester ?? '법률_생성자',
+    reviewer: base.reviewer ?? '법률_검토자',
+    documentCode: base.documentCode ?? '-',
+    date: base.date ?? '26/01/12',
+    amount: base.amount ?? '231,213',
+  };
 
   return (
     <section className="space-y-4">

@@ -1,7 +1,7 @@
 // src/standard/contract/components/ContractDetailRight.tsx
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import type { StandardContractDto } from '@/standard/contract/services/contract.service';
 
@@ -26,7 +26,6 @@ function TimelineItem({ title, time }: { title: string; time: string }) {
   );
 }
 
-// [변경] data props 추가 (배열 형태)
 interface Props {
   data: StandardContractDto[];
 }
@@ -34,20 +33,15 @@ interface Props {
 export default function ContractDetailRight({ data }: Props) {
   const { config } = useAppConfig();
 
-  // [변경] props로 받은 데이터 사용 (첫번째 아이템 사용 또는 로직에 따라 선택)
-  // page.tsx에서 getContractsDetail2의 결과(배열)를 넘겨주므로,
-  // 여기서는 단순히 첫번째 데이터를 사용하거나 필요한 데이터를 찾아서 씁니다.
   const contract = data?.[0] || null;
 
   const [comment, setComment] = useState('승인합니다.');
 
-  const derived = useMemo(() => {
-    const base = contract ?? { id: '-', title: '계약 상세', status: 'Active' };
-    return {
-      ...base,
-      smartEmail: `licombined+com${String(base.id ?? '0')}@smail.buptlestg.com`,
-    };
-  }, [contract]);
+  const base = contract ?? { id: '-', title: '계약 상세', status: 'Active' };
+  const derived = {
+    ...base,
+    smartEmail: `licombined+com${String(base.id ?? '0')}@smail.buptlestg.com`,
+  };
 
   return (
     <section className="space-y-4">

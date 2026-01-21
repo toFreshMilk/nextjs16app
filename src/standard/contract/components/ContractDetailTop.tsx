@@ -1,13 +1,11 @@
 // src/standard/contract/components/ContractDetailTop.tsx
 'use client';
 
-import { useMemo, useActionState } from 'react';
+import { useActionState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFormStatus } from 'react-dom';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
-// [변경] 공통 액션 import
 import { executeServiceAction } from '@/core/services/serviceAction';
-// [변경] 서비스 파일에서 타입 import (Colocation)
 import type { StandardContractDto } from '@/standard/contract/services/contract.service';
 
 type StepKey = 'draft' | 'review' | 'active' | 'done';
@@ -25,11 +23,19 @@ function statusToStep(status: string): StepKey {
   return 'active';
 }
 
+function getStatusLabel(status: string) {
+  const s = normalizeStatus(status);
+  if (!s) return '서명/날인대기';
+  if (s === 'draft') return '초안';
+  if (s === 'review') return '검토';
+  if (s === 'active') return '서명/날인대기';
+  if (s === 'completed' || s === 'complete' || s === 'done') return '완료';
+  return status ?? '서명/날인대기';
+}
+
 interface Props {
-  // [변경] ContractRow -> StandardContractDto (이름 맞춤)
   data: StandardContractDto;
   tenantId: string;
-  // [삭제] approveAction prop은 이제 불필요 (Common Action 사용)
 }
 
 // Submit Button Component (로딩 상태 표시)
@@ -52,32 +58,24 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
   const router = useRouter();
   const { config } = useAppConfig();
 
-  // [변경] executeServiceAction 연결
   const [state, formAction] = useActionState(executeServiceAction, initialState);
 
-  const step = useMemo(() => statusToStep(contract?.status ?? ''), [contract?.status]);
-  const stepIndex = useMemo(() => ({ draft: 0, review: 1, active: 2, done: 3 })[step], [step]);
+  const step = statusToStep(contract?.status ?? '');
+
+  // [변경] 객체 리터럴 참조도 컴파일러가 관리함
+  const stepMap = { draft: 0, review: 1, active: 2, done: 3 };
+  const stepIndex = stepMap[step];
+
   const title = contract?.title ?? '계약 상세';
+  const statusLabel = getStatusLabel(contract?.status ?? '');
 
-  const statusLabel = useMemo(() => {
-    const s = normalizeStatus(contract?.status ?? '');
-    if (!s) return '서명/날인대기';
-    if (s === 'draft') return '초안';
-    if (s === 'review') return '검토';
-    if (s === 'active') return '서명/날인대기';
-    if (s === 'completed' || s === 'complete' || s === 'done') return '완료';
-    return contract?.status ?? '서명/날인대기';
-  }, [contract?.status]);
-
-  const steps = useMemo(
-    () => [
-      { key: 'draft', label: '초안' },
-      { key: 'review', label: '검토' },
-      { key: 'active', label: '서명 및 회수' },
-      { key: 'done', label: '완료' },
-    ],
-    [],
-  );
+  // [변경] 정적 배열도 컴파일러가 알아서 상수 처리함
+  const steps = [
+    { key: 'draft', label: '초안' },
+    { key: 'review', label: '검토' },
+    { key: 'active', label: '서명 및 회수' },
+    { key: 'done', label: '완료' },
+  ];
 
   return (
     <section className="space-y-4">
