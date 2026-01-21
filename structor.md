@@ -14,121 +14,121 @@ buptlebiz_fe/
 ├── structor.md # Project structure doc
 │
 ├── public/ # Static assets
-│ ├── favicons/
-│ │ ├── apr.svg
-│ │ ├── default.svg
-│ │ └── demo.svg
-│ ├── file.svg
-│ ├── globe.svg
-│ ├── window.svg
-│ └── mock-data/
-│ └── contracts/
-│ ├── apr.json
-│ ├── demo.json
-│ ├── detail/
-│ │ ├── apr.json
-│ │ └── demo.json
-│ └── detail2/
-│ ├── apr.json
-│ └── demo.json
+│   ├── favicons/
+│   │   ├── apr.svg
+│   │   ├── default.svg
+│   │   └── demo.svg
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── window.svg
+│   └── mock-data/
+│       └── contracts/
+│           ├── apr.json
+│           ├── demo.json
+│           ├── detail/
+│           │   ├── apr.json
+│           │   └── demo.json
+│           └── detail2/
+│               ├── apr.json
+│               └── demo.json
 │
 └── src/
-├── proxy.ts # Tenant 감지 및 검증 로직
-│
-├── app/ # Next.js App Router (조립 레이어)
-│ ├── layout.tsx # Root Layout
-│ ├── page.tsx # Root Page
-│ ├── globals.css # Global Styles
-│ ├── not-found.tsx # Global 404
-│ │
-│ └── [tenant]/ # Tenant Dynamic Routes
-│ ├── layout.tsx # Tenant Config 주입 (AppConfigProvider)
-│ ├── page.tsx # Tenant Root
-│ ├── error.tsx # Tenant 에러 핸들링
-│ │
-│ └── (main)/
-│ ├── layout.tsx # Main Layout (TopNavbar, WorkspaceBanner 조립)
-│ └── contract/
-│ ├── page.tsx # Contract Page (Sidebar + Main 조립)
-│ └── [id]/
-│ └── page.tsx # Contract Detail Page (Top + Left + Right 조립)
-│
-├── core/
-│ ├── config/
-│ │ ├── tenant.config.ts # 테넌트 설정 로더 + 서비스/컴포넌트 매핑
-│ │ ├── tenant.types.ts # Tenant/Contract 관련 타입 정의
-│ │ └── tenants/
-│ │ ├── apr.config.ts # APR Tenant Config
-│ │ └── demo.config.ts # Demo Tenant Config
-│ │
-│ ├── contexts/
-│ │ └── AppConfigContext.tsx # App Config Context (TenantConfigData 등)
-│ │
-│ ├── hooks/
-│ │ └── useTenant.ts # Tenant 식별 Hook
-│ │
-│ ├── services/
-│ │ ├── apiClient.ts # API Client (apiGet, apiPost 등)
-│ │ └── serviceAction.ts # Common Server Action (executeServiceAction + revalidatePath)
-│ │
-│ └── utils/
-│ ├── date.util.ts # Date utilities
-│ ├── object.util.ts # Object utilities
-│ └── string.util.ts # String utilities
-│
-├── standard/ # [Base] 기본 구현체 (파일 보관소)
-│ ├── standard.css # Standard Styles
-│ │
-│ ├── shared/
-│ │ └── components/
-│ │ ├── TopNavbar.tsx # Standard TopNavbar
-│ │ └── WorkspaceBanner.tsx # Standard WorkspaceBanner (default: null)
-│ │
-│ └── contract/
-│ ├── components/
-│ │ ├── ContractSidebar.tsx # Standard Contract Sidebar
-│ │ ├── ContractMain.tsx # Standard Contract Main
-│ │ ├── ContractList.tsx # Standard Contract List
-│ │ ├── ContractDetailTop.tsx # Standard Contract Detail Top
-│ │ ├── ContractDetailLeft.tsx # Standard Contract Detail Left
-│ │ └── ContractDetailRight.tsx # Standard Contract Detail Right
-│ └── services/
-│ └── contract.service.ts # Standard Contract Service
-│
-├── tenants/ # [Override] 테넌트별 오버라이드 (파일 보관소)
-│ ├── apr/
-│ │ ├── apr.css # APR Tenant Styles
-│ │ ├── contract/
-│ │ │ ├── components/
-│ │ │ │ ├── ContractSidebar.tsx # APR Contract Sidebar Override
-│ │ │ │ └── ContractMain.tsx # APR Contract Main Override
-│ │ │ └── services/
-│ │ │ └── contract.service.ts # APR Contract Service Override
-│ │ └── shared/
-│ │ └── components/
-│ │ └── WorkspaceBanner.tsx # APR WorkspaceBanner Override
-│ │
-│ └── demo/
-│ ├── demo.css # Demo Tenant Styles
-│ ├── contract/
-│ │ └── services/
-│ │ └── contract.service.ts # Demo Contract Service Override
-│ └── shared/
-│ └── components/
-│ └── WorkspaceBanner.tsx # Demo WorkspaceBanner Override
-│
-└── uikit/ # UI Kit Components (재사용 공통 컴포넌트)
-├── card/
-│ └── StatCard.tsx # 통계 카드 컴포넌트
-├── chart/
-│ └── BarChart.tsx # 막대 차트 컴포넌트
-├── form/
-│ ├── Button.tsx # 버튼 컴포넌트
-│ ├── Input.tsx # 입력 필드 컴포넌트
-│ └── Select.tsx # 셀렉트 컴포넌트
-└── layout/
-├── PageContainer.tsx # 페이지 컨테이너
-└── Section.tsx # 섹션 컴포넌트
+    ├── proxy.ts # Tenant 감지 및 검증 로직
+    │
+    ├── app/ # Next.js App Router (조립 레이어)
+    │   ├── layout.tsx # Root Layout
+    │   ├── page.tsx # Root Page
+    │   ├── globals.css # Global Styles
+    │   ├── not-found.tsx # Global 404
+    │   │
+    │   └── [tenant]/ # Tenant Dynamic Routes
+    │       ├── layout.tsx # Tenant Config 주입 (AppConfigProvider)
+    │       ├── page.tsx # Tenant Root
+    │       ├── error.tsx # Tenant 에러 핸들링
+    │       │
+    │       └── (main)/
+    │           ├── layout.tsx # Main Layout (TopNavbar, WorkspaceBanner 조립)
+    │           └── contract/
+    │               ├── page.tsx # Contract Page (Sidebar + Main 조립)
+    │               └── [id]/
+    │                   └── page.tsx # Contract Detail Page (Top + Left + Right 조립)
+    │
+    ├── core/
+    │   ├── config/
+    │   │   ├── tenant.config.ts # 테넌트 설정 로더 + 서비스/컴포넌트 매핑
+    │   │   ├── tenant.types.ts # Tenant/Contract 관련 타입 정의
+    │   │   └── tenants/
+    │   │       ├── apr.config.ts # APR Tenant Config
+    │   │       └── demo.config.ts # Demo Tenant Config
+    │   │
+    │   ├── contexts/
+    │   │   └── AppConfigContext.tsx # App Config Context (TenantConfigData 등)
+    │   │
+    │   ├── hooks/
+    │   │   └── useTenant.ts # Tenant 식별 Hook
+    │   │
+    │   ├── services/
+    │   │   ├── apiClient.ts # API Client (apiGet, apiPost 등)
+    │   │   └── serviceAction.ts # Common Server Action (executeServiceAction + revalidatePath)
+    │   │
+    │   └── utils/
+    │       ├── date.util.ts # Date utilities
+    │       ├── object.util.ts # Object utilities
+    │       └── string.util.ts # String utilities
+    │
+    ├── standard/ # [Base] 기본 구현체 (파일 보관소)
+    │   ├── standard.css # Standard Styles
+    │   │
+    │   ├── shared/
+    │   │   └── components/
+    │   │       ├── TopNavbar.tsx # Standard TopNavbar
+    │   │       └── WorkspaceBanner.tsx # Standard WorkspaceBanner (default: null)
+    │   │
+    │   └── contract/
+    │       ├── components/
+    │       │   ├── ContractSidebar.tsx # Standard Contract Sidebar
+    │       │   ├── ContractMain.tsx # Standard Contract Main
+    │       │   ├── ContractList.tsx # Standard Contract List
+    │       │   ├── ContractDetailTop.tsx # Standard Contract Detail Top
+    │       │   ├── ContractDetailLeft.tsx # Standard Contract Detail Left
+    │       │   └── ContractDetailRight.tsx # Standard Contract Detail Right
+    │       └── services/
+    │           └── contract.service.ts # Standard Contract Service
+    │
+    ├── tenants/ # [Override] 테넌트별 오버라이드 (파일 보관소)
+    │   ├── apr/
+    │   │   ├── apr.css # APR Tenant Styles
+    │   │   ├── contract/
+    │   │   │   ├── components/
+    │   │   │   │   ├── ContractSidebar.tsx # APR Contract Sidebar Override
+    │   │   │   │   └── ContractMain.tsx # APR Contract Main Override
+    │   │   │   └── services/
+    │   │   │       └── contract.service.ts # APR Contract Service Override
+    │   │   └── shared/
+    │   │       └── components/
+    │   │           └── WorkspaceBanner.tsx # APR WorkspaceBanner Override
+    │   │
+    │   └── demo/
+    │       ├── demo.css # Demo Tenant Styles
+    │       ├── contract/
+    │       │   └── services/
+    │       │       └── contract.service.ts # Demo Contract Service Override
+    │       └── shared/
+    │           └── components/
+    │               └── WorkspaceBanner.tsx # Demo WorkspaceBanner Override
+    │
+    └── uikit/ # UI Kit Components (재사용 공통 컴포넌트)
+        ├── card/
+        │   └── StatCard.tsx # 통계 카드 컴포넌트
+        ├── chart/
+        │   └── BarChart.tsx # 막대 차트 컴포넌트
+        ├── form/
+        │   ├── Button.tsx # 버튼 컴포넌트
+        │   ├── Input.tsx # 입력 필드 컴포넌트
+        │   └── Select.tsx # 셀렉트 컴포넌트
+        └── layout/
+            ├── PageContainer.tsx # 페이지 컨테이너
+            └── Section.tsx # 섹션 컴포넌트
 
 ## 아키텍처 원칙
 
