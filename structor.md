@@ -77,8 +77,6 @@ buptlebiz_fe/
     │       └── string.util.ts # String utilities
     │
     ├── standard/ # [Base] 기본 구현체 (파일 보관소)
-    │   ├── standard.css # Standard Styles
-    │   │
     │   ├── shared/
     │   │   └── components/
     │   │       ├── TopNavbar.tsx # Standard TopNavbar
@@ -148,8 +146,7 @@ buptlebiz_fe/
 
 ### 3. 타입 정의 위치
 
-- **Contract 관련 타입**: `core/config/tenant.types.ts`에 정의
-  - 예: `ContractStatus`, `ContractRow`, `ContractService` 등
+- **Contract 관련 타입**: service.ts 파일에 정의
 - **App Config 관련 타입**: `core/contexts/AppConfigContext.tsx`에 정의
   - 예: `TenantConfigData`, `AppConfigContextValue` 등
 
@@ -172,7 +169,4 @@ buptlebiz_fe/
 - **목록 페이지 데이터 로딩**:
   - `app/[tenant]/(main)/contract/page.tsx`에서 `ContractService.getContracts()` 호출
 - **상태 업데이트**: Common Server Action + `revalidatePath` 사용
-  - 서버 액션은 `core/services/serviceAction.ts`의 `executeServiceAction()`로 중앙화
-  - 클라이언트 컴포넌트(예: `standard/contract/components/ContractDetailTop.tsx`)에서 `<form action={...}>`로 호출
-  - `FormData`로 `tenantId`, `serviceKey`(예: `ContractService`), `methodName`(예: `approve`), `args`(JSON 배열), `revalidateUrl`(콤마 구분 경로) 전달
-  - 성공 시 `revalidateUrl`에 포함된 경로들을 `revalidatePath()`로 갱신
+  - 서버 액션은 사용하지 않음. post요청이나 이벤트에 의해 발생되는 get요청은 클라이언트 컴포넌트에서 직접 호출.

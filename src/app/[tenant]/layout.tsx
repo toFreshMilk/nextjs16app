@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { Metadata } from 'next';
 import { loadTenantConfig } from '@/core/config/tenant.config';
 import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
+import TenantStyleGateway from '@/app/[tenant]/TenantStyleGateway';
 
 export async function generateMetadata({ params }: { params: Promise<{ tenant: string }> }): Promise<Metadata> {
   const { tenant } = await params;
@@ -37,6 +38,10 @@ export default async function TenantLayout({
     features: config.features,
     theme: config.theme,
   };
-
-  return <AppConfigProvider tenantConfig={configData}>{children}</AppConfigProvider>;
+  return (
+    <AppConfigProvider tenantConfig={configData}>
+      <TenantStyleGateway tenant={tenant} />
+      {children}
+    </AppConfigProvider>
+  );
 }
