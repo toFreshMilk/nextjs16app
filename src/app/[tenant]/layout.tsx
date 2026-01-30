@@ -1,9 +1,26 @@
 // src/app/[tenant]/layout.tsx
-import { ReactNode } from 'react';
+import { ComponentType, ReactNode } from 'react';
 import { Metadata } from 'next';
 import { loadTenantConfig } from '@/core/config/tenant.config';
 import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
-import TenantStyleGateway from '@/app/[tenant]/TenantStyleGateway';
+import dynamic from 'next/dynamic';
+
+const LOADERS: Record<string, ComponentType> = {
+  apr: dynamic(() => import('@/tenants/apr/shared/APRStyleLoader'), { ssr: true }),
+  demo: dynamic(() => import('@/tenants/demo/shared/DemoStyleLoader'), { ssr: true }),
+};
+
+export function TenantStyleGateway({ tenant }: { tenant: string }) {
+  // [로직] O(1) 속도로 즉시 컴포넌트를 찾습니다. if/else 분기보다 빠르고 깔끔합니다.
+  const Loader = LOADERS[tenant];
+
+  // 등록되지 않은 테넌트라면 아무것도 로드하지 않습니다.
+  if (!Loader) {
+    return null;
+  }
+
+  return <Loader />;
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ tenant: string }> }): Promise<Metadata> {
   const { tenant } = await params;
