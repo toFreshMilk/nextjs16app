@@ -1,6 +1,5 @@
 // src/app/[tenant]/layout.tsx
 import { ComponentType, ReactNode } from 'react';
-import { Metadata } from 'next';
 import { loadTenantConfig } from '@/core/config/tenant.config';
 import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
 import dynamic from 'next/dynamic';
@@ -20,15 +19,6 @@ export function TenantStyleGateway({ tenant }: { tenant: string }) {
   }
 
   return <Loader />;
-}
-
-export async function generateMetadata({ params }: { params: Promise<{ tenant: string }> }): Promise<Metadata> {
-  const { tenant } = await params;
-  return {
-    icons: {
-      icon: `/favicons/${tenant}.svg`,
-    },
-  };
 }
 
 export default async function TenantLayout({
