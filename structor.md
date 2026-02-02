@@ -69,7 +69,6 @@ buptlebiz_fe/
     │   │
     │   ├── services/
     │   │   ├── apiClient.ts # API Client (apiGet, apiPost 등)
-    │   │   └── serviceAction.ts # Common Server Action (executeServiceAction + revalidatePath)
     │   │
     │   └── utils/
     │       ├── date.util.ts # Date utilities

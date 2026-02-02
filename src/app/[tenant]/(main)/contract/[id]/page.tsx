@@ -3,7 +3,6 @@ import { getTenantComponent, getTenantService } from '@/core/config/tenant.confi
 import { notFound } from 'next/navigation';
 // [중요] Standard 구현체에서 타입을 가져옴 (Service & Props)
 import type { StandardContractService } from '@/standard/contract/services/contract.service';
-import { executeServiceAction } from '@/core/services/serviceAction';
 // ContractDetailTopProps는 실제 컴포넌트 파일이 있어야 import 가능. 여기선 any로 가정하거나 실제 파일에서 export 필요.
 // 여기서는 Duck Typing 설명을 위해 any로 캐스팅하거나, StandardService 타입을 사용
 
@@ -37,7 +36,7 @@ export default async function ContractDetailPage({ params }: { params: Promise<{
   // Top, Left, Right 컴포넌트는 "암묵적으로" contractDetail 데이터를 받을 준비가 되어 있다고 가정 (Duck Typing)
   return (
     <div className="-m-10 p-10 bg-slate-50 min-h-[calc(100vh-64px)] space-y-6">
-      <Top data={contractDetail} tenantId={tenant} approveAction={executeServiceAction} />
+      <Top data={contractDetail} tenantId={tenant} />
       <div className="flex gap-6">
         <div className="flex-1 min-w-0">
           <Left data={contractsList} />

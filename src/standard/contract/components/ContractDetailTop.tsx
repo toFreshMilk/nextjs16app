@@ -1,11 +1,9 @@
 // src/standard/contract/components/ContractDetailTop.tsx
 'use client';
 
-import { useActionState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFormStatus } from 'react-dom';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
-import { executeServiceAction } from '@/core/services/serviceAction';
 import type { StandardContractDto } from '@/standard/contract/services/contract.service';
 
 type StepKey = 'draft' | 'review' | 'active' | 'done';
@@ -52,13 +50,11 @@ function ApproveButton() {
   );
 }
 
-const initialState = { success: false, message: '' };
-
 export default function ContractDetailTop({ data: contract, tenantId }: Props) {
   const router = useRouter();
   const { config } = useAppConfig();
 
-  const [state, formAction] = useActionState(executeServiceAction, initialState);
+  const state = { success: false, message: '' };
 
   const step = statusToStep(contract?.status ?? '');
 
@@ -97,7 +93,7 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
         <div className="flex items-center gap-2 shrink-0">
           {/* 승인 버튼 (상태가 APPROVED가 아닐 때만 표시) */}
           {contract.status !== 'APPROVED' && (
-            <form action={formAction}>
+            <form>
               {/* [핵심] Common Action용 메타데이터 주입 */}
               <input type="hidden" name="tenantId" value={tenantId} />
               <input type="hidden" name="serviceKey" value="ContractService" />
