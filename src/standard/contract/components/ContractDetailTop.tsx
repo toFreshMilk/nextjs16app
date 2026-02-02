@@ -2,9 +2,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useFormStatus } from 'react-dom';
+import { useMutation } from '@tanstack/react-query';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
-import type { StandardContractDto } from '@/standard/contract/services/contract.service';
+import contractService, { StandardContractDto } from '@/standard/contract/services/contract.service';
 
 type StepKey = 'draft' | 'review' | 'active' | 'done';
 
@@ -36,42 +36,46 @@ interface Props {
   tenantId: string;
 }
 
-// Submit Button Component (로딩 상태 표시)
-function ApproveButton() {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="px-3 py-2 rounded-lg border border-blue-200 bg-blue-600 font-bold text-white hover:bg-blue-700 disabled:opacity-50"
-    >
-      {pending ? '처리중...' : '승인하기'}
-    </button>
-  );
-}
-
 export default function ContractDetailTop({ data: contract, tenantId }: Props) {
   const router = useRouter();
   const { config } = useAppConfig();
 
-  const state = { success: false, message: '' };
-
   const step = statusToStep(contract?.status ?? '');
 
-  // [변경] 객체 리터럴 참조도 컴파일러가 관리함
   const stepMap = { draft: 0, review: 1, active: 2, done: 3 };
   const stepIndex = stepMap[step];
 
   const title = contract?.title ?? '계약 상세';
   const statusLabel = getStatusLabel(contract?.status ?? '');
 
-  // [변경] 정적 배열도 컴파일러가 알아서 상수 처리함
   const steps = [
     { key: 'draft', label: '초안' },
     { key: 'review', label: '검토' },
     { key: 'active', label: '서명 및 회수' },
     { key: 'done', label: '완료' },
   ];
+
+  // [변경] React Query useMutation 사용
+  const { mutate: handleApprove, isPending } = useMutation({
+    mutationFn: async () => {
+      // 서비스 파일의 approve 함수 직접 호출
+      return await contractService.approve(tenantId, String(contract.id));
+    },
+    onSuccess: () => {
+      alert('승인되었습니다.');
+      // [핵심] 서버 컴포넌트 데이터 갱신 (Next.js 방식)
+      router.refresh();
+    },
+    onError: (error) => {
+      alert(`승인 실패: ${(error as Error).message}`);
+    },
+  });
+
+  const onApproveClick = () => {
+    if (confirm('정말 승인하시겠습니까?')) {
+      handleApprove();
+    }
+  };
 
   return (
     <section className="space-y-4">
@@ -91,26 +95,14 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          {/* 승인 버튼 (상태가 APPROVED가 아닐 때만 표시) */}
           {contract.status !== 'APPROVED' && (
-            <form>
-              {/* [핵심] Common Action용 메타데이터 주입 */}
-              <input type="hidden" name="tenantId" value={tenantId} />
-              <input type="hidden" name="serviceKey" value="ContractService" />
-              <input type="hidden" name="methodName" value="approve" />
-
-              {/* 인자는 JSON 문자열로 직렬화: [tenantId, contractId] */}
-              <input type="hidden" name="args" value={JSON.stringify([tenantId, contract.id])} />
-
-              {/* 성공 시 갱신할 경로 */}
-              <input
-                type="hidden"
-                name="revalidateUrl"
-                value={`/${tenantId}/contract, /${tenantId}/contract/${contract.id}`}
-              />
-
-              <ApproveButton />
-            </form>
+            <button
+              onClick={onApproveClick}
+              disabled={isPending}
+              className="px-3 py-2 rounded-lg border border-blue-200 bg-blue-600 font-bold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isPending ? '처리중...' : '승인하기'}
+            </button>
           )}
 
           <button className="px-3 py-2 rounded-lg border border-slate-200 bg-amber-300 font-bold text-slate-900">
@@ -121,16 +113,6 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
           </button>
         </div>
       </div>
-
-      {/* 에러/성공 메시지 표시 */}
-      {state?.message && !state?.success && (
-        <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm font-bold">{state.message}</div>
-      )}
-
-      {/* 성공 메시지 (옵션) */}
-      {state?.success && state?.message && (
-        <div className="bg-green-100 text-green-700 p-3 rounded-lg text-sm font-bold">{state.message}</div>
-      )}
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100">
@@ -143,7 +125,7 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
           <div className="relative">
             <div className="h-[2px] bg-slate-200" />
             <div
-              className="h-[2px] absolute top-0 left-0"
+              className="h-[2px] absolute top-0 left-0 transition-all duration-500"
               style={{
                 width: `${(stepIndex / 3) * 100}%`,
                 backgroundColor: config.theme.primaryColor,
@@ -156,7 +138,7 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
                 return (
                   <div key={s.key} className="text-center">
                     <div
-                      className="mx-auto h-2 w-2 rounded-full"
+                      className="mx-auto h-2 w-2 rounded-full transition-colors duration-300"
                       style={{
                         backgroundColor: active ? config.theme.primaryColor : '#cbd5e1',
                       }}

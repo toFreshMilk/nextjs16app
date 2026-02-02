@@ -62,7 +62,7 @@ buptlebiz_fe/
     │   │       └── demo.config.ts # Demo Tenant Config
     │   │
     │   ├── contexts/
-    │   │   └── AppConfigContext.tsx # App Config Context (TenantConfigData 등)
+    │   │   └── QueryProvider.tsx # App Config Context (TenantConfigData 등)
     │   │
     │   ├── hooks/
     │   │   └── useTenant.ts # Tenant 식별 Hook
@@ -146,7 +146,7 @@ buptlebiz_fe/
 ### 3. 타입 정의 위치
 
 - **Contract 관련 타입**: service.ts 파일에 정의
-- **App Config 관련 타입**: `core/contexts/AppConfigContext.tsx`에 정의
+- **App Config 관련 타입**: `core/contexts/QueryProvider.tsx`에 정의
   - 예: `TenantConfigData`, `AppConfigContextValue` 등
 
 ### 4. 테넌트별 차별화 포인트

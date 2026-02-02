@@ -3,6 +3,7 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 import { Metadata } from 'next'; // [1] Metadata 타입 import 필수
+import QueryProvider from '@/core/providers/QueryProvider'; // 방금 만든 파일
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,7 +19,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko" className={inter.className}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <QueryProvider>{children}</QueryProvider>
+      </body>
     </html>
   );
 }

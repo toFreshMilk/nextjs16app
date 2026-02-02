@@ -1,4 +1,4 @@
-// src/core/contexts/AppConfigContext.tsx
+// src/core/contexts/QueryProvider.tsx
 'use client';
 import { createContext, useContext, ReactNode } from 'react';
 import type { TenantConfig } from '@/core/config/tenant.types';
