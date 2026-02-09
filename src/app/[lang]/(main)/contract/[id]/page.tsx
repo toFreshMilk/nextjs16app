@@ -1,13 +1,14 @@
 // src/app/[lang]/(main)/contract/[id]/page.tsx
-import { getTenantComponent, getTenantService } from '@/core/config/tenant.config';
+import { getTenantComponent, getTenantService, getTenantId } from '@/core/config/tenant.config';
 import { notFound } from 'next/navigation';
 // [중요] Standard 구현체에서 타입을 가져옴 (Service & Props)
 import type { StandardContractService } from '@/standard/contract/services/contract.service';
 // ContractDetailTopProps는 실제 컴포넌트 파일이 있어야 import 가능. 여기선 any로 가정하거나 실제 파일에서 export 필요.
 // 여기서는 Duck Typing 설명을 위해 any로 캐스팅하거나, StandardService 타입을 사용
 
-export default async function ContractDetailPage({ params }: { params: Promise<{ tenant: string; id: string }> }) {
-  const { tenant, id } = await params;
+export default async function ContractDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const tenant = await getTenantId();
 
   // 1. 필요한 모든 리소스(컴포넌트, 서비스) 병렬 로드
   // [핵심] StandardContractService 타입 제네릭 전달 -> 타입 추론 활성화

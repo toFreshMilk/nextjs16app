@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 import { Metadata } from 'next'; // [1] Metadata 타입 import 필수
 import QueryProvider from '@/core/providers/QueryProvider'; // 방금 만든 파일
+import { headers } from 'next/headers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,14 +17,10 @@ export const metadata: Metadata = {
   description: 'Enterprise Legal Solution',
 };
 
-export default async function RootLayout({
-  children,
-  params,
-}: {
-  children: ReactNode;
-  params: Promise<{ lang: string }>;
-}) {
-  const lang = (await params)?.lang || 'ko';
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const headersList = await headers();
+  const lang = headersList.get('x-lang') || 'ko';
+
   return (
     <html lang={lang} className={inter.className}>
       <body className="antialiased">

@@ -1,16 +1,10 @@
 // src/app/[lang]/(main)/contract/page.tsx
-import { getTenantComponent, getTenantService } from '@/core/config/tenant.config';
+import { getTenantComponent, getTenantService, getTenantId } from '@/core/config/tenant.config';
 import type { StandardContractService } from '@/standard/contract/services/contract.service';
-import { headers } from 'next/headers';
 
 export default async function ContractPage() {
   // 1. 헤더에서 테넌트 ID 추출
-  const headersList = await headers();
-  const tenant = headersList.get('x-tenant-id');
-
-  if (!tenant) {
-    throw new Error('[Page Error] Tenant ID missing in headers');
-  }
+  const tenant = await getTenantId();
 
   // 1. 컴포넌트와 서비스를 병렬로 로드
   const [Sidebar, Main, List, service] = await Promise.all([

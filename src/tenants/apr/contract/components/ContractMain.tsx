@@ -4,7 +4,6 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
-import { useTenant } from '@/core/hooks/useTenant';
 
 function normalizeStatus(s: string) {
   return (s ?? '').trim().toLowerCase();
@@ -27,13 +26,11 @@ function Column({
   hint,
   items,
   chip,
-  tenantId,
 }: {
   title: string;
   hint: string;
   items: any[];
   chip: { bg: string; text: string; border: string };
-  tenantId: string;
 }) {
   return (
     <section className="min-w-[280px] flex-1 rounded-2xl border border-rose-200 bg-white shadow-sm overflow-hidden">
@@ -54,7 +51,7 @@ function Column({
           items.map((c) => (
             <Link
               key={String(c.id)}
-              href={`/${tenantId}/contract/${c.id}`}
+              href={`/contract/${c.id}`}
               className="block rounded-xl border border-rose-100 bg-rose-50/40 p-3 hover:bg-rose-50 transition cursor-pointer"
             >
               <div className="text-xs font-black text-rose-700">#{c.id}</div>
@@ -81,7 +78,6 @@ interface AprContractMainProps {
 
 export default function AprContractMain({ contracts }: AprContractMainProps) {
   const { config } = useAppConfig();
-  const { tenantId } = useTenant();
   const searchParams = useSearchParams();
 
   // [React 19] 그냥 변수에 할당하면 끝. 컴파일러가 알아서 메모이제이션함.
@@ -151,7 +147,6 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
             text: 'text-amber-800',
             border: 'border-amber-200',
           }}
-          tenantId={tenantId}
         />
         <Column
           title="진행"
@@ -162,7 +157,6 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
             text: 'text-emerald-800',
             border: 'border-emerald-200',
           }}
-          tenantId={tenantId}
         />
         <Column
           title="초안"
@@ -173,7 +167,6 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
             text: 'text-slate-700',
             border: 'border-slate-200',
           }}
-          tenantId={tenantId}
         />
       </div>
     </section>

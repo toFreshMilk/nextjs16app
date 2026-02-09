@@ -1,7 +1,7 @@
 // src/app/[lang]/page.tsx
 import { redirect } from 'next/navigation';
 
-export default async function TenantRootPage({ params }: { params: Promise<{ tenant: string }> }) {
-  const { tenant } = await params;
-  redirect(`/${tenant}/contract`);
+export default async function LangRootPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  redirect(`/${lang}/contract`);
 }

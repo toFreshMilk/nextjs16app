@@ -1,8 +1,7 @@
 // src/app/[lang]/layout.tsx
 import { ComponentType, ReactNode } from 'react';
-import { headers } from 'next/headers';
 import dynamic from 'next/dynamic';
-import { loadTenantConfig } from '@/core/config/tenant.config';
+import { loadTenantConfig, getTenantId } from '@/core/config/tenant.config';
 import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
 
 // 스타일 로더 설정
@@ -19,12 +18,7 @@ export function TenantStyleGateway({ tenant }: { tenant: string }) {
 
 export default async function LangLayout({ children }: { children: ReactNode }) {
   // [변경] 미들웨어가 심어준 헤더에서 tenant 추출
-  const headersList = await headers();
-  const tenant = headersList.get('x-tenant-id');
-
-  if (!tenant) {
-    throw new Error('Tenant ID missing in headers');
-  }
+  const tenant = await getTenantId();
 
   let config;
   try {

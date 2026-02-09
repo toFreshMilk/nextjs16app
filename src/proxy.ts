@@ -69,10 +69,18 @@ export function proxy(req: NextRequest) {
   }
 
   // 3. 최종 Rewrite (헤더에 테넌트 심기)
-  const response = NextResponse.next();
-  response.headers.set('x-tenant-id', tenant);
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set('x-tenant-id', tenant);
 
-  return response;
+  const urlLang = pathname.split('/')[1];
+  const lang = LOCALES.includes(urlLang) ? urlLang : DEFAULT_LOCALE;
+  requestHeaders.set('x-lang', lang);
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
 // [주의] config 설정은 유지될 수도 있고, proxy에서는 제거될 수도 있으나

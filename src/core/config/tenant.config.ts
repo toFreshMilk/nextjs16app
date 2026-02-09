@@ -1,6 +1,7 @@
 // src/core/config/tenant.config.ts
-import { ComponentType } from 'react';
+import { cache, ComponentType } from 'react';
 import type { TenantConfig, ComponentLoader, ServiceLoader, ModuleWithDefault } from '@/core/config/tenant.types';
+import { headers } from 'next/headers';
 
 // === 1. Loaders ===
 export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> {
@@ -79,3 +80,14 @@ export async function getTenantService<T = any>(
   const moduleData = await standardLoader();
   return moduleData.default as T;
 }
+
+export const getTenantId = cache(async () => {
+  const headersList = await headers();
+  const tenant = headersList.get('x-tenant-id');
+
+  if (!tenant) {
+    throw new Error('Tenant ID missing in headers');
+  }
+
+  return tenant;
+});

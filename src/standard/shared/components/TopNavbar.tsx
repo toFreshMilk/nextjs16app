@@ -8,12 +8,11 @@ export function TopNavbar() {
   const { config } = useAppConfig();
   const pathname = usePathname();
   const isActive = (p: string) => pathname.startsWith(p);
-  const t = config.id;
 
   return (
     <nav className="h-16 px-6 bg-white border-b border-slate-200 flex items-center justify-between">
       <div className="flex items-center gap-10">
-        <Link href={`/${t}/contract`} className="flex items-center gap-3">
+        <Link href={`/contract`} className="flex items-center gap-3">
           <div
             className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black"
             style={{ backgroundColor: config.theme.primaryColor }}
@@ -30,19 +29,16 @@ export function TopNavbar() {
         </Link>
 
         <div className="hidden md:flex items-center gap-6 text-sm font-bold text-slate-600">
-          <Link
-            href={`/${t}/contract`}
-            className={isActive(`/${t}/contract`) ? 'text-slate-900' : 'hover:text-slate-900'}
-          >
+          <Link href={`/contract`} className={isActive(`/contract`) ? 'text-slate-900' : 'hover:text-slate-900'}>
             계약
           </Link>
-          <Link href={`/${t}/contract`} className="hover:text-slate-900">
+          <Link href={`/contract`} className="hover:text-slate-900">
             자문
           </Link>
-          <Link href={`/${t}/contract`} className="hover:text-slate-900">
+          <Link href={`/contract`} className="hover:text-slate-900">
             소송
           </Link>
-          <Link href={`/${t}/contract`} className="hover:text-slate-900">
+          <Link href={`/contract`} className="hover:text-slate-900">
             통계
           </Link>
         </div>
@@ -50,10 +46,10 @@ export function TopNavbar() {
 
       <div className="flex items-center gap-4">
         <div className="hidden lg:flex items-center gap-3 text-sm font-bold text-slate-600">
-          <Link href={`/${t}/contract`} className="hover:text-slate-900">
+          <Link href={`/contract`} className="hover:text-slate-900">
             공지사항
           </Link>
-          <Link href={`/${t}/contract`} className="hover:text-slate-900">
+          <Link href={`/contract`} className="hover:text-slate-900">
             관리자
           </Link>
         </div>
