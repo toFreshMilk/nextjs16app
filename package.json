@@ -15,16 +15,22 @@
     "build:prod": "cross-env NEXT_PUBLIC_ENV=prod next build"
   },
   "dependencies": {
+    "@formatjs/intl-localematcher": "^0.8.1",
     "@tanstack/react-query": "^5.90.20",
     "clsx": "^2.1.1",
+    "i18next": "^25.8.0",
+    "i18next-resources-to-backend": "^1.2.1",
+    "negotiator": "^1.0.0",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-i18next": "^16.5.4",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.1.1",
     "@tailwindcss/postcss": "^4",
+    "@types/negotiator": "^0.6.4",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",

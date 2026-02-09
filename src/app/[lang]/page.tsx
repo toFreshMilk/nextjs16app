@@ -1,4 +1,4 @@
-// src/app/[tenant]/page.tsx
+// src/app/[lang]/page.tsx
 import { redirect } from 'next/navigation';
 
 export default async function TenantRootPage({ params }: { params: Promise<{ tenant: string }> }) {

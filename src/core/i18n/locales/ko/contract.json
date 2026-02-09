@@ -1,0 +1,10 @@
+{
+  "title": "계약 목록",
+  "approve": "승인하기",
+  "reject": "반려하기",
+  "status": {
+    "draft": "초안",
+    "active": "진행중",
+    "done": "완료"
+  }
+}

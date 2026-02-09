@@ -16,9 +16,16 @@ export const metadata: Metadata = {
   description: 'Enterprise Legal Solution',
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ lang: string }>;
+}) {
+  const lang = (await params)?.lang || 'ko';
   return (
-    <html lang="ko" className={inter.className}>
+    <html lang={lang} className={inter.className}>
       <body className="antialiased">
         <QueryProvider>{children}</QueryProvider>
       </body>

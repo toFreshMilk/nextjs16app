@@ -1,0 +1,10 @@
+{
+  "title": "Contract List",
+  "approve": "Approve",
+  "reject": "Reject",
+  "status": {
+    "draft": "Draft",
+    "active": "Active",
+    "done": "Done"
+  }
+}

@@ -1,9 +1,16 @@
-// src/app/[tenant]/(main)/contract/page.tsx
+// src/app/[lang]/(main)/contract/page.tsx
 import { getTenantComponent, getTenantService } from '@/core/config/tenant.config';
 import type { StandardContractService } from '@/standard/contract/services/contract.service';
+import { headers } from 'next/headers';
 
-export default async function ContractPage({ params }: { params: Promise<{ tenant: string }> }) {
-  const { tenant } = await params;
+export default async function ContractPage() {
+  // 1. 헤더에서 테넌트 ID 추출
+  const headersList = await headers();
+  const tenant = headersList.get('x-tenant-id');
+
+  if (!tenant) {
+    throw new Error('[Page Error] Tenant ID missing in headers');
+  }
 
   // 1. 컴포넌트와 서비스를 병렬로 로드
   const [Sidebar, Main, List, service] = await Promise.all([
@@ -13,6 +20,7 @@ export default async function ContractPage({ params }: { params: Promise<{ tenan
     getTenantService<StandardContractService>(tenant, 'ContractService'),
   ]);
 
+  // t함수를 구지 여기서 내려줘야하나? 필수로 쓰이니까 그게 좋겠지
   // 2. 데이터 페칭
   const contracts = await service.getContracts(tenant);
 

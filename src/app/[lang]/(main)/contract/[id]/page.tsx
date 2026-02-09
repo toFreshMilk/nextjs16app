@@ -1,4 +1,4 @@
-// src/app/[tenant]/(main)/contract/[id]/page.tsx
+// src/app/[lang]/(main)/contract/[id]/page.tsx
 import { getTenantComponent, getTenantService } from '@/core/config/tenant.config';
 import { notFound } from 'next/navigation';
 // [중요] Standard 구현체에서 타입을 가져옴 (Service & Props)

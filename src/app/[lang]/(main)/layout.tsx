@@ -1,15 +1,12 @@
-// src/app/[tenant]/(main)/layout.tsx
+// src/app/[lang]/(main)/layout.tsx
 import { ReactNode } from 'react';
 import { getTenantComponent } from '@/core/config/tenant.config';
+import { headers } from 'next/headers';
 
-export default async function MainLayout({
-  children,
-  params,
-}: {
-  children: ReactNode;
-  params: Promise<{ tenant: string }>;
-}) {
-  const { tenant } = await params;
+export default async function MainLayout({ children }: { children: ReactNode; params: Promise<{ tenant: string }> }) {
+  // 1. 헤더에서 테넌트 ID 추출 (proxy.ts가 넣어줌)
+  const headersList = await headers();
+  const tenant = headersList.get('x-tenant-id') || '';
 
   // [핵심] Navbar도 테넌트별로 갈아끼움!
   // Demo면 DemoTopNavbar가 오고, 일반이면 Standard TopNavbar가 옴

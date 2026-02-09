@@ -1,0 +1,10 @@
+{
+  "title": "Contract List apr",
+  "approve": "Approve apr",
+  "reject": "Reject apr",
+  "status": {
+    "draft": "Draft apr",
+    "active": "Active apr",
+    "done": "Done apr"
+  }
+}
