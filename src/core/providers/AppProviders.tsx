@@ -12,7 +12,6 @@ export function AppProviders({
   tenantConfig,
   lang,
   resources,
-  cacheKey,
   children,
 }: {
   tenantConfig: TenantConfigData;
@@ -24,7 +23,7 @@ export function AppProviders({
   return (
     <QueryProvider>
       <AppConfigProvider tenantConfig={tenantConfig}>
-        <I18nProvider lang={lang} resources={resources} cacheKey={cacheKey}>
+        <I18nProvider lang={lang} resources={resources}>
           {children}
         </I18nProvider>
       </AppConfigProvider>
