@@ -1,12 +1,10 @@
 // src/app/[lang]/layout.tsx
 import type { ComponentType, ReactNode } from 'react';
 import dynamic from 'next/dynamic';
-import { notFound } from 'next/navigation';
 
 import { loadTenantConfig, getTenantId } from '@/core/config/tenant.config';
 import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
 
-import { isSupportedLang } from '@/core/i18n/settings';
 import { getI18nResources } from '@/core/i18n/server';
 import I18nProvider from '@/core/providers/I18nProvider';
 
@@ -30,9 +28,6 @@ export default async function LangLayout({
   params: Promise<{ lang: string }>;
 }) {
   const lang = (await params).lang;
-  if (!isSupportedLang(lang)) {
-    notFound();
-  }
 
   // [변경] 미들웨어(Proxy)가 심어준 헤더에서 tenant 추출
   const tenant = await getTenantId();
