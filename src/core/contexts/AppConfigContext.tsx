@@ -1,6 +1,7 @@
-// src/core/contexts/QueryProvider.tsx
+// src/core/contexts/AppConfigContext.tsx
 'use client';
-import { createContext, useContext, ReactNode } from 'react';
+
+import { createContext, useContext, type ReactNode } from 'react';
 import type { TenantConfig } from '@/core/config/tenant.types';
 
 // === App Config Types ===
@@ -18,6 +19,6 @@ export function AppConfigProvider({ tenantConfig, children }: { tenantConfig: Te
 
 export function useAppConfig() {
   const ctx = useContext(AppConfigContext);
-  if (!ctx) throw new Error('useAppConfig Error');
+  if (!ctx) throw new Error('useAppConfig Error: AppConfigProvider가 상위에 존재하지 않습니다.');
   return ctx;
 }

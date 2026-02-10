@@ -1,8 +1,8 @@
 // src/app/layout.tsx
 import './globals.css';
 import { Inter } from 'next/font/google';
-import { ReactNode } from 'react';
-import { Metadata } from 'next'; // [1] Metadata 타입 import 필수
+import type { ReactNode } from 'react';
+import type { Metadata } from 'next'; // [1] Metadata 타입 import 필수
 import QueryProvider from '@/core/providers/QueryProvider'; // 방금 만든 파일
 import { headers } from 'next/headers';
 

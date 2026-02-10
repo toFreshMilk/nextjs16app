@@ -20,6 +20,9 @@ importers:
       i18next:
         specifier: ^25.8.0
         version: 25.8.0(typescript@5.9.3)
+      i18next-korean-postposition-processor:
+        specifier: ^1.0.0
+        version: 1.0.0(i18next@25.8.0(typescript@5.9.3))
       i18next-resources-to-backend:
         specifier: ^1.2.1
         version: 1.2.1
@@ -1298,6 +1301,11 @@ packages:
 
   html-parse-stringify@3.0.1:
     resolution: {integrity: sha512-KknJ50kTInJ7qIScF3jeaFRpMpE8/lfiTdzf/twXyPBLAGrLRTmkz3AdTnKeh40X8k9L2fdYwEp/42WGXIRGcg==}
+
+  i18next-korean-postposition-processor@1.0.0:
+    resolution: {integrity: sha512-ruNXjI9awsFK6Ie+F9gYaMW8ciLMuCkeRjH9QkSv2Wb8xI0mnm773v3M9eua8dtvAXudIUk4p6Ho7hNkEASXDg==}
+    peerDependencies:
+      i18next: '>=8.4.0'
 
   i18next-resources-to-backend@1.2.1:
     resolution: {integrity: sha512-okHbVA+HZ7n1/76MsfhPqDou0fptl2dAlhRDu2ideXloRRduzHsqDOznJBef+R3DFZnbvWoBW+KxJ7fnFjd6Yw==}
@@ -3448,6 +3456,10 @@ snapshots:
   html-parse-stringify@3.0.1:
     dependencies:
       void-elements: 3.1.0
+
+  i18next-korean-postposition-processor@1.0.0(i18next@25.8.0(typescript@5.9.3)):
+    dependencies:
+      i18next: 25.8.0(typescript@5.9.3)
 
   i18next-resources-to-backend@1.2.1:
     dependencies:

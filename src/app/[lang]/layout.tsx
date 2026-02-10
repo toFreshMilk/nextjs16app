@@ -1,8 +1,14 @@
 // src/app/[lang]/layout.tsx
-import { ComponentType, ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import dynamic from 'next/dynamic';
+import { notFound } from 'next/navigation';
+
 import { loadTenantConfig, getTenantId } from '@/core/config/tenant.config';
 import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
+
+import { isSupportedLang } from '@/core/i18n/settings';
+import { getI18nResources } from '@/core/i18n/server';
+import I18nProvider from '@/core/i18n/I18nProvider';
 
 // 스타일 로더 설정
 const LOADERS: Record<string, ComponentType> = {
@@ -16,8 +22,19 @@ export function TenantStyleGateway({ tenant }: { tenant: string }) {
   return <Loader />;
 }
 
-export default async function LangLayout({ children }: { children: ReactNode }) {
-  // [변경] 미들웨어가 심어준 헤더에서 tenant 추출
+export default async function LangLayout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ lang: string }>;
+}) {
+  const lang = (await params).lang;
+  if (!isSupportedLang(lang)) {
+    notFound();
+  }
+
+  // [변경] 미들웨어(Proxy)가 심어준 헤더에서 tenant 추출
   const tenant = await getTenantId();
 
   let config;
@@ -34,13 +51,20 @@ export default async function LangLayout({ children }: { children: ReactNode }) 
     theme: config.theme,
   };
 
+  // ✅ 선택지 B: 서버는 리소스를 준비(병합)만 하고, 번역 사용은 클라이언트에서만
+  const resources = await getI18nResources(lang, tenant, ['common', 'contract']);
+  const cacheKey = `${tenant}__${lang}`;
+
   return (
     <AppConfigProvider tenantConfig={configData}>
       {/* 테넌트별 스타일 로드 */}
       <TenantStyleGateway tenant={tenant} />
 
-      {/* 하위 페이지 렌더링 */}
-      {children}
+      {/* i18n Provider (client translations only) */}
+      <I18nProvider lang={lang} resources={resources} cacheKey={cacheKey}>
+        {/* 하위 페이지 렌더링 */}
+        {children}
+      </I18nProvider>
     </AppConfigProvider>
   );
 }
