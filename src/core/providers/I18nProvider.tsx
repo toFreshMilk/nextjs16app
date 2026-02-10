@@ -1,7 +1,7 @@
 // src/core/providers/I18nProvider.tsx
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
 import type { I18nResourceStore } from '@/core/i18n/types';
