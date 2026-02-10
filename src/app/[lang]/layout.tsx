@@ -51,9 +51,9 @@ export default async function LangLayout({
     theme: config.theme,
   };
 
-  // ✅ 선택지 B: 서버는 리소스를 준비(병합)만 하고, 번역 사용은 클라이언트에서만
-  const resources = await getI18nResources(lang, tenant, ['common', 'contract']);
-  const cacheKey = `${tenant}__${lang}`;
+  // ✅ 변경: 여기서는 common만 로딩 (contract는 /contract 라우트에서만 추가 로딩)
+  const resources = await getI18nResources(lang, tenant, ['common']);
+  const cacheKey = `${tenant}__${lang}__common`;
 
   return (
     <AppConfigProvider tenantConfig={configData}>
