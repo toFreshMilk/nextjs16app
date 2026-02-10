@@ -5,8 +5,10 @@ import Negotiator from 'negotiator';
 
 const VALID_TENANTS = new Set(['demo', 'apr']);
 const VALID_ROOT_DOMAINS = ['buptle.com', 'buptlestg.com', 'localhost.com', 'localhost'];
-const LOCALES = ['ko', 'en'];
+const LOCALES = ['ko', 'en'] as const;
 const DEFAULT_LOCALE = 'ko';
+
+const LANG_COOKIE = 'lang'; // 원하는 이름으로 변경 가능
 
 function detectTenant(hostname: string): string | null {
   const host = hostname.split(':')[0];
@@ -16,29 +18,39 @@ function detectTenant(hostname: string): string | null {
   const subdomain = host.slice(0, host.length - rootDomain.length);
   const sanitized = subdomain.endsWith('.') ? subdomain.slice(0, -1) : subdomain;
 
-  if (!sanitized || sanitized === 'www' || !VALID_TENANTS.has(sanitized)) {
-    return null;
-  }
+  if (!sanitized || sanitized === 'www' || !VALID_TENANTS.has(sanitized)) return null;
   return sanitized;
 }
 
-function getLocale(request: NextRequest) {
+function getLocaleFromAcceptLanguage(request: NextRequest) {
   const headers = { 'accept-language': request.headers.get('accept-language') || '' };
   const languages = new Negotiator({ headers }).languages();
   try {
-    return match(languages, LOCALES, DEFAULT_LOCALE);
-  } catch (e) {
-    console.log(e);
+    return match(languages, Array.from(LOCALES), DEFAULT_LOCALE);
+  } catch {
     return DEFAULT_LOCALE;
   }
 }
 
-// [변경] 함수명을 proxy로 변경
+function getPreferredLocale(req: NextRequest) {
+  // 1) 쿠키 우선
+  const cookieLang = req.cookies.get(LANG_COOKIE)?.value;
+  if (cookieLang && (LOCALES as readonly string[]).includes(cookieLang)) return cookieLang;
+
+  // 2) (선택) referer에 /en/ 또는 /ko/가 있으면 그걸 우선
+  const ref = req.headers.get('referer') ?? '';
+  const m = ref.match(/\/(ko|en)(\/|$)/);
+  if (m?.[1] && (LOCALES as readonly string[]).includes(m[1])) return m[1];
+
+  // 3) 없으면 Accept-Language
+  return getLocaleFromAcceptLanguage(req);
+}
+
 export function proxy(req: NextRequest) {
   const url = req.nextUrl;
   const hostname = req.headers.get('host') || '';
 
-  // [Pass] 정적 파일, API, Next.js 내부 경로 통과
+  // Pass static/API
   if (
     url.pathname.includes('.') ||
     url.pathname.startsWith('/_next') ||
@@ -48,7 +60,7 @@ export function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 1. 테넌트 식별
+  // 1) tenant
   const tenant = detectTenant(hostname);
   if (!tenant) {
     const errorUrl = req.nextUrl.clone();
@@ -56,37 +68,60 @@ export function proxy(req: NextRequest) {
     return NextResponse.rewrite(errorUrl);
   }
 
-  // 2. 언어 처리 (/ko, /en)
   const pathname = url.pathname;
+
+  // 현재 URL이 /ko/... or /en/... 인지 확인
+  const urlLang = pathname.split('/')[1];
+  const hasLocalePrefix = (LOCALES as readonly string[]).includes(urlLang);
+
+  // 2) locale 없는 경우 -> 쿠키(or ref/accept-language)로 리다이렉트
   const pathnameIsMissingLocale = LOCALES.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`,
   );
 
   if (pathnameIsMissingLocale) {
-    const locale = getLocale(req);
-    // 예: /contract -> /ko/contract
+    const locale = getPreferredLocale(req);
     const newUrl = new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, req.url);
-    return NextResponse.redirect(newUrl);
+
+    const res = NextResponse.redirect(newUrl);
+
+    // 쿠키가 비어있던 첫 진입(/contract) 케이스에서도 locale 저장해두면 다음부터 바로 유지됨
+    res.cookies.set(LANG_COOKIE, locale, {
+      path: '/',
+      sameSite: 'lax',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 365, // 1년
+    });
+
+    return res;
   }
 
-  // 3. 최종 Rewrite (헤더에 테넌트 심기)
+  // 3) locale이 있는 정상 경로 -> 헤더 심고 + 쿠키 갱신
+  const lang = hasLocalePrefix ? urlLang : DEFAULT_LOCALE;
+
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set('x-tenant-id', tenant);
-
-  const urlLang = pathname.split('/')[1];
-  const lang = LOCALES.includes(urlLang) ? urlLang : DEFAULT_LOCALE;
   requestHeaders.set('x-lang', lang);
 
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
+  const res = NextResponse.next({
+    request: { headers: requestHeaders },
   });
+
+  // 사용자가 /en/... 또는 /ko/... 로 "명시적으로" 바꿨으면 그 선택을 저장
+  if (hasLocalePrefix) {
+    res.cookies.set(LANG_COOKIE, lang, {
+      path: '/',
+      sameSite: 'lax',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 365,
+    });
+  }
+
+  return res;
 }
 
-// [주의] config 설정은 유지될 수도 있고, proxy에서는 제거될 수도 있으나
-// 현재 과도기 버전에서는 matcher가 여전히 유효할 수 있습니다.
-// 만약 config export 에러가 나면 이 부분은 제거해야 합니다.
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

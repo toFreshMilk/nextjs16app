@@ -16,8 +16,7 @@ export default async function ContractLayout({
   const lang = (await params).lang;
 
   // ✅ /contract subtree에서만 common + contract 제공
-  const resources = await getI18nResources(lang, tenant, ['common', 'contract'], {
-    common: 'shared',
+  const resources = await getI18nResources(lang, tenant, ['contract'], {
     contract: 'contract',
   });
 
