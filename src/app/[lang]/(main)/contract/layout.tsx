@@ -15,13 +15,14 @@ export default async function ContractLayout({
   const tenant = await getTenantId();
   const lang = (await params).lang;
 
-  // ✅ /contract subtree에서만 common + contract를 함께 제공
-  //    (SSR 시점부터 contract 번역이 존재 -> hydration mismatch 제거)
-  const resources = await getI18nResources(lang, tenant, ['common', 'contract']);
-  const cacheKey = `${tenant}__${lang}__common_contract`;
+  // ✅ /contract subtree에서만 common + contract 제공
+  const resources = await getI18nResources(lang, tenant, ['common', 'contract'], {
+    common: 'shared',
+    contract: 'contract',
+  });
 
   return (
-    <I18nProvider lang={lang} resources={resources} cacheKey={cacheKey}>
+    <I18nProvider lang={lang} resources={resources}>
       {children}
     </I18nProvider>
   );

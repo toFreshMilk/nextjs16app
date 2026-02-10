@@ -51,18 +51,17 @@ export default async function LangLayout({
     theme: config.theme,
   };
 
-  // ✅ 변경: 여기서는 common만 로딩 (contract는 /contract 라우트에서만 추가 로딩)
-  const resources = await getI18nResources(lang, tenant, ['common']);
-  const cacheKey = `${tenant}__${lang}__common`;
+  // ✅ 여기서는 common만 로딩
+  // ✅ 요청한 lang 1개만 내려줌
+  const resources = await getI18nResources(lang, tenant, ['common'], { common: 'shared' });
 
   return (
     <AppConfigProvider tenantConfig={configData}>
       {/* 테넌트별 스타일 로드 */}
       <TenantStyleGateway tenant={tenant} />
 
-      {/* i18n Provider (client translations only) */}
-      <I18nProvider lang={lang} resources={resources} cacheKey={cacheKey}>
-        {/* 하위 페이지 렌더링 */}
+      {/* i18n Provider */}
+      <I18nProvider lang={lang} resources={resources}>
         {children}
       </I18nProvider>
     </AppConfigProvider>
