@@ -104,7 +104,7 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
             className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900"
             onClick={() => router.back()}
           >
-            <span aria-hidden>←</span>ddddddddddddddddddddd
+            <span aria-hidden>←</span>
             <span>{t('detailTop.backToList')}</span>
           </button>
 
