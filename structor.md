@@ -49,6 +49,7 @@ buptlebiz_fe/
     │       └── (main)/
     │           ├── layout.tsx # Main Layout (TopNavbar, WorkspaceBanner 조립)
     │           └── contract/
+    │               ├── layout.tsx # Contract Layout (Sidebar + Main 조립)
     │               ├── page.tsx # Contract Page (Sidebar + Main 조립)
     │               └── [id]/
     │                   └── page.tsx # Contract Detail Page (Top + Left + Right 조립)
@@ -65,19 +66,19 @@ buptlebiz_fe/
     │   │   └── AppConfigContext.tsx # App Config Context (TenantConfigData 등)
     │   │
     │   ├── hooks/
+    │   │   ├── useCoreTranslation.ts # 공통 i18n 훅
     │   │   └── useTenant.ts # Tenant 식별 Hook
     │   │
     │   ├── i18n/ # Internationalization
+    │   │   ├── createClientI18n.ts # 클라이언트 i18n 생성 유틸
+    │   │   ├── loadMergedResource.ts # standard/tenants 리소스 병합 로더
     │   │   ├── server.ts # i18n 서버 유틸리티
-    │   │   └── locales/
-    │   │       ├── en/
-    │   │       │   ├── common.json # 영어 공통 번역
-    │   │       │   └── contract.json # 영어 계약 번역
-    │   │       └── ko/
-    │   │           ├── common.json # 한국어 공통 번역
-    │   │           └── contract.json # 한국어 계약 번역
+    │   │   ├── settings.ts # i18n 설정
+    │   │   └── types.ts # i18n 타입 정의
     │   │
     │   ├── providers/
+    │   │   ├── AppProviders.tsx # App 전역 Provider 조립 (Query, I18n 등)
+    │   │   ├── I18nProvider.tsx # I18n Provider
     │   │   └── QueryProvider.tsx # React Query Provider
     │   │
     │   ├── services/
@@ -90,9 +91,14 @@ buptlebiz_fe/
     │
     ├── standard/ # [Base] 기본 구현체 (파일 보관소)
     │   ├── shared/
-    │   │   └── components/
-    │   │       ├── TopNavbar.tsx # Standard TopNavbar
-    │   │       └── WorkspaceBanner.tsx # Standard WorkspaceBanner (default: null)
+    │   │   ├── components/
+    │   │   │   ├── TopNavbar.tsx # Standard TopNavbar
+    │   │   │   └── WorkspaceBanner.tsx # Standard WorkspaceBanner (default: null)
+    │   │   └── locales/
+    │   │       ├── en/
+    │   │       │   └── common.json # Standard 영어 공통 번역
+    │   │       └── ko/
+    │   │           └── common.json # Standard 한국어 공통 번역
     │   │
     │   └── contract/
     │       ├── components/
@@ -102,6 +108,11 @@ buptlebiz_fe/
     │       │   ├── ContractDetailTop.tsx # Standard Contract Detail Top
     │       │   ├── ContractDetailLeft.tsx # Standard Contract Detail Left
     │       │   └── ContractDetailRight.tsx # Standard Contract Detail Right
+    │       ├── locales/
+    │       │   ├── en/
+    │       │   │   └── contract.json # Standard 영어 계약 번역
+    │       │   └── ko/
+    │       │       └── contract.json # Standard 한국어 계약 번역
     │       └── services/
     │           └── contract.service.ts # Standard Contract Service
     │
@@ -112,6 +123,11 @@ buptlebiz_fe/
     │   │   │   ├── components/
     │   │   │   │   ├── ContractSidebar.tsx # APR Contract Sidebar Override
     │   │   │   │   └── ContractMain.tsx # APR Contract Main Override
+    │   │   │   ├── locales/
+    │   │   │   │   ├── en/
+    │   │   │   │   │   └── contract.json # APR 영어 계약 번역
+    │   │   │   │   └── ko/
+    │   │   │   │       └── contract.json # APR 한국어 계약 번역
     │   │   │   └── services/
     │   │   │       └── contract.service.ts # APR Contract Service Override
     │   │   └── shared/
@@ -120,11 +136,9 @@ buptlebiz_fe/
     │   │       │   └── WorkspaceBanner.tsx # APR WorkspaceBanner Override
     │   │       └── locales/
     │   │           ├── en/
-    │   │           │   ├── common.json # APR 영어 공통 번역
-    │   │           │   └── contract.json # APR 영어 계약 번역
+    │   │           │   └── common.json # APR 영어 공통 번역
     │   │           └── ko/
-    │   │               ├── common.json # APR 한국어 공통 번역
-    │   │               └── contract.json # APR 한국어 계약 번역
+    │   │               └── common.json # APR 한국어 공통 번역
     │   │
     │   └── demo/
     │       ├── demo.css # Demo Tenant Styles
@@ -133,6 +147,7 @@ buptlebiz_fe/
     │       │   └── services/
     │       │       └── contract.service.ts # Demo Contract Service Override
     │       └── shared/
+    │           ├── DemoStyleLoader.tsx # Demo 스타일 로더
     │           └── components/
     │               └── WorkspaceBanner.tsx # Demo WorkspaceBanner Override
     │
