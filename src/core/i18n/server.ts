@@ -27,8 +27,7 @@ async function buildResourceStore(lang: string, tenant: string, namespaces: stri
  */
 const getResourcesCached = cache(async (lang: string, tenant: string, namespaces: string[]) => {
   const uniqueNamespaces = Array.from(new Set(namespaces));
-  const resources = await buildResourceStore(lang, tenant, uniqueNamespaces);
-  return resources;
+  return await buildResourceStore(lang, tenant, uniqueNamespaces);
 });
 
 export async function getI18nResources(lang: string, tenant: string, namespaces: string[]) {

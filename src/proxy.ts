@@ -28,6 +28,7 @@ function getLocale(request: NextRequest) {
   try {
     return match(languages, LOCALES, DEFAULT_LOCALE);
   } catch (e) {
+    console.log(e);
     return DEFAULT_LOCALE;
   }
 }
