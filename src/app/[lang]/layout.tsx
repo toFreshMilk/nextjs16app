@@ -8,7 +8,7 @@ import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
 
 import { isSupportedLang } from '@/core/i18n/settings';
 import { getI18nResources } from '@/core/i18n/server';
-import I18nProvider from '@/core/i18n/I18nProvider';
+import I18nProvider from '@/core/providers/I18nProvider';
 
 // 스타일 로더 설정
 const LOADERS: Record<string, ComponentType> = {

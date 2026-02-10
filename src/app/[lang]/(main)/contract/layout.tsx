@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 import { getTenantId } from '@/core/config/tenant.config';
 import { getI18nResources } from '@/core/i18n/server';
-import I18nProvider from '@/core/i18n/I18nProvider';
+import I18nProvider from '@/core/providers/I18nProvider';
 
 export default async function ContractLayout({
   children,
