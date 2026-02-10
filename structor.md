@@ -41,7 +41,7 @@ buptlebiz_fe/
     │   ├── globals.css # Global Styles
     │   ├── not-found.tsx # Global 404
     │   │
-    │   └── [tenant]/ # Tenant Dynamic Routes
+    │   └── [lang]/ # Language/Tenant Dynamic Routes
     │       ├── layout.tsx # Tenant Config 주입 (AppConfigProvider)
     │       ├── page.tsx # Tenant Root
     │       ├── error.tsx # Tenant 에러 핸들링
@@ -62,13 +62,26 @@ buptlebiz_fe/
     │   │       └── demo.config.ts # Demo Tenant Config
     │   │
     │   ├── contexts/
-    │   │   └── QueryProvider.tsx # App Config Context (TenantConfigData 등)
+    │   │   └── AppConfigContext.tsx # App Config Context (TenantConfigData 등)
     │   │
     │   ├── hooks/
     │   │   └── useTenant.ts # Tenant 식별 Hook
     │   │
+    │   ├── i18n/ # Internationalization
+    │   │   ├── server.ts # i18n 서버 유틸리티
+    │   │   └── locales/
+    │   │       ├── en/
+    │   │       │   ├── common.json # 영어 공통 번역
+    │   │       │   └── contract.json # 영어 계약 번역
+    │   │       └── ko/
+    │   │           ├── common.json # 한국어 공통 번역
+    │   │           └── contract.json # 한국어 계약 번역
+    │   │
+    │   ├── providers/
+    │   │   └── QueryProvider.tsx # React Query Provider
+    │   │
     │   ├── services/
-    │   │   ├── apiClient.ts # API Client (apiGet, apiPost 등)
+    │   │   └── apiClient.ts # API Client (apiGet, apiPost 등)
     │   │
     │   └── utils/
     │       ├── date.util.ts # Date utilities
@@ -102,12 +115,21 @@ buptlebiz_fe/
     │   │   │   └── services/
     │   │   │       └── contract.service.ts # APR Contract Service Override
     │   │   └── shared/
-    │   │       └── components/
-    │   │           └── WorkspaceBanner.tsx # APR WorkspaceBanner Override
+    │   │       ├── APRStyleLoader.tsx # APR 스타일 로더
+    │   │       ├── components/
+    │   │       │   └── WorkspaceBanner.tsx # APR WorkspaceBanner Override
+    │   │       └── locales/
+    │   │           ├── en/
+    │   │           │   ├── common.json # APR 영어 공통 번역
+    │   │           │   └── contract.json # APR 영어 계약 번역
+    │   │           └── ko/
+    │   │               ├── common.json # APR 한국어 공통 번역
+    │   │               └── contract.json # APR 한국어 계약 번역
     │   │
     │   └── demo/
     │       ├── demo.css # Demo Tenant Styles
     │       ├── contract/
+    │       │   ├── components/ # Demo Contract Components (비어있음)
     │       │   └── services/
     │       │       └── contract.service.ts # Demo Contract Service Override
     │       └── shared/
@@ -132,9 +154,9 @@ buptlebiz_fe/
 ### 1. app/ 레이어: 조립(Composition)
 
 - `app/` 디렉토리는 **1차 뎁스 레이아웃(레이아웃 뼈대)**을 책임합니다.
-- `app/[tenant]/(main)/layout.tsx`: TopNavbar, WorkspaceBanner를 테넌트 설정에 따라 주입
-- `app/[tenant]/(main)/contract/page.tsx`: ContractSidebar + ContractMain을 조립
-- `app/[tenant]/(main)/contract/[id]/page.tsx`: ContractDetailTop + ContractDetailLeft + ContractDetailRight를 조립
+- `app/[lang]/(main)/layout.tsx`: TopNavbar, WorkspaceBanner를 테넌트 설정에 따라 주입
+- `app/[lang]/(main)/contract/page.tsx`: ContractSidebar + ContractMain을 조립
+- `app/[lang]/(main)/contract/[id]/page.tsx`: ContractDetailTop + ContractDetailLeft + ContractDetailRight를 조립
 - **페이지 단위 override는 사용하지 않고, 슬롯 조립 방식만 사용**합니다.
 
 ### 2. standard/ & tenants/: 파일 보관소
@@ -146,7 +168,7 @@ buptlebiz_fe/
 ### 3. 타입 정의 위치
 
 - **Contract 관련 타입**: service.ts 파일에 정의
-- **App Config 관련 타입**: `core/contexts/QueryProvider.tsx`에 정의
+- **App Config 관련 타입**: `core/contexts/AppConfigContext.tsx`에 정의
   - 예: `TenantConfigData`, `AppConfigContextValue` 등
 
 ### 4. 테넌트별 차별화 포인트
@@ -157,15 +179,15 @@ buptlebiz_fe/
 
 ### 5. 계약 상세 페이지 구조
 
-- **URL**: `/[tenant]/contract/[id]`
+- **URL**: `/[lang]/contract/[id]`
 - **3분할 컴포넌트 조립**:
   - `ContractDetailTop`: 상단부 (제목, 버튼, 상태표시, 상태 프로그레스바 등)
   - `ContractDetailLeft`: 좌측 (기본정보, 유저정보, 기타정보, 계약서 카드)
   - `ContractDetailRight`: 우측 (버튼박스, 공유카드, 진행상황 흐름도)
 - **데이터 로딩**: 서버 컴포넌트에서 1회 데이터 로드 후 props로 전달
-  - `app/[tenant]/(main)/contract/[id]/page.tsx`에서 `ContractService.getContractsDetail()` 호출
+  - `app/[lang]/(main)/contract/[id]/page.tsx`에서 `ContractService.getContractsDetail()` 호출
   - 로드된 데이터를 `contract` props로 Top/Left/Right 컴포넌트에 전달
 - **목록 페이지 데이터 로딩**:
-  - `app/[tenant]/(main)/contract/page.tsx`에서 `ContractService.getContracts()` 호출
+  - `app/[lang]/(main)/contract/page.tsx`에서 `ContractService.getContracts()` 호출
 - **상태 업데이트**: Common Server Action + `revalidatePath` 사용
   - 서버 액션은 사용하지 않음. post요청이나 이벤트에 의해 발생되는 get요청은 클라이언트 컴포넌트에서 직접 호출.
