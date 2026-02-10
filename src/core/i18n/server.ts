@@ -81,8 +81,7 @@ async function buildResourceStore(lang: string, tenant: string, nsOwnerKey: stri
 
   for (const { ns, owner } of pairs) {
     if (!ns || !owner) continue;
-    const dict = await loadMergedResource(lang, ns, tenant, owner);
-    store[lang][ns] = dict;
+    store[lang][ns] = await loadMergedResource(lang, ns, tenant, owner);
   }
 
   return store;
