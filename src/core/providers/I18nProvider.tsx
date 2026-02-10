@@ -1,7 +1,7 @@
 // src/core/providers/I18nProvider.tsx
 'use client';
 
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { I18nextProvider, I18nContext } from 'react-i18next';
 
 import type { I18nResourceStore } from '@/core/i18n/types';
