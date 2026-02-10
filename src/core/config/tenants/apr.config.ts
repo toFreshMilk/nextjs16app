@@ -13,6 +13,7 @@ const config: TenantConfig = {
     ContractSidebar: () => import('@/tenants/apr/contract/components/ContractSidebar'),
     // APR은 계약 메인 UI를 크게 다르게 가져감
     ContractMain: () => import('@/tenants/apr/contract/components/ContractMain'),
+    ContractDetailTop: () => import('@/tenants/apr/contract/components/ContractDetailTop'),
   },
 
   // APR은 계약 서비스 로직만 바꿈 (나머진 Standard 사용)

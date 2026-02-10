@@ -99,7 +99,7 @@ const getResourcesCached = cache(async (lang: string, tenant: string, nsOwnerKey
  * 서버에서 i18n 리소스 생성 (payload 최소화)
  * - ✅ 요청한 lang 1개만 내려줌
  * - ✅ 요청한 namespaces만 내려줌
- * - ✅ namespace별 owner는 호출부에서 주입 (Core에서 도메인 하드코딩 최소화)
+ * - ✅ namespace별 owner는 호출부에서 주입 (Core 도메인 하드코딩 최소화)
  */
 export async function getI18nResources(
   lang: string,
