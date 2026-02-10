@@ -1,10 +1,40 @@
 {
-  "title": "계약 목록2222222222",
-  "approve": "승인하기22222222222",
-  "reject": "반려하기22222",
-  "status": {
-    "draft": "초안222222",
-    "active": "진행중2222222",
-    "done": "완료222222"
+  "apr": {
+    "badge": "APR",
+    "desk": "Contract Desk",
+    "board_title": "계약 워크보드",
+    "board_desc": "그룹웨어 연동 기반 계약 상태를 보드로 관리합니다.",
+    "actions": {
+      "sync": "동기화",
+      "approval": "결재 설정"
+    },
+    "alerts": {
+      "sync_demo": "APR 전용: 그룹웨어 동기화 (데모)",
+      "approval_demo": "APR 전용: 승인 라인 설정 (데모)"
+    },
+    "stat": {
+      "total": "TOTAL",
+      "active": "ACTIVE",
+      "review": "REVIEW",
+      "draft": "DRAFT"
+    },
+    "columns": {
+      "empty": "표시할 항목이 없습니다.",
+      "review": {
+        "title": "검토",
+        "hint": "법무 검토/수정 요청"
+      },
+      "active": {
+        "title": "진행",
+        "hint": "서명/회수/체결 진행"
+      },
+      "draft": {
+        "title": "초안",
+        "hint": "작성 중인 계약"
+      }
+    },
+    "card": {
+      "status_label": "상태"
+    }
   }
 }

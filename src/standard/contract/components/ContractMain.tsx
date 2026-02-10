@@ -4,6 +4,7 @@
 import { ComponentType } from 'react';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCoreTranslation } from '@/core/hooks/useCoreTranslation';
 
 function buildUrl(pathname: string, params: URLSearchParams) {
   const qs = params.toString();
@@ -22,6 +23,8 @@ export interface ContractMainProps {
 }
 
 export default function ContractMain({ contracts, ListComponent }: ContractMainProps) {
+  const { t } = useCoreTranslation('contract');
+
   const { config } = useAppConfig();
   const router = useRouter();
   const pathname = usePathname();
@@ -42,43 +45,50 @@ export default function ContractMain({ contracts, ListComponent }: ContractMainP
     return matchQ && matchTab;
   });
 
+  const tabs: { k: TabKey; label: string }[] = [
+    { k: 'all', label: t('main.tabs.all') },
+    { k: 'draft', label: t('main.tabs.draft') },
+    { k: 'review', label: t('main.tabs.review') },
+    { k: 'active', label: t('main.tabs.active') },
+  ];
+
   return (
     <section className="flex-1 space-y-4">
       <div className="flex items-end justify-between">
         <div>
           <div className="text-sm text-slate-500">
-            전체 : <span className="font-bold text-slate-900">{filtered.length}</span> 건
+            {t('main.summary_total_label')} : <span className="font-bold text-slate-900">{filtered.length}</span>{' '}
+            {t('main.summary_count_unit')}
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">계약</h1>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">{t('title')}</h1>
         </div>
 
         <div className="flex items-center gap-2 text-sm">
-          <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">필드 표시</button>
-          <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">10개씩 보기</button>
+          <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">
+            {t('main.actions.show_fields')}
+          </button>
+          <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">
+            {t('main.actions.per_page_10')}
+          </button>
         </div>
       </div>
 
       {/* Tabs */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 flex gap-2">
-        {[
-          { k: 'all', label: '전체' },
-          { k: 'draft', label: '초안' },
-          { k: 'review', label: '검토' },
-          { k: 'active', label: '서명 및 회수' },
-        ].map((t) => (
+        {tabs.map((x) => (
           <button
-            key={t.k}
+            key={x.k}
             className={`px-4 py-2 rounded-xl font-bold text-sm ${
-              tab === t.k ? 'text-white' : 'text-slate-600 hover:bg-slate-50'
+              tab === x.k ? 'text-white' : 'text-slate-600 hover:bg-slate-50'
             }`}
-            style={tab === t.k ? { backgroundColor: config.theme.primaryColor } : undefined}
+            style={tab === x.k ? { backgroundColor: config.theme.primaryColor } : undefined}
             onClick={() => {
               const next = new URLSearchParams(searchParams.toString());
-              next.set('tab', t.k);
+              next.set('tab', x.k);
               router.replace(buildUrl(pathname, next));
             }}
           >
-            {t.label}
+            {x.label}
           </button>
         ))}
       </div>
@@ -89,7 +99,7 @@ export default function ContractMain({ contracts, ListComponent }: ContractMainP
           <ListComponent contracts={filtered} />
         ) : (
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-            <div className="text-sm text-slate-500">목록 컴포넌트 로딩 실패</div>
+            <div className="text-sm text-slate-500">{t('main.list_component_load_failed')}</div>
           </div>
         )}
       </div>

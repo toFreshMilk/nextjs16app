@@ -1,7 +1,5 @@
 {
-  "confirm": "Confirm apr2222222",
-  "cancel": "Cancel ap222222222r",
-  "save": "Save apr22222222",
-  "delete": "Delete apr222",
-  "error_occurred": "An error occurred. apr222222222"
+  "workspace_banner": {
+    "apr": "APR environment only."
+  }
 }

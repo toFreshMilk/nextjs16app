@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
+import { useCoreTranslation } from '@/core/hooks/useCoreTranslation';
 
 function normalizeStatus(s: string) {
   return (s ?? '').trim().toLowerCase();
@@ -26,11 +27,15 @@ function Column({
   hint,
   items,
   chip,
+  emptyText,
+  statusLabel,
 }: {
   title: string;
   hint: string;
   items: any[];
   chip: { bg: string; text: string; border: string };
+  emptyText: string;
+  statusLabel: string;
 }) {
   return (
     <section className="min-w-[280px] flex-1 rounded-2xl border border-rose-200 bg-white shadow-sm overflow-hidden">
@@ -46,7 +51,7 @@ function Column({
 
       <div className="p-4 space-y-3">
         {items.length === 0 ? (
-          <div className="text-sm text-slate-500">표시할 항목이 없습니다.</div>
+          <div className="text-sm text-slate-500">{emptyText}</div>
         ) : (
           items.map((c) => (
             <Link
@@ -57,7 +62,7 @@ function Column({
               <div className="text-xs font-black text-rose-700">#{c.id}</div>
               <div className="mt-1 font-bold text-slate-900 leading-snug">{c.title}</div>
               <div className="mt-2 text-[11px] font-black text-slate-500">
-                상태: <span className="text-slate-800">{c.status}</span>
+                {statusLabel}: <span className="text-slate-800">{c.status}</span>
               </div>
             </Link>
           ))
@@ -77,6 +82,8 @@ interface AprContractMainProps {
 }
 
 export default function AprContractMain({ contracts }: AprContractMainProps) {
+  const { t } = useCoreTranslation('contract');
+
   const { config } = useAppConfig();
   const searchParams = useSearchParams();
 
@@ -100,48 +107,53 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
   const review = filtered.filter((c) => normalizeStatus(c.status) === 'review');
   const draft = filtered.filter((c) => normalizeStatus(c.status) === 'draft');
 
+  const emptyText = t('apr.columns.empty');
+  const statusLabel = t('apr.card.status_label');
+
   return (
     <section className="flex-1 space-y-4">
       {/* ... (UI 부분은 동일하므로 생략하지 않고 그대로 유지) */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="inline-flex items-center gap-2 text-xs font-black text-rose-700">
-            <span className="px-2 py-1 rounded-full border border-rose-200 bg-rose-50">APR</span>
-            <span className="text-slate-500">Contract Desk</span>
+            <span className="px-2 py-1 rounded-full border border-rose-200 bg-rose-50">{t('apr.badge')}</span>
+            <span className="text-slate-500">{t('apr.desk')}</span>
           </div>
-          <h1 className="mt-2 text-3xl font-black text-slate-900 tracking-tight">계약 워크보드</h1>
-          <div className="mt-1 text-sm text-slate-500">그룹웨어 연동 기반 계약 상태를 보드로 관리합니다.</div>
+          <h1 className="mt-2 text-3xl font-black text-slate-900 tracking-tight">{t('apr.board_title')}</h1>
+          <div className="mt-1 text-sm text-slate-500">{t('apr.board_desc')}</div>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             className="px-3 py-2 rounded-xl font-black text-white shadow-sm"
             style={{ backgroundColor: config.theme.primaryColor }}
-            onClick={() => alert('APR 전용: 그룹웨어 동기화 (데모)')}
+            onClick={() => alert(t('apr.alerts.sync_demo'))}
           >
-            동기화
+            {t('apr.actions.sync')}
           </button>
           <button
             className="px-3 py-2 rounded-xl border border-rose-200 bg-white font-black text-rose-800"
-            onClick={() => alert('APR 전용: 승인 라인 설정 (데모)')}
+            onClick={() => alert(t('apr.alerts.approval_demo'))}
           >
-            결재 설정
+            {t('apr.actions.approval')}
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard label="TOTAL" value={filtered.length} accent={config.theme.primaryColor} />
-        <StatCard label="ACTIVE" value={active.length} accent="#16a34a" />
-        <StatCard label="REVIEW" value={review.length} accent="#f59e0b" />
-        <StatCard label="DRAFT" value={draft.length} accent="#64748b" />
+        <StatCard label={t('apr.stat.total')} value={filtered.length} accent={config.theme.primaryColor} />
+        <StatCard label={t('apr.stat.active')} value={active.length} accent="#16a34a" />
+        <StatCard label={t('apr.stat.review')} value={review.length} accent="#f59e0b" />
+        <StatCard label={t('apr.stat.draft')} value={draft.length} accent="#64748b" />
       </div>
 
       <div className="flex flex-col lg:flex-row gap-4">
         <Column
-          title="검토"
-          hint="법무 검토/수정 요청"
+          title={t('apr.columns.review.title')}
+          hint={t('apr.columns.review.hint')}
           items={review}
+          emptyText={emptyText}
+          statusLabel={statusLabel}
           chip={{
             bg: 'bg-amber-50',
             text: 'text-amber-800',
@@ -149,9 +161,11 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
           }}
         />
         <Column
-          title="진행"
-          hint="서명/회수/체결 진행"
+          title={t('apr.columns.active.title')}
+          hint={t('apr.columns.active.hint')}
           items={active}
+          emptyText={emptyText}
+          statusLabel={statusLabel}
           chip={{
             bg: 'bg-emerald-50',
             text: 'text-emerald-800',
@@ -159,9 +173,11 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
           }}
         />
         <Column
-          title="초안"
-          hint="작성 중인 계약"
+          title={t('apr.columns.draft.title')}
+          hint={t('apr.columns.draft.hint')}
           items={draft}
+          emptyText={emptyText}
+          statusLabel={statusLabel}
           chip={{
             bg: 'bg-slate-50',
             text: 'text-slate-700',

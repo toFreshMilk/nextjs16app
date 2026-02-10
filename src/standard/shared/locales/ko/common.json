@@ -1,7 +1,9 @@
 {
-  "confirm": "확인",
-  "cancel": "취소",
-  "save": "저장",
-  "delete": "삭제",
-  "error_occurred": "오류가 발생했습니다."
+  "app_name": "법틀비즈",
+  "cmmn_label_all": "전체",
+  "cmmn_ok": "확인",
+  "cmmn_cancel": "취소",
+  "workspace_banner": {
+    "demo": "데모 모드입니다. 데이터는 저장되지 않습니다."
+  }
 }

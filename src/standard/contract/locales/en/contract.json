@@ -1,10 +1,18 @@
 {
-  "title": "Contract List",
-  "approve": "Approve",
-  "reject": "Reject",
-  "status": {
-    "draft": "Draft",
-    "active": "Active",
-    "done": "Done"
+  "title": "Contracts",
+  "main": {
+    "summary_total_label": "Total",
+    "summary_count_unit": "items",
+    "actions": {
+      "show_fields": "Show fields",
+      "per_page_10": "10 per page"
+    },
+    "tabs": {
+      "all": "All",
+      "draft": "Draft",
+      "review": "Review",
+      "active": "Signed & Collected"
+    },
+    "list_component_load_failed": "Failed to load list component."
   }
 }

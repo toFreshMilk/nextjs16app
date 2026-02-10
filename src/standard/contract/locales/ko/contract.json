@@ -1,10 +1,18 @@
 {
-  "title": "계약 목록",
-  "approve": "승인하기",
-  "reject": "반려하기",
-  "status": {
-    "draft": "초안",
-    "active": "진행중",
-    "done": "완료"
+  "title": "계약",
+  "main": {
+    "summary_total_label": "전체",
+    "summary_count_unit": "건",
+    "actions": {
+      "show_fields": "필드 표시",
+      "per_page_10": "10개씩 보기"
+    },
+    "tabs": {
+      "all": "전체",
+      "draft": "초안",
+      "review": "검토",
+      "active": "서명 및 회수"
+    },
+    "list_component_load_failed": "목록 컴포넌트 로딩 실패"
   }
 }

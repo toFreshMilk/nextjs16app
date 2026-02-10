@@ -1,7 +1,5 @@
 {
-  "confirm": "확인 apr2222222",
-  "cancel": "취소 apr2222222",
-  "save": "저장 apr2222222",
-  "delete": "삭제 ap22r",
-  "error_occurred": "오류가 발생했습니다. apr222222"
+  "workspace_banner": {
+    "apr": "APR 전용 환경입니다."
+  }
 }

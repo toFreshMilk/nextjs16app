@@ -1,10 +1,14 @@
 // src/tenants/apr/shared/components/WorkspaceBanner.tsx
 'use client';
 
+import { useCoreTranslation } from '@/core/hooks/useCoreTranslation';
+
 export default function WorkspaceBanner() {
+  const { t } = useCoreTranslation('common');
+
   return (
     <div className="w-full bg-rose-50 text-rose-900 border-b border-rose-200 px-6 py-2 text-sm font-bold">
-      APR 전용 환경입니다.
+      {t('workspace_banner.apr')}
     </div>
   );
 }

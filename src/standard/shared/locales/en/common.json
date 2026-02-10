@@ -1,7 +1,9 @@
 {
-  "confirm": "Confirm",
-  "cancel": "Cancel",
-  "save": "Save",
-  "delete": "Delete",
-  "error_occurred": "An error occurred."
+  "app_name": "buptlebiz",
+  "cmmn_label_all": "All",
+  "cmmn_ok": "OK",
+  "cmmn_cancel": "Cancel",
+  "workspace_banner": {
+    "demo": "Demo mode. Data will not be saved."
+  }
 }
