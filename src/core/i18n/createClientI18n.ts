@@ -5,7 +5,7 @@ import { createInstance, type i18n as I18nInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next/initReactI18next';
 import KoreanPostpositionProcessor from 'i18next-korean-postposition-processor';
 
-import { DEFAULT_NS, SUPPORTED_LANGS } from './settings';
+import { DEFAULT_NS } from '@/core/config/tenant.config';
 import type { I18nResourceStore } from './types';
 
 export function createClientI18n(lang: string, resources: I18nResourceStore): I18nInstance {
@@ -24,7 +24,9 @@ export function createClientI18n(lang: string, resources: I18nResourceStore): I1
       //    (ko/en 둘 다 내려주지 않으므로, fallback을 DEFAULT_LANG(ko)로 두면 미번역 키가 그대로 노출될 수 있음)
       fallbackLng: lang,
 
-      supportedLngs: SUPPORTED_LANGS as unknown as string[],
+      // ✅ 서버가 내려준 언어 1개만 지원(경로 전환으로만 언어 변경)
+      supportedLngs: [lang],
+
       ns: namespaces as unknown as string[],
       defaultNS: DEFAULT_NS,
       resources,

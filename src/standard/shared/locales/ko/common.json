@@ -4,6 +4,6 @@
   "cmmn_ok": "확인",
   "cmmn_cancel": "취소",
   "workspace_banner": {
-    "demo": "데모 모드입니다. 데이터는 저장되지 않습니다."
+    "demo": "데모 모드입니다."
   }
 }

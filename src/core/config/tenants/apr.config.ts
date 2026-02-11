@@ -4,7 +4,7 @@ import { TenantConfig } from '../tenant.types';
 const config: TenantConfig = {
   id: 'apr',
   name: 'APR Corp',
-  features: { i18n: true, ai: false, sso: false }, // AI 미사용
+  features: { i18n: false, ai: false, sso: false }, // AI 미사용
   theme: { primaryColor: '#e11d48' },
 
   // APR은 Standard 페이지를 유지하고, 리포트/배너 같은 일부만 교체

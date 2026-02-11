@@ -3,6 +3,7 @@ import 'server-only';
 
 import { cache } from 'react';
 import type { I18nResourceStore } from './types';
+import { DEFAULT_LANG, isSupportedLang, loadTenantConfig } from '@/core/config/tenant.config';
 
 type Dict = Record<string, any>;
 
@@ -96,6 +97,22 @@ const getResourcesCached = cache(async (lang: string, tenant: string, nsOwnerKey
 });
 
 /**
+ * ✅ tenant config 기반으로 "운영 언어"를 정규화
+ * - features.i18n=false => 무조건 DEFAULT_LANG(ko)만 로딩/관리
+ * - 그 외 => 요청 lang이 supported가 아니면 DEFAULT_LANG(ko)
+ */
+async function normalizeLangForTenant(requestedLang: string, tenant: string) {
+  const config = await loadTenantConfig(tenant);
+
+  if (config.features?.i18n === false) {
+    return DEFAULT_LANG;
+  }
+
+  if (isSupportedLang(requestedLang)) return requestedLang;
+  return DEFAULT_LANG;
+}
+
+/**
  * 서버에서 i18n 리소스 생성 (payload 최소화)
  * - ✅ 요청한 lang 1개만 내려줌
  * - ✅ 요청한 namespaces만 내려줌
@@ -107,6 +124,7 @@ export async function getI18nResources(
   namespaces: string[],
   ownerByNamespace: NamespaceOwnerMap,
 ) {
+  const normalizedLang = await normalizeLangForTenant(lang, tenant);
   const nsOwnerKey = buildNsOwnerKey(namespaces, ownerByNamespace);
-  return getResourcesCached(lang, tenant, nsOwnerKey);
+  return getResourcesCached(normalizedLang, tenant, nsOwnerKey);
 }

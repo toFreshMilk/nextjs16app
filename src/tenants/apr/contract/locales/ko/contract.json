@@ -13,10 +13,10 @@
       "approval_demo": "APR 전용: 승인 라인 설정 (데모)"
     },
     "stat": {
-      "total": "TOTAL",
-      "active": "ACTIVE",
-      "review": "REVIEW",
-      "draft": "DRAFT"
+      "total": "전체",
+      "active": "활성",
+      "review": "리뷰",
+      "draft": "검토"
     },
     "columns": {
       "empty": "표시할 항목이 없습니다.",

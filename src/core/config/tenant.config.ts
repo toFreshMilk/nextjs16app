@@ -1,7 +1,17 @@
 // src/core/config/tenant.config.ts
-import { cache, ComponentType } from 'react';
+import type { ComponentType } from 'react';
 import type { TenantConfig, ComponentLoader, ServiceLoader, ModuleWithDefault } from '@/core/config/tenant.types';
-import { headers } from 'next/headers';
+
+// ===== i18n settings (moved from src/core/i18n/settings.ts) =====
+export const SUPPORTED_LANGS = ['ko', 'en'] as const;
+export type AppLang = (typeof SUPPORTED_LANGS)[number];
+
+export const DEFAULT_LANG: AppLang = 'ko';
+export const DEFAULT_NS = 'common' as const;
+
+export function isSupportedLang(v: string): v is AppLang {
+  return (SUPPORTED_LANGS as readonly string[]).includes(v);
+}
 
 // === 1. Loaders ===
 export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> {
@@ -15,9 +25,22 @@ export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> 
     throw new Error(`[Config Error] Unknown tenant: ${tenantId}`);
   }
 
-  const moduleData = await loader();
-  return { ...moduleData.default, id: tenantId };
+  // ✅ tenant config 모듈 로드는 런타임이 알아서 캐시하긴 하지만,
+  //    동일 프로세스에서 반복 호출되는 케이스를 줄이기 위해 Promise 캐시를 둡니다.
+  const cached = tenantConfigPromiseCache.get(tenantId);
+  if (cached) return cached;
+
+  const p = (async () => {
+    const moduleData = await loader();
+    return { ...moduleData.default, id: tenantId };
+  })();
+
+  tenantConfigPromiseCache.set(tenantId, p);
+  return p;
 }
+
+// ✅ Promise cache (new file 생성 없이 이 파일 내부에서만 사용)
+const tenantConfigPromiseCache = new Map<string, Promise<TenantConfig>>();
 
 // === 2. Component Loader ===
 // [변경] 키 목록 제한 없이 문자열 키 사용
@@ -81,7 +104,11 @@ export async function getTenantService<T = any>(
   return moduleData.default as T;
 }
 
-export const getTenantId = cache(async () => {
+export async function getTenantId() {
+  // ✅ proxy.ts(Edge)에서도 이 파일을 import할 수 있게,
+  //    next/headers는 여기서만 동적 import 합니다.
+  const { headers } = await import('next/headers');
+
   const headersList = await headers();
   const tenant = headersList.get('x-tenant-id');
 
@@ -90,4 +117,4 @@ export const getTenantId = cache(async () => {
   }
 
   return tenant;
-});
+}

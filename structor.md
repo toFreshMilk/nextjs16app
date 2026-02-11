@@ -71,7 +71,6 @@ buptlebiz_fe/
     │   │
     │   ├── i18n/ # Internationalization
     │   │   ├── createClientI18n.ts # 클라이언트 i18n 생성 유틸
-    │   │   ├── loadMergedResource.ts # standard/tenants 리소스 병합 로더
     │   │   ├── server.ts # i18n 서버 유틸리티
     │   │   ├── settings.ts # i18n 설정
     │   │   └── types.ts # i18n 타입 정의
@@ -204,5 +203,5 @@ buptlebiz_fe/
   - 로드된 데이터를 `contract` props로 Top/Left/Right 컴포넌트에 전달
 - **목록 페이지 데이터 로딩**:
   - `app/[lang]/(main)/contract/page.tsx`에서 `ContractService.getContracts()` 호출
-- **상태 업데이트**: Common Server Action + `revalidatePath` 사용
+- **상태 업데이트**
   - 서버 액션은 사용하지 않음. post요청이나 이벤트에 의해 발생되는 get요청은 클라이언트 컴포넌트에서 직접 호출.
