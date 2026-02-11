@@ -1,6 +1,7 @@
 // src/core/config/tenant.config.ts
 import type { ComponentType } from 'react';
 import type { TenantConfig, ComponentLoader, ServiceLoader, ModuleWithDefault } from '@/core/config/tenant.types';
+import type { StandardComponentKey, StandardServiceKey } from '@/standard/registry';
 
 // ===== i18n settings (moved from src/core/i18n/settings.ts) =====
 export const SUPPORTED_LANGS = ['ko', 'en'] as const;
@@ -55,20 +56,26 @@ export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> 
 }
 
 // === 2. Component Loader ===
-// ✅ Standard 컴포넌트 키 목록은 standard/standard.registry.ts "1개 파일"이 소유한다.
-// ✅ proxy.ts가 loadTenantConfig만 import해도 안전하도록, registry는 함수 내부에서 동적 import한다.
+// ✅ 오버로드: 표준 키는 컴파일 타임에 오타를 잡고 자동완성도 받는다.
+export async function getTenantComponent<T = ComponentType<any>>(tenantId: string, key: StandardComponentKey): Promise<T>;
+export async function getTenantComponent<T = ComponentType<any>>(tenantId: string, key: string): Promise<T>;
 export async function getTenantComponent<T = ComponentType<any>>(tenantId: string, key: string): Promise<T> {
   const config = await loadTenantConfig(tenantId);
 
+  // ✅ registry는 함수 내부에서 동적 import (proxy 경로 영향 최소화)
   const { STANDARD_COMPONENT_LOADERS } = await import('@/standard/registry');
 
+  // ✅ TS7053 해결:
+  // - STANDARD_COMPONENT_LOADERS는 "정확한 키 집합 객체 타입"으로 유지되므로,
+  //   구현부에서 string으로 인덱싱할 땐 읽기용 Record 캐스팅을 사용합니다.
+  const standardComponentLoaders = STANDARD_COMPONENT_LOADERS as unknown as Record<string, ComponentLoader>;
+  const standardLoader = standardComponentLoaders[key];
+
   // 오버라이드 확인 -> 없으면 Standard 확인
-  const loader: ComponentLoader | undefined = config.components?.[key] || STANDARD_COMPONENT_LOADERS[key];
+  const loader: ComponentLoader | undefined = config.components?.[key] || standardLoader;
 
   if (!loader) {
-    // [중요] 런타임 에러 처리
     console.error(`[Component Error] Component '${key}' not found for tenant '${tenantId}'`);
-    // 여기서는 명확히 개발자에게 알리기 위해 에러 throw
     throw new Error(`Component '${key}' not found`);
   }
 
@@ -77,8 +84,9 @@ export async function getTenantComponent<T = ComponentType<any>>(tenantId: strin
 }
 
 // === 3. Service Loader ===
-// ✅ Standard 서비스 키 목록은 standard/standard.registry.ts "1개 파일"이 소유한다.
-// ✅ proxy.ts가 loadTenantConfig만 import해도 안전하도록, registry는 함수 내부에서 동적 import한다.
+// ✅ 오버로드: 표준 키는 컴파일 타임에 오타를 잡고 자동완성도 받는다.
+export async function getTenantService<T = any>(tenantId: string, key: StandardServiceKey): Promise<T>;
+export async function getTenantService<T = any>(tenantId: string, key: string): Promise<T>;
 export async function getTenantService<T = any>(tenantId: string, key: string): Promise<T> {
   const config = await loadTenantConfig(tenantId);
   const tenantLoader = config.services?.[key];
@@ -91,9 +99,13 @@ export async function getTenantService<T = any>(tenantId: string, key: string): 
     return moduleData.default as T;
   }
 
+  // ✅ registry는 함수 내부에서 동적 import (proxy 경로 영향 최소화)
   const { STANDARD_SERVICE_LOADERS } = await import('@/standard/registry');
 
-  const standardLoader: ServiceLoader | undefined = STANDARD_SERVICE_LOADERS[key];
+  // ✅ TS7053 해결: string 인덱싱은 Record 캐스팅으로 읽기
+  const standardServiceLoaders = STANDARD_SERVICE_LOADERS as unknown as Record<string, ServiceLoader>;
+  const standardLoader = standardServiceLoaders[key];
+
   if (!standardLoader) {
     throw new Error(`Service '${key}' not found`);
   }
