@@ -7,6 +7,7 @@ import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
 
 import { getI18nResources } from '@/core/i18n/server';
 import I18nProvider from '@/core/providers/I18nProvider';
+import { pickI18nOwnerMap } from '@/standard/registry';
 
 // 스타일 로더 설정
 const LOADERS: Record<string, ComponentType> = {
@@ -29,7 +30,7 @@ export default async function LangLayout({
 }) {
   const lang = (await params).lang;
 
-  // [변경] 미들웨어(Proxy)가 심어준 헤더에서 tenant 추출
+  // [변경] 프록시(Proxy)가 심어준 헤더에서 tenant 추출
   const tenant = await getTenantId();
 
   let config;
@@ -47,8 +48,8 @@ export default async function LangLayout({
   };
 
   // ✅ 여기서는 common만 로딩
-  // ✅ 요청한 lang 1개만 내려줌
-  const resources = await getI18nResources(lang, tenant, ['common'], { common: 'shared' });
+  // ✅ owner map 하드코딩 제거 -> registry 헬퍼로 필요한 ns만 전달
+  const resources = await getI18nResources(lang, tenant, ['common'], pickI18nOwnerMap(['common']));
 
   return (
     <AppConfigProvider tenantConfig={configData}>

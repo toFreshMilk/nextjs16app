@@ -32,3 +32,28 @@ export const STANDARD_SERVICE_LOADERS = {
 // ✅ Standard 키 타입 (오타 방지/자동완성)
 export type StandardComponentKey = keyof typeof STANDARD_COMPONENT_LOADERS;
 export type StandardServiceKey = keyof typeof STANDARD_SERVICE_LOADERS;
+
+// =========================
+// i18n Namespace Registry0
+// =========================
+
+export const STANDARD_I18N_OWNER_BY_NAMESPACE = {
+  common: 'shared',
+  contract: 'contract',
+} as const;
+
+export type StandardI18nNamespace = keyof typeof STANDARD_I18N_OWNER_BY_NAMESPACE;
+
+/**
+ * ✅ 필요한 namespace만 ownerMap으로 뽑아 전달하는 헬퍼
+ * - 전체 맵을 통째로 넘기지 않고, 호출부 의도가 명확해짐
+ */
+export type NamespaceOwnerMap = Record<string, string>;
+
+export function pickI18nOwnerMap<const Ns extends readonly StandardI18nNamespace[]>(namespaces: Ns): NamespaceOwnerMap {
+  const out: NamespaceOwnerMap = {};
+  for (const ns of namespaces) {
+    out[ns] = STANDARD_I18N_OWNER_BY_NAMESPACE[ns];
+  }
+  return out;
+}
