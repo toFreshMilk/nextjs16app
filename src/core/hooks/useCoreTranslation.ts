@@ -6,14 +6,23 @@ import { useTranslation, type UseTranslationOptions } from 'react-i18next';
 
 type Overrides = Record<string, any>;
 
-// ✅ 1) 동일 overrides "객체 참조" 기준 캐시
-const injectedByIdentity = new WeakMap<Overrides, Set<string>>();
+// ✅ override 주입 캐시: i18n 인스턴스에 붙여서 중첩 Provider/리마운트에도 일관성 유지
+const OVERRIDE_CACHE_SYMBOL = Symbol.for('buptlebiz.i18n.overrideCache');
 
-// ✅ 2) overrides가 렌더마다 새 객체여도 동일 내용이면 1회만 주입되도록 "내용(signature)" 캐시
-const injectedBySignature = new Map<string, true>();
+// ✅ overrides -> signature 캐시(동일 객체면 stringify 비용 제거)
+const overrideSignatureByIdentity = new WeakMap<Overrides, string>();
 
 function getActiveLang(i18n: any) {
   return i18n?.resolvedLanguage || i18n?.language || 'ko';
+}
+
+function getOverrideCache(i18n: any) {
+  const existing = i18n[OVERRIDE_CACHE_SYMBOL] as Set<string> | undefined;
+  if (existing) return existing;
+
+  const created = new Set<string>();
+  i18n[OVERRIDE_CACHE_SYMBOL] = created;
+  return created;
 }
 
 function stableStringify(value: any) {
@@ -37,34 +46,23 @@ function stableStringify(value: any) {
   try {
     return JSON.stringify(walk(value));
   } catch {
-    // 번역 overrides는 보통 plain object라 여기로 올 일은 거의 없지만, 방어적으로 처리
     return String(value);
   }
 }
 
-function isInjectedIdentity(overrides: Overrides, lang: string, ns: string) {
-  return injectedByIdentity.get(overrides)?.has(`${lang}__${ns}`) ?? false;
-}
+function getOverridesSignature(overrides: Overrides) {
+  const cached = overrideSignatureByIdentity.get(overrides);
+  if (cached) return cached;
 
-function markInjectedIdentity(overrides: Overrides, lang: string, ns: string) {
-  const key = `${lang}__${ns}`;
-  const set = injectedByIdentity.get(overrides) ?? new Set<string>();
-  set.add(key);
-  injectedByIdentity.set(overrides, set);
-}
-
-function isInjectedSignature(signatureKey: string) {
-  return injectedBySignature.has(signatureKey);
-}
-
-function markInjectedSignature(signatureKey: string) {
-  injectedBySignature.set(signatureKey, true);
+  const sig = stableStringify(overrides);
+  overrideSignatureByIdentity.set(overrides, sig);
+  return sig;
 }
 
 /**
  * Core 다국어 훅 (동적 주입 지원)
  * @param ns - 사용할 네임스페이스 (예: 'contract')
- * @param overrides - (선택) 커스텀 모듈에서 덮어쓸 JSON 데이터
+ * @param overrides - (선택) 커스텀 모듈에서 덮어쓸 JSON 데이터 (정적 데이터 권장)
  * @param options
  */
 export function useCoreTranslation(ns: string, overrides?: Overrides, options?: UseTranslationOptions<any>) {
@@ -75,24 +73,17 @@ export function useCoreTranslation(ns: string, overrides?: Overrides, options?: 
 
     let cancelled = false;
 
-    const inject = async () => {
+    const run = async () => {
       const lang = getActiveLang(i18n);
+      const cache = getOverrideCache(i18n);
 
-      // ✅ signature 기반 캐시 (객체 참조가 바뀌어도 동일 내용이면 1회)
-      const signature = stableStringify(overrides);
-      const signatureKey = `${lang}__${ns}__${signature}`;
+      // ✅ 데이터는 정적이므로 "내용 기반"으로 1회만 주입하면 됨
+      const signature = getOverridesSignature(overrides);
+      const cacheKey = `${lang}__${ns}__${signature}`;
 
-      // ✅ 동일 overrides 객체 + 동일 (lang,ns)는 최초 1회만 실행
-      if (isInjectedIdentity(overrides, lang, ns)) return;
+      if (cache.has(cacheKey)) return;
 
-      // ✅ 동일 내용(signature) + 동일 (lang,ns)도 최초 1회만 실행
-      if (isInjectedSignature(signatureKey)) {
-        markInjectedIdentity(overrides, lang, ns); // 객체 캐시도 같이 마킹 (불필요 연산 감소)
-        return;
-      }
-
-      // ✅ base(ns)가 아직 없을 수도 있으니, 가능하면 존재 확인 후 필요 시만 load
-      // (현재 구조상 I18nProvider가 먼저 addResourceBundle을 해주므로 대체로 즉시 true일 가능성이 큼)
+      // ✅ base(ns)가 아직 없을 수도 있으니 필요 시만 load
       try {
         if (typeof i18n.hasResourceBundle === 'function') {
           if (!i18n.hasResourceBundle(lang, ns)) {
@@ -112,15 +103,14 @@ export function useCoreTranslation(ns: string, overrides?: Overrides, options?: 
           true, // overwrite
         );
 
-        markInjectedIdentity(overrides, lang, ns);
-        markInjectedSignature(signatureKey);
+        cache.add(cacheKey);
       }
     };
 
-    void inject();
+    void run();
 
     const onLanguageChanged = () => {
-      void inject();
+      void run();
     };
 
     i18n.on('languageChanged', onLanguageChanged);
