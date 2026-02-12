@@ -2,7 +2,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { match } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
-import { loadTenantConfig, SUPPORTED_LANGS, DEFAULT_LANG, isTenantId } from '@/core/config/tenant.config';
+import {
+  loadTenantConfig,
+  SUPPORTED_LANGS,
+  DEFAULT_LANG,
+  isTenantId,
+  type TenantId,
+} from '@/core/config/tenant.config';
 
 const VALID_ROOT_DOMAINS = ['buptle.com', 'buptlestg.com', 'localhost.com', 'localhost'];
 
@@ -12,33 +18,17 @@ const DEFAULT_LOCALE = DEFAULT_LANG;
 
 const LANG_COOKIE = 'lang'; // 원하는 이름으로 변경 가능
 
-function findRootDomain(host: string): string | null {
-  for (const d of VALID_ROOT_DOMAINS) {
-    // ✅ 정확한 루트 도메인 판정: 완전 일치 or ".루트도메인" 경계
-    if (host === d) return d;
-    if (host.endsWith(`.${d}`)) return d;
-  }
-  return null;
-}
-
-function detectTenant(hostname: string): string | null {
-  const host = hostname.split(':')[0].toLowerCase();
-  const rootDomain = findRootDomain(host);
+function detectTenant(hostname: string): TenantId | null {
+  const host = hostname.split(':')[0];
+  const rootDomain = VALID_ROOT_DOMAINS.find((d) => host.endsWith(d));
   if (!rootDomain) return null;
 
-  // 루트 도메인 자체로 접근하면 테넌트 없음
-  if (host === rootDomain) return null;
+  const subdomain = host.slice(0, host.length - rootDomain.length);
+  const sanitized = subdomain.endsWith('.') ? subdomain.slice(0, -1) : subdomain;
 
-  // host = "{tenant}.{rootDomain}" 형태만 허용
-  const sub = host.slice(0, host.length - rootDomain.length - 1); // -1은 점(".") 제거
-
-  // 다단계 서브도메인은 tenant로 인정하지 않음 (foo.bar.buptle.com 방지)
-  if (!sub || sub === 'www' || sub.includes('.')) return null;
-
-  // ✅ tenant 목록은 단일 소스: tenant.config.ts(TENANT_LOADERS) 기준
-  if (!isTenantId(sub)) return null;
-
-  return sub;
+  // ✅ 테넌트 목록은 core/config/tenant.config.ts(TENANT_LOADERS)만이 "단일 소스"
+  if (!sanitized || sanitized === 'www' || !isTenantId(sanitized)) return null;
+  return sanitized;
 }
 
 function getLocaleFromAcceptLanguage(request: NextRequest) {
@@ -51,29 +41,15 @@ function getLocaleFromAcceptLanguage(request: NextRequest) {
   }
 }
 
-function getLocaleFromReferer(req: NextRequest) {
-  const ref = req.headers.get('referer');
-  if (!ref) return null;
-
-  try {
-    // referer는 보통 absolute지만, 방어적으로 base를 둠
-    const u = new URL(ref, req.url);
-    const refLang = u.pathname.split('/')[1] ?? '';
-    if ((LOCALES as readonly string[]).includes(refLang)) return refLang;
-    return null;
-  } catch {
-    return null;
-  }
-}
-
 function getPreferredLocale(req: NextRequest) {
   // 1) 쿠키 우선
   const cookieLang = req.cookies.get(LANG_COOKIE)?.value;
   if (cookieLang && (LOCALES as readonly string[]).includes(cookieLang)) return cookieLang;
 
-  // 2) (선택) referer에 locale prefix가 있으면 그걸 우선
-  const refLang = getLocaleFromReferer(req);
-  if (refLang) return refLang;
+  // 2) (선택) referer에 /en/ 또는 /ko/가 있으면 그걸 우선
+  const ref = req.headers.get('referer') ?? '';
+  const m = ref.match(/\/(ko|en)(\/|$)/);
+  if (m?.[1] && (LOCALES as readonly string[]).includes(m[1])) return m[1];
 
   // 3) 없으면 Accept-Language
   return getLocaleFromAcceptLanguage(req);
@@ -154,7 +130,6 @@ export async function proxy(req: NextRequest) {
 
     const res = NextResponse.redirect(newUrl);
 
-    // 쿠키가 비어있던 첫 진입(/contract) 케이스에서도 locale 저장해두면 다음부터 바로 유지됨
     res.cookies.set(LANG_COOKIE, locale, {
       path: '/',
       sameSite: 'lax',
