@@ -72,11 +72,9 @@ buptlebiz_fe/
     │   ├── i18n/ # Internationalization
     │   │   ├── createClientI18n.ts # 클라이언트 i18n 생성 유틸
     │   │   ├── server.ts # i18n 서버 유틸리티
-    │   │   ├── settings.ts # i18n 설정
     │   │   └── types.ts # i18n 타입 정의
     │   │
     │   ├── providers/
-    │   │   ├── AppProviders.tsx # App 전역 Provider 조립 (Query, I18n 등)
     │   │   ├── I18nProvider.tsx # I18n Provider
     │   │   └── QueryProvider.tsx # React Query Provider
     │   │
@@ -89,6 +87,8 @@ buptlebiz_fe/
     │       └── string.util.ts # String utilities
     │
     ├── standard/ # [Base] 기본 구현체 (파일 보관소)
+    │   ├── registry.ts # Standard 컴포넌트 레지스트리
+    │   │
     │   ├── shared/
     │   │   ├── components/
     │   │   │   ├── TopNavbar.tsx # Standard TopNavbar
@@ -120,6 +120,7 @@ buptlebiz_fe/
     │   │   ├── apr.css # APR Tenant Styles
     │   │   ├── contract/
     │   │   │   ├── components/
+    │   │   │   │   ├── ContractDetailTop.tsx # APR Contract Detail Top Override
     │   │   │   │   ├── ContractSidebar.tsx # APR Contract Sidebar Override
     │   │   │   │   └── ContractMain.tsx # APR Contract Main Override
     │   │   │   ├── locales/
@@ -146,9 +147,9 @@ buptlebiz_fe/
     │       │   └── services/
     │       │       └── contract.service.ts # Demo Contract Service Override
     │       └── shared/
-    │           ├── DemoStyleLoader.tsx # Demo 스타일 로더
-    │           └── components/
-    │               └── WorkspaceBanner.tsx # Demo WorkspaceBanner Override
+    │           ├── components/
+    │           │   └── WorkspaceBanner.tsx # Demo WorkspaceBanner Override
+    │           └── DemoStyleLoader.tsx # Demo 스타일 로더
     │
     └── uikit/ # UI Kit Components (재사용 공통 컴포넌트)
         ├── card/
@@ -188,8 +189,8 @@ buptlebiz_fe/
 ### 4. 테넌트별 차별화 포인트
 
 - **Demo**: WorkspaceBanner + ContractService (데모 데이터 + 로깅 등)
-- **APR**: WorkspaceBanner + ContractSidebar + ContractMain (UI 차별화) + ContractService
-- ContractDetailTop/Left/Right는 오버라이드하지 않으면 Standard 구현체를 사용합니다.
+- **APR**: WorkspaceBanner + ContractSidebar + ContractMain + ContractDetailTop (UI 차별화) + ContractService
+- ContractDetailLeft/Right는 오버라이드하지 않으면 Standard 구현체를 사용합니다.
 
 ### 5. 계약 상세 페이지 구조
 
