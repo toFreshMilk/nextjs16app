@@ -6,6 +6,7 @@ import {
   loadTenantConfig,
   SUPPORTED_LANGS,
   DEFAULT_LANG,
+  isSupportedLang,
   isTenantId,
   type TenantId,
 } from '@/core/config/tenant.config';
@@ -17,6 +18,9 @@ const LOCALES = SUPPORTED_LANGS;
 const DEFAULT_LOCALE = DEFAULT_LANG;
 
 const LANG_COOKIE = 'lang'; // 원하는 이름으로 변경 가능
+
+// ✅ referer locale 추출도 단일 소스화 (ko|en 하드코딩 제거)
+const REF_LOCALE_RE = new RegExp(`/(${LOCALES.join('|')})(/|$)`);
 
 function detectTenant(hostname: string): TenantId | null {
   const host = hostname.split(':')[0];
@@ -44,12 +48,12 @@ function getLocaleFromAcceptLanguage(request: NextRequest) {
 function getPreferredLocale(req: NextRequest) {
   // 1) 쿠키 우선
   const cookieLang = req.cookies.get(LANG_COOKIE)?.value;
-  if (cookieLang && (LOCALES as readonly string[]).includes(cookieLang)) return cookieLang;
+  if (cookieLang && isSupportedLang(cookieLang)) return cookieLang;
 
   // 2) (선택) referer에 /en/ 또는 /ko/가 있으면 그걸 우선
   const ref = req.headers.get('referer') ?? '';
-  const m = ref.match(/\/(ko|en)(\/|$)/);
-  if (m?.[1] && (LOCALES as readonly string[]).includes(m[1])) return m[1];
+  const m = ref.match(REF_LOCALE_RE);
+  if (m?.[1] && isSupportedLang(m[1])) return m[1];
 
   // 3) 없으면 Accept-Language
   return getLocaleFromAcceptLanguage(req);
@@ -58,11 +62,26 @@ function getPreferredLocale(req: NextRequest) {
 function forceLocaleToDefault(pathname: string) {
   const parts = pathname.split('/');
   // ['', 'en', ...]
-  if (parts.length >= 2 && (LOCALES as readonly string[]).includes(parts[1])) {
+  if (parts.length >= 2 && isSupportedLang(parts[1])) {
     parts[1] = DEFAULT_LOCALE;
     return parts.join('/');
   }
   return `/${DEFAULT_LOCALE}${pathname.startsWith('/') ? '' : '/'}${pathname}`;
+}
+
+async function resolveI18nEnabledIfNeeded(args: { tenant: TenantId; needsTenantPolicy: boolean }): Promise<boolean> {
+  const { tenant, needsTenantPolicy } = args;
+
+  // ✅ 정책이 필요 없는 케이스면 config 로드를 하지 않는다.
+  if (!needsTenantPolicy) return true;
+
+  try {
+    const tenantConfig = await loadTenantConfig(tenant);
+    return tenantConfig.features?.i18n !== false;
+  } catch {
+    // 안전 디폴트: 켜져있다고 간주(기존 동작 유지)
+    return true;
+  }
 }
 
 export async function proxy(req: NextRequest) {
@@ -87,25 +106,29 @@ export async function proxy(req: NextRequest) {
     return NextResponse.rewrite(errorUrl);
   }
 
-  // ✅ tenant config 기준으로 i18n 운영 여부 판단
-  // features.i18n === false => "ko만 관리/운영"
-  let i18nEnabled: boolean;
-  try {
-    const tenantConfig = await loadTenantConfig(tenant);
-    i18nEnabled = tenantConfig.features?.i18n !== false;
-  } catch {
-    i18nEnabled = true;
-  }
-
   const pathname = url.pathname;
 
   // 현재 URL이 /ko/... or /en/... 인지 확인
-  const urlLang = pathname.split('/')[1];
-  const hasLocalePrefix = (LOCALES as readonly string[]).includes(urlLang);
+  const urlLang = pathname.split('/')[1] ?? '';
+  const hasLocalePrefix = isSupportedLang(urlLang);
+
+  // 2) locale 없는 경우 -> 쿠키(or ref/accept-language)로 리다이렉트
+  const pathnameIsMissingLocale = LOCALES.every(
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`,
+  );
+
+  // ✅ i18nEnabled 판단이 필요한지(=정책이 필요한지) 먼저 결정
+  // - missing locale이면 "어떤 locale로 붙일지" 정책이 필요
+  // - /en/... 같은 접근이면 "i18n off 테넌트면 /ko로 강제" 정책이 필요
+  // - /ko/... 는 i18n on/off와 무관하게 허용이므로 정책 불필요
+  const needsTenantPolicy = pathnameIsMissingLocale || (hasLocalePrefix && urlLang !== DEFAULT_LOCALE);
+
+  const i18nEnabled = await resolveI18nEnabledIfNeeded({ tenant, needsTenantPolicy });
 
   // ✅ i18nEnabled=false인 테넌트는 /en/... 같은 접근을 /ko/...로 강제
   if (!i18nEnabled && hasLocalePrefix && urlLang !== DEFAULT_LOCALE) {
-    const newUrl = new URL(forceLocaleToDefault(pathname) + url.search, req.url);
+    const redirectedPath = forceLocaleToDefault(pathname);
+    const newUrl = new URL(`${redirectedPath}${url.search}`, req.url);
     const res = NextResponse.redirect(newUrl);
 
     res.cookies.set(LANG_COOKIE, DEFAULT_LOCALE, {
@@ -118,11 +141,6 @@ export async function proxy(req: NextRequest) {
 
     return res;
   }
-
-  // 2) locale 없는 경우 -> 쿠키(or ref/accept-language)로 리다이렉트
-  const pathnameIsMissingLocale = LOCALES.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`,
-  );
 
   if (pathnameIsMissingLocale) {
     const locale = i18nEnabled ? getPreferredLocale(req) : DEFAULT_LOCALE;
