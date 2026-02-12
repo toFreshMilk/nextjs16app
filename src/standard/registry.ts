@@ -3,9 +3,8 @@ import type { ComponentLoader, ServiceLoader } from '@/core/config/tenant.types'
 
 /**
  * Standard Registry (Single File)
- * - 표준 컴포넌트/서비스 키를 "이 파일 1개"에서만 관리합니다.
- * - 키 타입(StandardComponentKey/StandardServiceKey)을 export 해서
- *   Core에서 오타를 컴파일 타임에 잡을 수 있게 합니다.
+ * - 표준 컴포넌트/서비스/i18n owner-map을 "이 파일 1개"에서만 관리합니다.
+ * - 키 타입을 export 해서 Core에서 오타를 컴파일 타임에 잡을 수 있게 합니다.
  */
 
 // ⚠️ Record<string, ...>로 타입을 "먼저" 박아버리면 keyof가 string으로 죽습니다.
@@ -33,27 +32,31 @@ export const STANDARD_SERVICE_LOADERS = {
 export type StandardComponentKey = keyof typeof STANDARD_COMPONENT_LOADERS;
 export type StandardServiceKey = keyof typeof STANDARD_SERVICE_LOADERS;
 
-// =========================
-// i18n Namespace Registry0
-// =========================
-
+/**
+ * i18n owner map
+ * - namespace -> owner(폴더 루트) 매핑
+ * - 예: common   => shared
+ * - 예: contract => contract
+ */
 export const STANDARD_I18N_OWNER_BY_NAMESPACE = {
   common: 'shared',
   contract: 'contract',
-} as const;
+} as const satisfies Record<string, string>;
 
 export type StandardI18nNamespace = keyof typeof STANDARD_I18N_OWNER_BY_NAMESPACE;
 
 /**
- * ✅ 필요한 namespace만 ownerMap으로 뽑아 전달하는 헬퍼
- * - 전체 맵을 통째로 넘기지 않고, 호출부 의도가 명확해짐
+ * 필요한 namespace만 골라서 owner map을 만들어줍니다.
+ * - 호출부에서 ['common'] 같은 식으로 딱 필요한 것만 넘기면 됩니다.
  */
-export type NamespaceOwnerMap = Record<string, string>;
-
-export function pickI18nOwnerMap<const Ns extends readonly StandardI18nNamespace[]>(namespaces: Ns): NamespaceOwnerMap {
-  const out: NamespaceOwnerMap = {};
+export function pickI18nOwnerMap(namespaces: readonly string[]) {
+  const out: Record<string, string> = {};
   for (const ns of namespaces) {
-    out[ns] = STANDARD_I18N_OWNER_BY_NAMESPACE[ns];
+    const owner = (STANDARD_I18N_OWNER_BY_NAMESPACE as Record<string, string>)[ns];
+    if (!owner) {
+      throw new Error(`[i18n registry] unknown namespace: ${ns}`);
+    }
+    out[ns] = owner;
   }
   return out;
 }
