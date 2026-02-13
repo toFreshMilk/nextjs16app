@@ -1,6 +1,7 @@
 // src/core/config/tenant.config.ts
 import type { ComponentType } from 'react';
 import type { TenantConfig, ComponentLoader, ServiceLoader, ModuleWithDefault } from '@/core/config/tenant.types';
+import { asStringKeyedRecord } from '@/core/utils/object.util';
 import type { StandardComponentKey, StandardServiceKey } from '@/standard/registry';
 
 // ===== i18n settings (moved from src/core/i18n/settings.ts) =====
@@ -32,9 +33,6 @@ export function isTenantId(v: string): v is TenantId {
 
 // ✅ Promise cache (new file 생성 없이 이 파일 내부에서만 사용)
 const tenantConfigPromiseCache = new Map<TenantId, Promise<TenantConfig>>();
-function asStringKeyedRecord<T>(obj: unknown): Record<string, T> {
-  return obj as Record<string, T>;
-}
 
 // === 1. Loaders ===
 export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> {

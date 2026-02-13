@@ -2,9 +2,9 @@
 import 'server-only';
 
 import { cache } from 'react';
+import { deepMerge, type Dict } from '@/core/utils/object.util';
+import { buildNsOwnerKey, parseNsOwnerKey, type NamespaceOwnerMap as I18nNamespaceOwnerMap } from '@/core/utils/text.util';
 import type { I18nResourceStore } from './types';
-
-type Dict = Record<string, any>;
 
 /**
  * Namespace -> owner(모듈 루트) 매핑을 호출부에서 주입받습니다.
@@ -14,20 +14,7 @@ type Dict = Record<string, any>;
  * Core는 "namespace 이름"에 대해 하드코딩하지 않고,
  * 주입된 owner를 기준으로 standard/ 및 tenants/ 경로에서 리소스를 합칩니다.
  */
-export type NamespaceOwnerMap = Record<string, string>;
-
-function isPlainObject(v: any): v is Record<string, any> {
-  return v !== null && typeof v === 'object' && !Array.isArray(v);
-}
-
-function deepMerge(base: Dict, override: Dict): Dict {
-  const out: Dict = { ...base };
-  for (const [k, v] of Object.entries(override ?? {})) {
-    if (isPlainObject(out[k]) && isPlainObject(v)) out[k] = deepMerge(out[k], v);
-    else out[k] = v;
-  }
-  return out;
-}
+export type NamespaceOwnerMap = I18nNamespaceOwnerMap;
 
 async function safeImport<T>(importer: () => Promise<{ default: T }>): Promise<T> {
   try {
@@ -49,28 +36,6 @@ async function loadMergedResource(lang: string, ns: string, tenant: string, owne
   const base = await safeImport<Dict>(() => import(`@/standard/${owner}/locales/${lang}/${ns}.json`));
   const override = await safeImport<Dict>(() => import(`@/tenants/${tenant}/${owner}/locales/${lang}/${ns}.json`));
   return deepMerge(base, override);
-}
-
-function buildNsOwnerKey(namespaces: string[], ownerByNamespace: NamespaceOwnerMap) {
-  const unique = Array.from(new Set(namespaces)).sort();
-  const pairs = unique.map((ns) => {
-    const owner = ownerByNamespace[ns];
-    if (!owner) {
-      throw new Error(`i18n owner map missing: namespace="${ns}"`);
-    }
-    return `${ns}:${owner}`;
-  });
-  return pairs.join('|');
-}
-
-function parseNsOwnerKey(nsOwnerKey: string): Array<{ ns: string; owner: string }> {
-  if (!nsOwnerKey) return [];
-  return nsOwnerKey.split('|').map((token) => {
-    const idx = token.indexOf(':');
-    const ns = idx >= 0 ? token.slice(0, idx) : token;
-    const owner = idx >= 0 ? token.slice(idx + 1) : '';
-    return { ns, owner };
-  });
 }
 
 async function buildResourceStore(lang: string, tenant: string, nsOwnerKey: string) {

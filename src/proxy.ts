@@ -10,6 +10,8 @@ import {
   isTenantId,
   type TenantId,
 } from '@/core/config/tenant.config';
+import { detectTenantFromHostname } from '@/core/utils/host.util';
+import { forceLocaleToDefault, getUrlLang, isBypassPath } from '@/core/utils/url.util';
 
 const VALID_ROOT_DOMAINS = ['buptle.com', 'buptlestg.com', 'localhost.com', 'localhost'];
 
@@ -29,15 +31,6 @@ function rewriteNotFound(req: NextRequest) {
   return NextResponse.rewrite(errorUrl);
 }
 
-function isBypassPath(pathname: string) {
-  return (
-    pathname.includes('.') ||
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.startsWith('/favicon.ico')
-  );
-}
-
 function setLangCookie(res: NextResponse, lang: string) {
   res.cookies.set(LANG_COOKIE, lang, {
     path: '/',
@@ -46,24 +39,6 @@ function setLangCookie(res: NextResponse, lang: string) {
     secure: process.env.NODE_ENV === 'production',
     maxAge: LANG_COOKIE_MAX_AGE,
   });
-}
-
-function getUrlLang(pathname: string) {
-  const lang = pathname.split('/')[1] ?? '';
-  return isSupportedLang(lang) ? lang : null;
-}
-
-function detectTenant(hostname: string): TenantId | null {
-  const host = hostname.split(':')[0];
-  const rootDomain = VALID_ROOT_DOMAINS.find((d) => host.endsWith(d));
-  if (!rootDomain) return null;
-
-  const subdomain = host.slice(0, host.length - rootDomain.length);
-  const sanitized = subdomain.endsWith('.') ? subdomain.slice(0, -1) : subdomain;
-
-  // ✅ 테넌트 목록은 core/config/tenant.config.ts(TENANT_LOADERS)만이 "단일 소스"
-  if (!sanitized || sanitized === 'www' || !isTenantId(sanitized)) return null;
-  return sanitized;
 }
 
 function getLocaleFromAcceptLanguage(request: NextRequest) {
@@ -90,16 +65,6 @@ function getPreferredLocale(req: NextRequest) {
   return getLocaleFromAcceptLanguage(req);
 }
 
-function forceLocaleToDefault(pathname: string) {
-  const parts = pathname.split('/');
-  // ['', 'en', ...]
-  if (parts.length >= 2 && isSupportedLang(parts[1])) {
-    parts[1] = DEFAULT_LOCALE;
-    return parts.join('/');
-  }
-  return `/${DEFAULT_LOCALE}${pathname.startsWith('/') ? '' : '/'}${pathname}`;
-}
-
 export async function proxy(req: NextRequest) {
   const url = req.nextUrl;
   const hostname = req.headers.get('host') || '';
@@ -111,13 +76,13 @@ export async function proxy(req: NextRequest) {
   }
 
   // 1) tenant
-  const tenant = detectTenant(hostname);
+  const tenant = detectTenantFromHostname<TenantId>(hostname, VALID_ROOT_DOMAINS, isTenantId);
   if (!tenant) {
     return rewriteNotFound(req);
   }
 
   // 현재 URL이 /ko/... or /en/... 인지 확인
-  const urlLang = getUrlLang(pathname);
+  const urlLang = getUrlLang(pathname, isSupportedLang);
   const hasLocalePrefix = urlLang !== null;
 
   // 2) locale 없는 경우 -> 쿠키(or ref/accept-language)로 리다이렉트
@@ -142,7 +107,7 @@ export async function proxy(req: NextRequest) {
 
   // ✅ i18nEnabled=false인 테넌트는 /en/... 같은 접근을 /ko/...로 강제
   if (!i18nEnabled && hasLocalePrefix && urlLang !== DEFAULT_LOCALE) {
-    const redirectedPath = forceLocaleToDefault(pathname);
+    const redirectedPath = forceLocaleToDefault(pathname, DEFAULT_LOCALE, isSupportedLang);
     const newUrl = new URL(`${redirectedPath}${url.search}`, req.url);
     const res = NextResponse.redirect(newUrl);
     setLangCookie(res, DEFAULT_LOCALE);
