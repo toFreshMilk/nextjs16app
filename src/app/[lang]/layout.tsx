@@ -3,7 +3,7 @@ import type { ComponentType, ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import { headers } from 'next/headers';
 
-import { DEFAULT_LANG, getTenantId } from '@/core/config/tenant.config';
+import { DEFAULT_LANG, getTenantId, loadTenantConfig } from '@/core/config/tenant.config';
 import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
 
 import { getI18nResources } from '@/core/i18n/server';
@@ -37,17 +37,15 @@ export default async function LangLayout({
 
   const headersList = await headers();
   const lang = headersList.get('x-lang') || DEFAULT_LANG;
-  const tenantName = headersList.get('x-tenant-name') || tenant;
-  const primaryColor = headersList.get('x-theme-primary-color') || '';
-  const i18nEnabled = headersList.get('x-i18n-enabled') !== '0';
-  const aiEnabled = headersList.get('x-ai-enabled') !== '0';
-  const ssoEnabled = headersList.get('x-sso-enabled') !== '0';
 
+  // ✅ 설정값은 그냥 가져다 쓴다. (feature/테마/테넌트명 등)
+  // ✅ config load 실패/테넌트 검증은 proxy.ts가 이미 처리하므로, 여기서는 단순 로드만 한다.
+  const config = await loadTenantConfig(tenant);
   const configData = {
-    id: tenant,
-    name: tenantName,
-    features: { i18n: i18nEnabled, ai: aiEnabled, sso: ssoEnabled },
-    theme: { primaryColor },
+    id: config.id,
+    name: config.name,
+    features: config.features,
+    theme: config.theme,
   };
 
   // ✅ 여기서는 common만 로딩

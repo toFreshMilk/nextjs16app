@@ -91,22 +91,6 @@ export async function proxy(req: NextRequest) {
     return NextResponse.rewrite(errorUrl);
   }
 
-  // ✅ Tenant/언어 정책 판단의 단일 소스: proxy.ts
-  // - 테넌트 설정 로드는 여기서만 책임지고, 다른 레이어에서는 에러 처리를 하지 않는다.
-  let tenantConfig;
-  try {
-    tenantConfig = await loadTenantConfig(tenant);
-  } catch (e) {
-    console.error(`[Proxy Error] Tenant config load failed: ${tenant}`, e);
-    const errorUrl = req.nextUrl.clone();
-    errorUrl.pathname = '/not-found';
-    return NextResponse.rewrite(errorUrl);
-  }
-
-  const i18nEnabled = tenantConfig.features?.i18n !== false;
-  const aiEnabled = tenantConfig.features?.ai !== false;
-  const ssoEnabled = tenantConfig.features?.sso !== false;
-
   const pathname = url.pathname;
 
   // 현재 URL이 /ko/... or /en/... 인지 확인
@@ -117,6 +101,25 @@ export async function proxy(req: NextRequest) {
   const pathnameIsMissingLocale = LOCALES.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`,
   );
+
+  // ✅ 설정 로드가 "정말 필요한 케이스"만 로드한다.
+  // - /ko/... 는 i18n on/off와 무관하게 허용(정책 불필요)
+  // - missing locale이면 "어떤 locale을 붙일지" 결정해야 함(정책 필요)
+  // - /en/... 같은 접근이면 "i18n off 테넌트면 /ko로 강제" 해야 함(정책 필요)
+  const needsTenantPolicy = pathnameIsMissingLocale || (hasLocalePrefix && urlLang !== DEFAULT_LOCALE);
+
+  let i18nEnabled = true;
+  if (needsTenantPolicy) {
+    try {
+      const tenantConfig = await loadTenantConfig(tenant);
+      i18nEnabled = tenantConfig.features?.i18n !== false;
+    } catch (e) {
+      console.error(`[Proxy Error] Tenant config load failed: ${tenant}`, e);
+      const errorUrl = req.nextUrl.clone();
+      errorUrl.pathname = '/not-found';
+      return NextResponse.rewrite(errorUrl);
+    }
+  }
 
   // ✅ i18nEnabled=false인 테넌트는 /en/... 같은 접근을 /ko/...로 강제
   if (!i18nEnabled && hasLocalePrefix && urlLang !== DEFAULT_LOCALE) {
@@ -154,17 +157,13 @@ export async function proxy(req: NextRequest) {
   }
 
   // 3) locale이 있는 정상 경로 -> 헤더 심고 + 쿠키 갱신
-  const lang = !i18nEnabled ? DEFAULT_LOCALE : hasLocalePrefix ? urlLang : DEFAULT_LOCALE;
+  // - 정책이 필요 없던 케이스(/ko/...)는 urlLang을 그대로 신뢰
+  // - 정책이 필요했던 케이스는 i18nEnabled 기준으로 정규화된 값을 사용
+  const lang = hasLocalePrefix ? (i18nEnabled ? urlLang : DEFAULT_LOCALE) : DEFAULT_LOCALE;
 
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set('x-tenant-id', tenant);
   requestHeaders.set('x-lang', lang);
-  // ✅ feature 플래그는 request header로만 전달(서브도메인간 침범 방지, 서버컴포넌트에서 동적 로딩 최소화)
-  requestHeaders.set('x-i18n-enabled', i18nEnabled ? '1' : '0');
-  requestHeaders.set('x-ai-enabled', aiEnabled ? '1' : '0');
-  requestHeaders.set('x-sso-enabled', ssoEnabled ? '1' : '0');
-  requestHeaders.set('x-tenant-name', tenantConfig.name);
-  requestHeaders.set('x-theme-primary-color', tenantConfig.theme?.primaryColor ?? '');
 
   const res = NextResponse.next({
     request: { headers: requestHeaders },
