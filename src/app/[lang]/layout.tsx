@@ -1,8 +1,9 @@
 // src/app/[lang]/layout.tsx
 import type { ComponentType, ReactNode } from 'react';
 import dynamic from 'next/dynamic';
+import { headers } from 'next/headers';
 
-import { loadTenantConfig, getTenantId } from '@/core/config/tenant.config';
+import { DEFAULT_LANG, getTenantId } from '@/core/config/tenant.config';
 import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
 
 import { getI18nResources } from '@/core/i18n/server';
@@ -23,28 +24,30 @@ export function TenantStyleGateway({ tenant }: { tenant: string }) {
 
 export default async function LangLayout({
   children,
-  params,
 }: {
   children: ReactNode;
-  params: Promise<{ lang: string }>;
 }) {
-  const lang = (await params).lang;
+  // ✅ URL([lang])는 진실의 원천이지만, 정책/정규화 결과는 proxy.ts가 결정합니다.
+  // - i18n off 테넌트는 proxy.ts가 x-lang=ko로 고정
+  // - i18n on 테넌트는 URL과 일치하는 x-lang을 주입
+  // 따라서 레이아웃은 params.lang을 다루지 않고, x-lang 헤더만 신뢰합니다.
 
   // [변경] 프록시(Proxy)가 심어준 헤더에서 tenant 추출
   const tenant = await getTenantId();
 
-  let config;
-  try {
-    config = await loadTenantConfig(tenant);
-  } catch {
-    throw new Error(`Tenant config load failed: ${tenant}`);
-  }
+  const headersList = await headers();
+  const lang = headersList.get('x-lang') || DEFAULT_LANG;
+  const tenantName = headersList.get('x-tenant-name') || tenant;
+  const primaryColor = headersList.get('x-theme-primary-color') || '';
+  const i18nEnabled = headersList.get('x-i18n-enabled') !== '0';
+  const aiEnabled = headersList.get('x-ai-enabled') !== '0';
+  const ssoEnabled = headersList.get('x-sso-enabled') !== '0';
 
   const configData = {
-    id: config.id,
-    name: config.name,
-    features: config.features,
-    theme: config.theme,
+    id: tenant,
+    name: tenantName,
+    features: { i18n: i18nEnabled, ai: aiEnabled, sso: ssoEnabled },
+    theme: { primaryColor },
   };
 
   // ✅ 여기서는 common만 로딩

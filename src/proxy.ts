@@ -69,21 +69,6 @@ function forceLocaleToDefault(pathname: string) {
   return `/${DEFAULT_LOCALE}${pathname.startsWith('/') ? '' : '/'}${pathname}`;
 }
 
-async function resolveI18nEnabledIfNeeded(args: { tenant: TenantId; needsTenantPolicy: boolean }): Promise<boolean> {
-  const { tenant, needsTenantPolicy } = args;
-
-  // ✅ 정책이 필요 없는 케이스면 config 로드를 하지 않는다.
-  if (!needsTenantPolicy) return true;
-
-  try {
-    const tenantConfig = await loadTenantConfig(tenant);
-    return tenantConfig.features?.i18n !== false;
-  } catch {
-    // 안전 디폴트: 켜져있다고 간주(기존 동작 유지)
-    return true;
-  }
-}
-
 export async function proxy(req: NextRequest) {
   const url = req.nextUrl;
   const hostname = req.headers.get('host') || '';
@@ -106,6 +91,22 @@ export async function proxy(req: NextRequest) {
     return NextResponse.rewrite(errorUrl);
   }
 
+  // ✅ Tenant/언어 정책 판단의 단일 소스: proxy.ts
+  // - 테넌트 설정 로드는 여기서만 책임지고, 다른 레이어에서는 에러 처리를 하지 않는다.
+  let tenantConfig;
+  try {
+    tenantConfig = await loadTenantConfig(tenant);
+  } catch (e) {
+    console.error(`[Proxy Error] Tenant config load failed: ${tenant}`, e);
+    const errorUrl = req.nextUrl.clone();
+    errorUrl.pathname = '/not-found';
+    return NextResponse.rewrite(errorUrl);
+  }
+
+  const i18nEnabled = tenantConfig.features?.i18n !== false;
+  const aiEnabled = tenantConfig.features?.ai !== false;
+  const ssoEnabled = tenantConfig.features?.sso !== false;
+
   const pathname = url.pathname;
 
   // 현재 URL이 /ko/... or /en/... 인지 확인
@@ -116,14 +117,6 @@ export async function proxy(req: NextRequest) {
   const pathnameIsMissingLocale = LOCALES.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`,
   );
-
-  // ✅ i18nEnabled 판단이 필요한지(=정책이 필요한지) 먼저 결정
-  // - missing locale이면 "어떤 locale로 붙일지" 정책이 필요
-  // - /en/... 같은 접근이면 "i18n off 테넌트면 /ko로 강제" 정책이 필요
-  // - /ko/... 는 i18n on/off와 무관하게 허용이므로 정책 불필요
-  const needsTenantPolicy = pathnameIsMissingLocale || (hasLocalePrefix && urlLang !== DEFAULT_LOCALE);
-
-  const i18nEnabled = await resolveI18nEnabledIfNeeded({ tenant, needsTenantPolicy });
 
   // ✅ i18nEnabled=false인 테넌트는 /en/... 같은 접근을 /ko/...로 강제
   if (!i18nEnabled && hasLocalePrefix && urlLang !== DEFAULT_LOCALE) {
@@ -143,6 +136,7 @@ export async function proxy(req: NextRequest) {
   }
 
   if (pathnameIsMissingLocale) {
+    // ✅ i18n off인 경우: locale 협상/추론 자체를 하지 않고 기본 언어만 사용 (리소스/연산 최소화)
     const locale = i18nEnabled ? getPreferredLocale(req) : DEFAULT_LOCALE;
     const newUrl = new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, req.url);
 
@@ -165,6 +159,12 @@ export async function proxy(req: NextRequest) {
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set('x-tenant-id', tenant);
   requestHeaders.set('x-lang', lang);
+  // ✅ feature 플래그는 request header로만 전달(서브도메인간 침범 방지, 서버컴포넌트에서 동적 로딩 최소화)
+  requestHeaders.set('x-i18n-enabled', i18nEnabled ? '1' : '0');
+  requestHeaders.set('x-ai-enabled', aiEnabled ? '1' : '0');
+  requestHeaders.set('x-sso-enabled', ssoEnabled ? '1' : '0');
+  requestHeaders.set('x-tenant-name', tenantConfig.name);
+  requestHeaders.set('x-theme-primary-color', tenantConfig.theme?.primaryColor ?? '');
 
   const res = NextResponse.next({
     request: { headers: requestHeaders },
