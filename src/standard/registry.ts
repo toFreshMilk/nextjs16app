@@ -35,7 +35,7 @@ export type StandardServiceKey = keyof typeof STANDARD_SERVICE_LOADERS;
 /**
  * i18n owner map
  * - namespace -> owner(폴더 루트) 매핑
- * - 예: common   => shared
+ * - 예: common => shared
  * - 예: contract => contract
  */
 export const STANDARD_I18N_OWNER_BY_NAMESPACE = {
