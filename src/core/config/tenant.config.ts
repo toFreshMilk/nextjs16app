@@ -32,6 +32,9 @@ export function isTenantId(v: string): v is TenantId {
 
 // ✅ Promise cache (new file 생성 없이 이 파일 내부에서만 사용)
 const tenantConfigPromiseCache = new Map<TenantId, Promise<TenantConfig>>();
+function asStringKeyedRecord<T>(obj: unknown): Record<string, T> {
+  return obj as Record<string, T>;
+}
 
 // === 1. Loaders ===
 export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> {
@@ -45,14 +48,9 @@ export async function loadTenantConfig(tenantId: string): Promise<TenantConfig> 
   if (cached) return cached;
 
   const loader = TENANT_LOADERS[tenantId];
-
-  const p = (async () => {
-    const moduleData = await loader();
-    return { ...moduleData.default, id: tenantId };
-  })();
-
-  tenantConfigPromiseCache.set(tenantId, p);
-  return p;
+  const promise = loader().then((moduleData) => ({ ...moduleData.default, id: tenantId }));
+  tenantConfigPromiseCache.set(tenantId, promise);
+  return promise;
 }
 
 // === 2. Component Loader ===
@@ -68,7 +66,7 @@ export async function getTenantComponent<T = ComponentType<any>>(tenantId: strin
   // ✅ TS7053 해결:
   // - STANDARD_COMPONENT_LOADERS는 "정확한 키 집합 객체 타입"으로 유지되므로,
   //   구현부에서 string으로 인덱싱할 땐 읽기용 Record 캐스팅을 사용합니다.
-  const standardComponentLoaders = STANDARD_COMPONENT_LOADERS as unknown as Record<string, ComponentLoader>;
+  const standardComponentLoaders = asStringKeyedRecord<ComponentLoader>(STANDARD_COMPONENT_LOADERS);
   const standardLoader = standardComponentLoaders[key];
 
   // 오버라이드 확인 -> 없으면 Standard 확인
@@ -103,7 +101,7 @@ export async function getTenantService<T = any>(tenantId: string, key: string): 
   const { STANDARD_SERVICE_LOADERS } = await import('@/standard/registry');
 
   // ✅ TS7053 해결: string 인덱싱은 Record 캐스팅으로 읽기
-  const standardServiceLoaders = STANDARD_SERVICE_LOADERS as unknown as Record<string, ServiceLoader>;
+  const standardServiceLoaders = asStringKeyedRecord<ServiceLoader>(STANDARD_SERVICE_LOADERS);
   const standardLoader = standardServiceLoaders[key];
 
   if (!standardLoader) {
@@ -118,7 +116,7 @@ export async function getTenantService<T = any>(tenantId: string, key: string): 
   return moduleData.default as T;
 }
 
-export async function getTenantId() {
+export async function getTenantId(): Promise<TenantId> {
   // ✅ proxy.ts(Edge)에서도 이 파일을 import할 수 있게,
   //    next/headers는 여기서만 동적 import 합니다.
   const { headers } = await import('next/headers');
@@ -126,8 +124,8 @@ export async function getTenantId() {
   const headersList = await headers();
   const tenant = headersList.get('x-tenant-id');
 
-  if (!tenant) {
-    throw new Error('Tenant ID missing in headers');
+  if (!tenant || !isTenantId(tenant)) {
+    throw new Error('Tenant ID missing or invalid in headers');
   }
 
   return tenant;

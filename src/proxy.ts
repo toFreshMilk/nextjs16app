@@ -21,6 +21,37 @@ const LANG_COOKIE = 'lang'; // 원하는 이름으로 변경 가능
 
 // ✅ referer locale 추출도 단일 소스화 (ko|en 하드코딩 제거)
 const REF_LOCALE_RE = new RegExp(`/(${LOCALES.join('|')})(/|$)`);
+const LANG_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
+function rewriteNotFound(req: NextRequest) {
+  const errorUrl = req.nextUrl.clone();
+  errorUrl.pathname = '/not-found';
+  return NextResponse.rewrite(errorUrl);
+}
+
+function isBypassPath(pathname: string) {
+  return (
+    pathname.includes('.') ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/favicon.ico')
+  );
+}
+
+function setLangCookie(res: NextResponse, lang: string) {
+  res.cookies.set(LANG_COOKIE, lang, {
+    path: '/',
+    sameSite: 'lax',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: LANG_COOKIE_MAX_AGE,
+  });
+}
+
+function getUrlLang(pathname: string) {
+  const lang = pathname.split('/')[1] ?? '';
+  return isSupportedLang(lang) ? lang : null;
+}
 
 function detectTenant(hostname: string): TenantId | null {
   const host = hostname.split(':')[0];
@@ -72,35 +103,25 @@ function forceLocaleToDefault(pathname: string) {
 export async function proxy(req: NextRequest) {
   const url = req.nextUrl;
   const hostname = req.headers.get('host') || '';
+  const pathname = url.pathname;
 
   // Pass static/API
-  if (
-    url.pathname.includes('.') ||
-    url.pathname.startsWith('/_next') ||
-    url.pathname.startsWith('/api') ||
-    url.pathname.startsWith('/favicon.ico')
-  ) {
+  if (isBypassPath(pathname)) {
     return NextResponse.next();
   }
 
   // 1) tenant
   const tenant = detectTenant(hostname);
   if (!tenant) {
-    const errorUrl = req.nextUrl.clone();
-    errorUrl.pathname = '/not-found';
-    return NextResponse.rewrite(errorUrl);
+    return rewriteNotFound(req);
   }
 
-  const pathname = url.pathname;
-
   // 현재 URL이 /ko/... or /en/... 인지 확인
-  const urlLang = pathname.split('/')[1] ?? '';
-  const hasLocalePrefix = isSupportedLang(urlLang);
+  const urlLang = getUrlLang(pathname);
+  const hasLocalePrefix = urlLang !== null;
 
   // 2) locale 없는 경우 -> 쿠키(or ref/accept-language)로 리다이렉트
-  const pathnameIsMissingLocale = LOCALES.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`,
-  );
+  const pathnameIsMissingLocale = !hasLocalePrefix;
 
   // ✅ 설정 로드가 "정말 필요한 케이스"만 로드한다.
   // - /ko/... 는 i18n on/off와 무관하게 허용(정책 불필요)
@@ -115,9 +136,7 @@ export async function proxy(req: NextRequest) {
       i18nEnabled = tenantConfig.features?.i18n !== false;
     } catch (e) {
       console.error(`[Proxy Error] Tenant config load failed: ${tenant}`, e);
-      const errorUrl = req.nextUrl.clone();
-      errorUrl.pathname = '/not-found';
-      return NextResponse.rewrite(errorUrl);
+      return rewriteNotFound(req);
     }
   }
 
@@ -126,15 +145,7 @@ export async function proxy(req: NextRequest) {
     const redirectedPath = forceLocaleToDefault(pathname);
     const newUrl = new URL(`${redirectedPath}${url.search}`, req.url);
     const res = NextResponse.redirect(newUrl);
-
-    res.cookies.set(LANG_COOKIE, DEFAULT_LOCALE, {
-      path: '/',
-      sameSite: 'lax',
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 365, // 1년
-    });
-
+    setLangCookie(res, DEFAULT_LOCALE);
     return res;
   }
 
@@ -144,22 +155,14 @@ export async function proxy(req: NextRequest) {
     const newUrl = new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, req.url);
 
     const res = NextResponse.redirect(newUrl);
-
-    res.cookies.set(LANG_COOKIE, locale, {
-      path: '/',
-      sameSite: 'lax',
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 365, // 1년
-    });
-
+    setLangCookie(res, locale);
     return res;
   }
 
   // 3) locale이 있는 정상 경로 -> 헤더 심고 + 쿠키 갱신
   // - 정책이 필요 없던 케이스(/ko/...)는 urlLang을 그대로 신뢰
   // - 정책이 필요했던 케이스는 i18nEnabled 기준으로 정규화된 값을 사용
-  const lang = hasLocalePrefix ? (i18nEnabled ? urlLang : DEFAULT_LOCALE) : DEFAULT_LOCALE;
+  const lang = i18nEnabled && urlLang ? urlLang : DEFAULT_LOCALE;
 
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set('x-tenant-id', tenant);
@@ -171,13 +174,7 @@ export async function proxy(req: NextRequest) {
 
   // 사용자가 /en/... 또는 /ko/... 로 "명시적으로" 바꿨으면 그 선택을 저장
   if (hasLocalePrefix) {
-    res.cookies.set(LANG_COOKIE, lang, {
-      path: '/',
-      sameSite: 'lax',
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 365,
-    });
+    setLangCookie(res, lang);
   }
 
   return res;
