@@ -4,6 +4,9 @@
 import { useState } from 'react';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import type { StandardContractDto } from '@/standard/contract/services/contract.service';
+import { Button } from '@/uikit/form/Button';
+import { Input } from '@/uikit/form/Input';
+import { Checkbox } from '@/uikit/form/Checkbox';
 
 function safeText(v?: string) {
   return v && String(v).trim() ? v : '-';
@@ -47,15 +50,15 @@ export default function ContractDetailRight({ data }: Props) {
     <section className="space-y-4">
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
         <div className="flex gap-2">
-          <button className="flex-1 px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-700">
+          <Button className="flex-1 px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-700">
             날인용 다운로드
-          </button>
-          <button
+          </Button>
+          <Button
             className="flex-1 px-3 py-2 rounded-lg text-sm font-black text-white"
             style={{ backgroundColor: config.theme.primaryColor }}
           >
             날인 확인
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -72,7 +75,7 @@ export default function ContractDetailRight({ data }: Props) {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
           <div className="font-black text-slate-900">진행상황</div>
-          <button className="text-slate-400 hover:text-slate-900">^</button>
+          <Button className="text-slate-400 hover:text-slate-900 px-0 py-0">^</Button>
         </div>
 
         <div className="p-5 space-y-4">
@@ -82,9 +85,9 @@ export default function ContractDetailRight({ data }: Props) {
               <div className="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs font-mono text-slate-700">
                 {safeText(derived.smartEmail)}
               </div>
-              <button
+              <Button
                 className="px-2 py-2 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-700"
-                onClick={async () => {
+                onPress={async () => {
                   try {
                     await navigator.clipboard.writeText(String(derived.smartEmail ?? ''));
                   } catch {
@@ -93,31 +96,24 @@ export default function ContractDetailRight({ data }: Props) {
                 }}
               >
                 copy
-              </button>
-              <button className="text-xs font-bold text-blue-600 hover:underline">스마트 이메일 보기</button>
+              </Button>
+              <Button className="text-xs font-bold text-blue-600 hover:underline px-0 py-0 text-left">
+                스마트 이메일 보기
+              </Button>
             </div>
           </div>
 
           <div className="flex items-center justify-between">
-            <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-700">
+            <Button className="px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-700">
               워크플로우 설정
-            </button>
-            <button className="px-3 py-2 rounded-lg text-sm font-black text-white bg-blue-600">계약서 비교보기</button>
+            </Button>
+            <Button className="px-3 py-2 rounded-lg text-sm font-black text-white bg-blue-600">계약서 비교보기</Button>
           </div>
 
           <div className="flex items-center gap-4 text-sm text-slate-600">
-            <label className="inline-flex items-center gap-2">
-              <input type="checkbox" className="rounded border-slate-300" />
-              계약 수정 내역
-            </label>
-            <label className="inline-flex items-center gap-2">
-              <input type="checkbox" className="rounded border-slate-300" />
-              첨부파일
-            </label>
-            <label className="inline-flex items-center gap-2">
-              <input type="checkbox" className="rounded border-slate-300" />
-              코멘트
-            </label>
+            <Checkbox label="계약 수정 내역" />
+            <Checkbox label="첨부파일" />
+            <Checkbox label="코멘트" />
           </div>
 
           <div className="pt-2">
@@ -133,10 +129,10 @@ export default function ContractDetailRight({ data }: Props) {
                 <div className="text-sm font-bold text-slate-900">법률_최종승인자: 최종승인</div>
                 <div className="text-xs text-slate-400 mt-1">26/01/12 10:26</div>
                 <div className="mt-3">
-                  <input
+                  <Input
                     className="w-full px-4 py-3 rounded-xl border border-blue-500 outline-none"
                     value={comment}
-                    onChange={(e) => setComment(e.target.value)}
+                    onValueChange={setComment}
                   />
                 </div>
               </div>

@@ -1,5 +1,5 @@
 // src/uikit/form/Select.tsx
-import { SelectHTMLAttributes } from 'react';
+import { type ChangeEvent, type SelectHTMLAttributes } from 'react';
 
 interface Option {
   label: string;
@@ -17,11 +17,11 @@ interface Props extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   options: Option[];
   custom?: SelectCustom;
-  onValueChange?: (value: string, event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onValueChange?: (value: string, event: ChangeEvent<HTMLSelectElement>) => void;
 }
 
 export function Select({ label, options, className, custom, onChange, onValueChange, ...props }: Props) {
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     onChange?.(event);
     onValueChange?.(event.target.value, event);
   };

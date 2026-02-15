@@ -83,17 +83,17 @@ export default function ContractSidebar() {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
         <div className="flex items-center justify-between">
           <div className="font-bold text-slate-900">카테고리</div>
-          <button className="text-slate-400 hover:text-slate-900">⚙</button>
+          <Button className="text-slate-400 hover:text-slate-900 px-0 py-0">⚙</Button>
         </div>
         <div className="mt-3 space-y-2 text-sm">
           {['전체', '회사 템플릿', '마케팅/홍보 계약', '테스트용도', '보안'].map((label) => (
-            <button
+            <Button
               key={label}
               className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700"
-              onClick={() => alert(`카테고리: ${label} (데모)`)}
+              onPress={() => alert(`카테고리: ${label} (데모)`)}
             >
               {label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

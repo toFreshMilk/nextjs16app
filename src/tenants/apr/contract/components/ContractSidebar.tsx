@@ -99,13 +99,13 @@ export default function AprContractSidebar() {
         <div className="font-bold text-rose-800">APR 전용 메뉴</div>
         <div className="mt-3 space-y-2 text-sm">
           {['해외법인', '공급계약', '디바이스', '광고/마케팅'].map((label) => (
-            <button
+            <Button
               key={label}
               className="w-full text-left px-3 py-2 rounded-lg hover:bg-rose-50 text-rose-700"
-              onClick={() => alert(`APR 카테고리: ${label}`)}
+              onPress={() => alert(`APR 카테고리: ${label}`)}
             >
               {label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

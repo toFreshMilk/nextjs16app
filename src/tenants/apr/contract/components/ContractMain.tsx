@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { useCoreTranslation } from '@/core/hooks/useCoreTranslation';
+import { Button } from '@/uikit/form/Button';
 
 function normalizeStatus(s: string) {
   return (s ?? '').trim().toLowerCase();
@@ -124,19 +125,19 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button
             className="px-3 py-2 rounded-xl font-black text-white shadow-sm"
             style={{ backgroundColor: config.theme.primaryColor }}
-            onClick={() => alert(t('apr.alerts.sync_demo'))}
+            onPress={() => alert(t('apr.alerts.sync_demo'))}
           >
             {t('apr.actions.sync')}
-          </button>
-          <button
+          </Button>
+          <Button
             className="px-3 py-2 rounded-xl border border-rose-200 bg-white font-black text-rose-800"
-            onClick={() => alert(t('apr.alerts.approval_demo'))}
+            onPress={() => alert(t('apr.alerts.approval_demo'))}
           >
             {t('apr.actions.approval')}
-          </button>
+          </Button>
         </div>
       </div>
 

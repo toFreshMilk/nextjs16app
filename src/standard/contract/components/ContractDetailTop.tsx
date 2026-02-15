@@ -6,6 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { useCoreTranslation } from '@/core/hooks/useCoreTranslation';
 import contractService, { StandardContractDto } from '@/standard/contract/services/contract.service';
+import { Button } from '@/uikit/form/Button';
 
 type StepKey = 'draft' | 'review' | 'active' | 'done';
 
@@ -99,13 +100,13 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
     <section className="space-y-4">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2 min-w-0">
-          <button
+          <Button
             className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900"
-            onClick={() => router.back()}
+            onPress={() => router.back()}
           >
             <span aria-hidden>←</span>
             <span>{t('detailTop.backToList')}</span>
-          </button>
+          </Button>
 
           <div className="flex items-center gap-3 min-w-0">
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight truncate">{title}</h1>
@@ -114,21 +115,21 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
 
         <div className="flex items-center gap-2 shrink-0">
           {contract.status !== 'APPROVED' && (
-            <button
-              onClick={onApproveClick}
+            <Button
+              onPress={onApproveClick}
               disabled={isPending}
               className="px-3 py-2 rounded-lg border border-blue-200 bg-blue-600 font-bold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isPending ? t('detailTop.processing') : t('detailTop.approve')}
-            </button>
+            </Button>
           )}
 
-          <button className="px-3 py-2 rounded-lg border border-slate-200 bg-amber-300 font-bold text-slate-900">
+          <Button className="px-3 py-2 rounded-lg border border-slate-200 bg-amber-300 font-bold text-slate-900">
             {t('detailTop.delete')}
-          </button>
-          <button className="px-3 py-2 rounded-lg border border-rose-200 bg-rose-500 font-bold text-white">
+          </Button>
+          <Button className="px-3 py-2 rounded-lg border border-rose-200 bg-rose-500 font-bold text-white">
             {t('detailTop.terminate')}
-          </button>
+          </Button>
         </div>
       </div>
 

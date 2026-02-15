@@ -5,6 +5,7 @@ import { ComponentType } from 'react';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCoreTranslation } from '@/core/hooks/useCoreTranslation';
+import { Button } from '@/uikit/form/Button';
 
 function buildUrl(pathname: string, params: URLSearchParams) {
   const qs = params.toString();
@@ -64,32 +65,32 @@ export default function ContractMain({ contracts, ListComponent }: ContractMainP
         </div>
 
         <div className="flex items-center gap-2 text-sm">
-          <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">
+          <Button className="px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700">
             {t('main.actions.show_fields')}
-          </button>
-          <button className="px-3 py-2 rounded-lg border border-slate-200 bg-white">
+          </Button>
+          <Button className="px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700">
             {t('main.actions.per_page_10')}
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Tabs */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 flex gap-2">
         {tabs.map((x) => (
-          <button
+          <Button
             key={x.k}
             className={`px-4 py-2 rounded-xl font-bold text-sm ${
               tab === x.k ? 'text-white' : 'text-slate-600 hover:bg-slate-50'
             }`}
             style={tab === x.k ? { backgroundColor: config.theme.primaryColor } : undefined}
-            onClick={() => {
+            onPress={() => {
               const next = new URLSearchParams(searchParams.toString());
               next.set('tab', x.k);
               router.replace(buildUrl(pathname, next));
             }}
           >
             {x.label}
-          </button>
+          </Button>
         ))}
       </div>
 

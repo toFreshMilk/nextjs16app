@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
+import { Button } from '@/uikit/form/Button';
 
 export function TopNavbar() {
   const { config } = useAppConfig();
@@ -54,7 +55,7 @@ export function TopNavbar() {
           </Link>
         </div>
 
-        <button className="relative w-10 h-10 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition">
+        <Button className="relative w-10 h-10 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition">
           <span className="absolute inset-0 flex items-center justify-center">🔔</span>
           <span
             className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-[11px] font-black text-white flex items-center justify-center"
@@ -62,7 +63,7 @@ export function TopNavbar() {
           >
             3
           </span>
-        </button>
+        </Button>
 
         <div className="flex items-center gap-3">
           <div className="hidden sm:block text-right">

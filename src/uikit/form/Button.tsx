@@ -1,5 +1,5 @@
 // src/uikit/form/Button.tsx
-import { ButtonHTMLAttributes } from 'react';
+import { type ButtonHTMLAttributes, type MouseEvent } from 'react';
 
 type ButtonCustom = {
   baseClassName?: string;
@@ -8,11 +8,11 @@ type ButtonCustom = {
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
   custom?: ButtonCustom;
-  onPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onPress?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 export function Button({ fullWidth, className, custom, onClick, onPress, ...props }: Props) {
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     onClick?.(event);
     onPress?.(event);
   };
