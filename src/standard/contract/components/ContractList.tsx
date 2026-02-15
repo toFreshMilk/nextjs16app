@@ -114,10 +114,12 @@ export function ContractList({ contracts }: { contracts?: ContractRow[] }) {
       <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center text-xs text-slate-500">
         <span>Showing 5 of 124 results</span>
         <div className="flex gap-2">
-          <Button className="px-3 py-1 bg-white border border-slate-200 rounded hover:bg-slate-50 disabled:opacity-50 text-slate-700">
+          <Button variant="outline" tone="slate" size="sm" uniqueClassName="ui-standard-list-prev">
             Prev
           </Button>
-          <Button className="px-3 py-1 bg-white border border-slate-200 rounded hover:bg-slate-50 text-slate-700">Next</Button>
+          <Button variant="outline" tone="slate" size="sm" uniqueClassName="ui-standard-list-next">
+            Next
+          </Button>
         </div>
       </div>
     </div>

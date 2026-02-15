@@ -126,14 +126,19 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
 
         <div className="flex items-center gap-2">
           <Button
-            className="px-3 py-2 rounded-xl font-black text-white shadow-sm"
+            shape="xl"
+            tone="rose"
+            uniqueClassName="ui-apr-main-sync"
             style={{ backgroundColor: config.theme.primaryColor }}
             onPress={() => alert(t('apr.alerts.sync_demo'))}
           >
             {t('apr.actions.sync')}
           </Button>
           <Button
-            className="px-3 py-2 rounded-xl border border-rose-200 bg-white font-black text-rose-800"
+            variant="outline"
+            tone="rose"
+            shape="xl"
+            uniqueClassName="ui-apr-main-approval"
             onPress={() => alert(t('apr.alerts.approval_demo'))}
           >
             {t('apr.actions.approval')}

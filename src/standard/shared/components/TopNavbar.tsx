@@ -55,15 +55,17 @@ export function TopNavbar() {
           </Link>
         </div>
 
-        <Button className="relative w-10 h-10 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition">
-          <span className="absolute inset-0 flex items-center justify-center">🔔</span>
+        <div className="relative">
+          <Button variant="ghost" tone="slate" size="icon" uniqueClassName="ui-top-navbar-noti">
+            <span className="absolute inset-0 flex items-center justify-center">🔔</span>
+          </Button>
           <span
             className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-[11px] font-black text-white flex items-center justify-center"
             style={{ backgroundColor: config.theme.primaryColor }}
           >
             3
           </span>
-        </Button>
+        </div>
 
         <div className="flex items-center gap-3">
           <div className="hidden sm:block text-right">

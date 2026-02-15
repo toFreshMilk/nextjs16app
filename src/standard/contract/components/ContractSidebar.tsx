@@ -32,9 +32,11 @@ export default function ContractSidebar() {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
         <div className="text-lg font-black text-slate-900 mb-3">계약</div>
         <Button
-          className="w-full"
+          fullWidth
+          tone="slate"
+          uniqueClassName="ui-standard-contract-create"
           style={{ backgroundColor: config.theme.primaryColor }}
-          onClick={() => alert('새 계약 작성 (데모)')}
+          onPress={() => alert('새 계약 작성 (데모)')}
         >
           계약 생성
         </Button>
@@ -67,29 +69,39 @@ export default function ContractSidebar() {
           />
         </div>
 
-        <Button
-          className="mt-3 w-full rounded-lg border border-slate-200 bg-amber-300 font-bold text-slate-900"
-          onPress={() => {
-            const next = new URLSearchParams(searchParams.toString());
-            next.delete('q');
-            next.delete('tab');
-            router.replace(buildUrl(pathname, next));
-          }}
-        >
-          검색 초기화
-        </Button>
+        <div className="mt-3">
+          <Button
+            fullWidth
+            tone="amber"
+            uniqueClassName="ui-standard-contract-reset"
+            onPress={() => {
+              const next = new URLSearchParams(searchParams.toString());
+              next.delete('q');
+              next.delete('tab');
+              router.replace(buildUrl(pathname, next));
+            }}
+          >
+            검색 초기화
+          </Button>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
         <div className="flex items-center justify-between">
           <div className="font-bold text-slate-900">카테고리</div>
-          <Button className="text-slate-400 hover:text-slate-900 px-0 py-0">⚙</Button>
+          <Button variant="ghost" size="icon" tone="slate" uniqueClassName="ui-standard-category-setting">
+            ⚙
+          </Button>
         </div>
         <div className="mt-3 space-y-2 text-sm">
-          {['전체', '회사 템플릿', '마케팅/홍보 계약', '테스트용도', '보안'].map((label) => (
+          {['전체', '회사 템플릿', '마케팅/홍보 계약', '테스트용도', '보안'].map((label, index) => (
             <Button
               key={label}
-              className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700"
+              fullWidth
+              variant="ghost"
+              tone="slate"
+              align="start"
+              uniqueClassName={`ui-standard-category-${index}`}
               onPress={() => alert(`카테고리: ${label} (데모)`)}
             >
               {label}

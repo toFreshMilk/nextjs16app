@@ -50,13 +50,10 @@ export default function ContractDetailRight({ data }: Props) {
     <section className="space-y-4">
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
         <div className="flex gap-2">
-          <Button className="flex-1 px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-700">
+          <Button fullWidth variant="outline" tone="slate" uniqueClassName="ui-standard-right-download">
             날인용 다운로드
           </Button>
-          <Button
-            className="flex-1 px-3 py-2 rounded-lg text-sm font-black text-white"
-            style={{ backgroundColor: config.theme.primaryColor }}
-          >
+          <Button fullWidth tone="slate" uniqueClassName="ui-standard-right-stamp-check" style={{ backgroundColor: config.theme.primaryColor }}>
             날인 확인
           </Button>
         </div>
@@ -75,7 +72,9 @@ export default function ContractDetailRight({ data }: Props) {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
           <div className="font-black text-slate-900">진행상황</div>
-          <Button className="text-slate-400 hover:text-slate-900 px-0 py-0">^</Button>
+          <Button variant="ghost" tone="slate" size="icon" uniqueClassName="ui-standard-right-collapse">
+            ^
+          </Button>
         </div>
 
         <div className="p-5 space-y-4">
@@ -86,7 +85,10 @@ export default function ContractDetailRight({ data }: Props) {
                 {safeText(derived.smartEmail)}
               </div>
               <Button
-                className="px-2 py-2 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-700"
+                variant="outline"
+                tone="slate"
+                size="sm"
+                uniqueClassName="ui-standard-right-copy"
                 onPress={async () => {
                   try {
                     await navigator.clipboard.writeText(String(derived.smartEmail ?? ''));
@@ -97,17 +99,19 @@ export default function ContractDetailRight({ data }: Props) {
               >
                 copy
               </Button>
-              <Button className="text-xs font-bold text-blue-600 hover:underline px-0 py-0 text-left">
+              <Button variant="ghost" tone="blue" size="sm" align="start" uniqueClassName="ui-standard-right-smart-mail">
                 스마트 이메일 보기
               </Button>
             </div>
           </div>
 
           <div className="flex items-center justify-between">
-            <Button className="px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-700">
+            <Button variant="outline" tone="slate" uniqueClassName="ui-standard-right-workflow">
               워크플로우 설정
             </Button>
-            <Button className="px-3 py-2 rounded-lg text-sm font-black text-white bg-blue-600">계약서 비교보기</Button>
+            <Button tone="blue" uniqueClassName="ui-standard-right-compare">
+              계약서 비교보기
+            </Button>
           </div>
 
           <div className="flex items-center gap-4 text-sm text-slate-600">
@@ -129,11 +133,7 @@ export default function ContractDetailRight({ data }: Props) {
                 <div className="text-sm font-bold text-slate-900">법률_최종승인자: 최종승인</div>
                 <div className="text-xs text-slate-400 mt-1">26/01/12 10:26</div>
                 <div className="mt-3">
-                  <Input
-                    className="w-full px-4 py-3 rounded-xl border border-blue-500 outline-none"
-                    value={comment}
-                    onValueChange={setComment}
-                  />
+                  <Input tone="blue" size="lg" shape="xl" uniqueClassName="ui-standard-right-comment" value={comment} onValueChange={setComment} />
                 </div>
               </div>
             </div>

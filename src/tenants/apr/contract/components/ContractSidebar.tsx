@@ -39,7 +39,9 @@ export default function AprContractSidebar() {
 
         <Button
           fullWidth
-          custom={{ baseClassName: 'rounded-lg font-bold text-white shadow-sm py-2.5' }}
+          tone="slate"
+          size="md"
+          uniqueClassName="ui-apr-contract-create"
           style={{ backgroundColor: config.theme.primaryColor }}
           onPress={() => alert('APR 전용 계약 생성 플로우')}
         >
@@ -50,10 +52,9 @@ export default function AprContractSidebar() {
           <Input
             label="계약명"
             value={query}
-            custom={{
-              labelClassName: 'text-xs font-bold text-rose-500',
-              inputClassName: 'mt-1 border-rose-200 rounded-lg focus:ring-rose-200',
-            }}
+            tone="rose"
+            shape="xl"
+            uniqueClassName="ui-apr-contract-search"
             onValueChange={(v) => {
               const next = new URLSearchParams(searchParams.toString());
               if (v) next.set('q', v);
@@ -70,10 +71,9 @@ export default function AprContractSidebar() {
             label="상태"
             value={tab}
             options={tabOptions}
-            custom={{
-              labelClassName: 'text-xs font-bold text-rose-500',
-              selectClassName: 'border-rose-200 rounded-lg focus:ring-rose-200',
-            }}
+            tone="rose"
+            shape="xl"
+            uniqueClassName="ui-apr-contract-status"
             onValueChange={(value) => {
               const next = new URLSearchParams(searchParams.toString());
               next.set('tab', value);
@@ -82,26 +82,35 @@ export default function AprContractSidebar() {
           />
         </div>
 
-        <Button
-          className="mt-3 w-full rounded-lg border border-rose-200 bg-rose-50 font-bold text-rose-800"
-          onPress={() => {
-            const next = new URLSearchParams(searchParams.toString());
-            next.delete('q');
-            next.delete('tab');
-            router.replace(buildUrl(pathname, next));
-          }}
-        >
-          필터 초기화
-        </Button>
+        <div className="mt-3">
+          <Button
+            fullWidth
+            variant="outline"
+            tone="rose"
+            uniqueClassName="ui-apr-contract-reset"
+            onPress={() => {
+              const next = new URLSearchParams(searchParams.toString());
+              next.delete('q');
+              next.delete('tab');
+              router.replace(buildUrl(pathname, next));
+            }}
+          >
+            필터 초기화
+          </Button>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-rose-200 shadow-sm p-4">
         <div className="font-bold text-rose-800">APR 전용 메뉴</div>
         <div className="mt-3 space-y-2 text-sm">
-          {['해외법인', '공급계약', '디바이스', '광고/마케팅'].map((label) => (
+          {['해외법인', '공급계약', '디바이스', '광고/마케팅'].map((label, index) => (
             <Button
               key={label}
-              className="w-full text-left px-3 py-2 rounded-lg hover:bg-rose-50 text-rose-700"
+              fullWidth
+              variant="ghost"
+              tone="rose"
+              align="start"
+              uniqueClassName={`ui-apr-category-${index}`}
               onPress={() => alert(`APR 카테고리: ${label}`)}
             >
               {label}

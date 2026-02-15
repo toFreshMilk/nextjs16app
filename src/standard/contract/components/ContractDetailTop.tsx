@@ -101,7 +101,11 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2 min-w-0">
           <Button
-            className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900"
+            variant="ghost"
+            tone="slate"
+            size="sm"
+            align="start"
+            uniqueClassName="ui-standard-detail-top-back"
             onPress={() => router.back()}
           >
             <span aria-hidden>←</span>
@@ -118,16 +122,17 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
             <Button
               onPress={onApproveClick}
               disabled={isPending}
-              className="px-3 py-2 rounded-lg border border-blue-200 bg-blue-600 font-bold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              tone="blue"
+              uniqueClassName="ui-standard-detail-top-approve"
             >
               {isPending ? t('detailTop.processing') : t('detailTop.approve')}
             </Button>
           )}
 
-          <Button className="px-3 py-2 rounded-lg border border-slate-200 bg-amber-300 font-bold text-slate-900">
+          <Button tone="amber" uniqueClassName="ui-standard-detail-top-delete">
             {t('detailTop.delete')}
           </Button>
-          <Button className="px-3 py-2 rounded-lg border border-rose-200 bg-rose-500 font-bold text-white">
+          <Button tone="rose" uniqueClassName="ui-standard-detail-top-terminate">
             {t('detailTop.terminate')}
           </Button>
         </div>

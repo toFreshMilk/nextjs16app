@@ -65,10 +65,10 @@ export default function ContractMain({ contracts, ListComponent }: ContractMainP
         </div>
 
         <div className="flex items-center gap-2 text-sm">
-          <Button className="px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700">
+          <Button variant="outline" tone="slate" uniqueClassName="ui-standard-main-show-fields">
             {t('main.actions.show_fields')}
           </Button>
-          <Button className="px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700">
+          <Button variant="outline" tone="slate" uniqueClassName="ui-standard-main-per-page">
             {t('main.actions.per_page_10')}
           </Button>
         </div>
@@ -79,9 +79,10 @@ export default function ContractMain({ contracts, ListComponent }: ContractMainP
         {tabs.map((x) => (
           <Button
             key={x.k}
-            className={`px-4 py-2 rounded-xl font-bold text-sm ${
-              tab === x.k ? 'text-white' : 'text-slate-600 hover:bg-slate-50'
-            }`}
+            shape="xl"
+            variant={tab === x.k ? 'solid' : 'ghost'}
+            tone={tab === x.k ? 'slate' : 'slate'}
+            uniqueClassName={`ui-standard-main-tab-${x.k}`}
             style={tab === x.k ? { backgroundColor: config.theme.primaryColor } : undefined}
             onPress={() => {
               const next = new URLSearchParams(searchParams.toString());
