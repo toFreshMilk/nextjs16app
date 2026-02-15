@@ -15,7 +15,7 @@ interface Props extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'className
   label?: string;
   options: Option[];
   tone?: SelectTone;
-  size?: SelectSize;
+  selectSize?: SelectSize;
   shape?: SelectShape;
   uniqueClassName?: string;
   onValueChange?: (value: string, event: ChangeEvent<HTMLSelectElement>) => void;
@@ -36,7 +36,7 @@ export function Select({
   label,
   options,
   tone = 'slate',
-  size = 'md',
+  selectSize = 'md',
   shape = 'md',
   uniqueClassName,
   onChange,
@@ -52,7 +52,7 @@ export function Select({
     <div className={`flex flex-col gap-1 ${uniqueClassName ?? ''}`}>
       {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
       <select
-        className={`${SELECT_SIZE_CLASS[size]} border ${shape === 'xl' ? 'rounded-xl' : 'rounded-md'} focus:ring-2 outline-none bg-white ${SELECT_TONE_CLASS[tone]}`}
+        className={`${SELECT_SIZE_CLASS[selectSize]} border ${shape === 'xl' ? 'rounded-xl' : 'rounded-md'} focus:ring-2 outline-none bg-white ${SELECT_TONE_CLASS[tone]}`}
         onChange={handleChange}
         {...props}
       >

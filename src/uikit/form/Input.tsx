@@ -10,7 +10,7 @@ interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className'>
   error?: string;
   labelSuffix?: ReactNode;
   tone?: InputTone;
-  size?: InputSize;
+  inputSize?: InputSize;
   shape?: InputShape;
   uniqueClassName?: string;
   onValueChange?: (value: string, event: ChangeEvent<HTMLInputElement>) => void;
@@ -32,7 +32,7 @@ export function Input({
   error,
   labelSuffix,
   tone = 'slate',
-  size = 'md',
+  inputSize = 'md',
   shape = 'md',
   uniqueClassName,
   onChange,
@@ -53,7 +53,7 @@ export function Input({
         </label>
       )}
       <input
-        className={`${INPUT_SIZE_CLASS[size]} border ${shape === 'xl' ? 'rounded-xl' : 'rounded-md'} focus:ring-2 outline-none transition disabled:bg-gray-100 ${
+        className={`${INPUT_SIZE_CLASS[inputSize]} border ${shape === 'xl' ? 'rounded-xl' : 'rounded-md'} focus:ring-2 outline-none transition disabled:bg-gray-100 ${
           error ? 'border-red-500 focus:ring-red-500' : INPUT_TONE_CLASS[tone]
         }`}
         onChange={handleChange}

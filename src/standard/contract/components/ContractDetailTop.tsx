@@ -1,12 +1,14 @@
 // src/standard/contract/components/ContractDetailTop.tsx
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { useCoreTranslation } from '@/core/hooks/useCoreTranslation';
 import contractService, { StandardContractDto } from '@/standard/contract/services/contract.service';
 import { Button } from '@/uikit/form/Button';
+import Modal from '@/uikit/layout/Modal';
 
 type StepKey = 'draft' | 'review' | 'active' | 'done';
 
@@ -32,6 +34,7 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
   const router = useRouter();
   const { config } = useAppConfig();
   const { t } = useCoreTranslation('contract');
+  const [approveModalOpen, setApproveModalOpen] = useState(false);
 
   const step = statusToStep(contract?.status ?? '');
 
@@ -91,13 +94,27 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
   });
 
   const onApproveClick = () => {
-    if (confirm(t('detailTop.confirmApprove'))) {
-      handleApprove();
-    }
+    setApproveModalOpen(true);
   };
 
   return (
     <section className="space-y-4">
+      <Modal
+        open={approveModalOpen}
+        title={t('detailTop.approve')}
+        message={t('detailTop.confirmApprove')}
+        variant="double"
+        confirmText={t('detailTop.approve')}
+        cancelText="취소"
+        onConfirm={() => {
+          setApproveModalOpen(false);
+          handleApprove();
+        }}
+        onCancel={() => setApproveModalOpen(false)}
+        onClose={() => setApproveModalOpen(false)}
+        uniqueClassName="ui-standard-approve-modal"
+      />
+
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2 min-w-0">
           <Button

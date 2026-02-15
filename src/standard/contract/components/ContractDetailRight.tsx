@@ -133,7 +133,14 @@ export default function ContractDetailRight({ data }: Props) {
                 <div className="text-sm font-bold text-slate-900">법률_최종승인자: 최종승인</div>
                 <div className="text-xs text-slate-400 mt-1">26/01/12 10:26</div>
                 <div className="mt-3">
-                  <Input tone="blue" size="lg" shape="xl" uniqueClassName="ui-standard-right-comment" value={comment} onValueChange={setComment} />
+                  <Input
+                    tone="blue"
+                    inputSize="lg"
+                    shape="xl"
+                    uniqueClassName="ui-standard-right-comment"
+                    value={comment}
+                    onValueChange={setComment}
+                  />
                 </div>
               </div>
             </div>

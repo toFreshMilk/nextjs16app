@@ -1,9 +1,11 @@
 // src/standard/contract/components/ContractSidebar.tsx
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/uikit/form/Button';
 import { Input } from '@/uikit/form/Input';
 import { Select } from '@/uikit/form/Select';
+import Modal from '@/uikit/layout/Modal';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
@@ -17,6 +19,7 @@ export default function ContractSidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const query = searchParams.get('q') ?? '';
   const tab = searchParams.get('tab') ?? 'all';
@@ -29,6 +32,17 @@ export default function ContractSidebar() {
 
   return (
     <aside className="w-72 shrink-0 space-y-4">
+      <Modal
+        open={createModalOpen}
+        title="계약 생성"
+        message="새 계약 작성 플로우를 시작합니다. (데모)"
+        variant="single"
+        confirmText="확인"
+        onConfirm={() => setCreateModalOpen(false)}
+        onClose={() => setCreateModalOpen(false)}
+        uniqueClassName="ui-standard-create-modal"
+      />
+
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
         <div className="text-lg font-black text-slate-900 mb-3">계약</div>
         <Button
@@ -36,7 +50,7 @@ export default function ContractSidebar() {
           tone="slate"
           uniqueClassName="ui-standard-contract-create"
           style={{ backgroundColor: config.theme.primaryColor }}
-          onPress={() => alert('새 계약 작성 (데모)')}
+          onPress={() => setCreateModalOpen(true)}
         >
           계약 생성
         </Button>

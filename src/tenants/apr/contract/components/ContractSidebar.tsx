@@ -1,11 +1,13 @@
 // src/tenants/apr/contract/components/ContractSidebar.tsx
 'use client';
 
+import { useState } from 'react';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/uikit/form/Button';
 import { Input } from '@/uikit/form/Input';
 import { Select } from '@/uikit/form/Select';
+import Modal from '@/uikit/layout/Modal';
 
 function buildUrl(pathname: string, params: URLSearchParams) {
   const qs = params.toString();
@@ -17,6 +19,7 @@ export default function AprContractSidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const query = searchParams.get('q') ?? '';
   const tab = searchParams.get('tab') ?? 'all';
@@ -29,6 +32,17 @@ export default function AprContractSidebar() {
 
   return (
     <aside className="w-72 shrink-0 space-y-4">
+      <Modal
+        open={createModalOpen}
+        title="APR 계약 생성"
+        message="APR 전용 계약 생성 플로우를 시작합니다."
+        variant="single"
+        confirmText="확인"
+        onConfirm={() => setCreateModalOpen(false)}
+        onClose={() => setCreateModalOpen(false)}
+        uniqueClassName="ui-apr-create-modal"
+      />
+
       <div className="bg-white rounded-2xl border border-rose-200 shadow-sm p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="text-lg font-black text-rose-700">APR 계약</div>
@@ -43,7 +57,7 @@ export default function AprContractSidebar() {
           size="md"
           uniqueClassName="ui-apr-contract-create"
           style={{ backgroundColor: config.theme.primaryColor }}
-          onPress={() => alert('APR 전용 계약 생성 플로우')}
+          onPress={() => setCreateModalOpen(true)}
         >
           APR 계약 생성
         </Button>
