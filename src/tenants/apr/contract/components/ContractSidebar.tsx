@@ -3,6 +3,9 @@
 
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Button } from '@/uikit/form/Button';
+import { Input } from '@/uikit/form/Input';
+import { Select } from '@/uikit/form/Select';
 
 function buildUrl(pathname: string, params: URLSearchParams) {
   const qs = params.toString();
@@ -17,6 +20,12 @@ export default function AprContractSidebar() {
 
   const query = searchParams.get('q') ?? '';
   const tab = searchParams.get('tab') ?? 'all';
+  const tabOptions = [
+    { label: '전체', value: 'all' },
+    { label: '초안', value: 'draft' },
+    { label: '검토', value: 'review' },
+    { label: '진행', value: 'active' },
+  ];
 
   return (
     <aside className="w-72 shrink-0 space-y-4">
@@ -28,22 +37,25 @@ export default function AprContractSidebar() {
           </span>
         </div>
 
-        <button
-          className="w-full py-2.5 rounded-lg font-bold text-white shadow-sm"
+        <Button
+          fullWidth
+          custom={{ baseClassName: 'rounded-lg font-bold text-white shadow-sm py-2.5' }}
           style={{ backgroundColor: config.theme.primaryColor }}
-          onClick={() => alert('APR 전용 계약 생성 플로우')}
+          onPress={() => alert('APR 전용 계약 생성 플로우')}
         >
           APR 계약 생성
-        </button>
+        </Button>
 
         <div className="mt-4">
-          <label className="text-xs font-bold text-rose-500">계약명</label>
-          <input
-            className="mt-1 w-full px-3 py-2 border border-rose-200 rounded-lg outline-none focus:ring-2 focus:ring-rose-200"
+          <Input
+            label="계약명"
             value={query}
-            onChange={(e) => {
+            custom={{
+              labelClassName: 'text-xs font-bold text-rose-500',
+              inputClassName: 'mt-1 border-rose-200 rounded-lg focus:ring-rose-200',
+            }}
+            onValueChange={(v) => {
               const next = new URLSearchParams(searchParams.toString());
-              const v = e.target.value;
               if (v) next.set('q', v);
               else next.delete('q');
               if (!next.get('tab')) next.set('tab', tab);
@@ -53,9 +65,26 @@ export default function AprContractSidebar() {
           />
         </div>
 
-        <button
-          className="mt-3 w-full py-2 rounded-lg border border-rose-200 bg-rose-50 font-bold text-rose-800"
-          onClick={() => {
+        <div className="mt-3">
+          <Select
+            label="상태"
+            value={tab}
+            options={tabOptions}
+            custom={{
+              labelClassName: 'text-xs font-bold text-rose-500',
+              selectClassName: 'border-rose-200 rounded-lg focus:ring-rose-200',
+            }}
+            onValueChange={(value) => {
+              const next = new URLSearchParams(searchParams.toString());
+              next.set('tab', value);
+              router.replace(buildUrl(pathname, next));
+            }}
+          />
+        </div>
+
+        <Button
+          className="mt-3 w-full rounded-lg border border-rose-200 bg-rose-50 font-bold text-rose-800"
+          onPress={() => {
             const next = new URLSearchParams(searchParams.toString());
             next.delete('q');
             next.delete('tab');
@@ -63,7 +92,7 @@ export default function AprContractSidebar() {
           }}
         >
           필터 초기화
-        </button>
+        </Button>
       </div>
 
       <div className="bg-white rounded-2xl border border-rose-200 shadow-sm p-4">
