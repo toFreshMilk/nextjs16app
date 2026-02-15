@@ -83,8 +83,10 @@ buptlebiz_fe/
     │   │
     │   └── utils/
     │       ├── date.util.ts # Date utilities
+    │       ├── host.util.ts # Hostname utilities (tenant detection)
     │       ├── object.util.ts # Object utilities
-    │       └── string.util.ts # String utilities
+    │       ├── text.util.ts # Text/string utilities (i18n key processing)
+    │       └── url.util.ts # URL utilities (path parsing, locale handling)
     │
     ├── standard/ # [Base] 기본 구현체 (파일 보관소)
     │   ├── registry.ts # Standard 컴포넌트 레지스트리
@@ -158,9 +160,13 @@ buptlebiz_fe/
         │   └── BarChart.tsx # 막대 차트 컴포넌트
         ├── form/
         │   ├── Button.tsx # 버튼 컴포넌트
+        │   ├── Checkbox.tsx # 체크박스 컴포넌트
         │   ├── Input.tsx # 입력 필드 컴포넌트
-        │   └── Select.tsx # 셀렉트 컴포넌트
+        │   ├── Radio.tsx # 라디오 버튼 컴포넌트
+        │   ├── Select.tsx # 셀렉트 컴포넌트
+        │   └── Textarea.tsx # 텍스트 영역 컴포넌트
         └── layout/
+            ├── Modal.tsx # 모달 팝업 컴포넌트 (1버튼/2버튼)
             ├── PageContainer.tsx # 페이지 컨테이너
             └── Section.tsx # 섹션 컴포넌트
 
@@ -192,7 +198,23 @@ buptlebiz_fe/
 - **APR**: WorkspaceBanner + ContractSidebar + ContractMain + ContractDetailTop (UI 차별화) + ContractService
 - ContractDetailLeft/Right는 오버라이드하지 않으면 Standard 구현체를 사용합니다.
 
-### 5. 계약 상세 페이지 구조
+### 5. proxy.ts: Tenant/Language 정책 집행
+
+- **역할**: Next.js 16에서 `src/proxy.ts`는 암묵적으로 미들웨어로 동작합니다.
+- **책임**:
+  - 호스트명 기반 테넌트 감지 및 검증
+  - 언어 정책 집행 (i18n feature flag 기반)
+  - URL locale prefix 처리 및 리다이렉션
+  - `x-tenant-id`, `x-lang` 헤더 주입
+- **에러 처리**: 테넌트 설정 로드 실패 시 `/not-found`로 rewrite (중앙 집중식)
+
+### 6. uikit 컴포넌트 스타일링 원칙
+
+- **내부 스타일 선언**: 모든 uikit 컴포넌트는 `variant`, `tone`, `size` 등 기본 스타일을 내부에 정의합니다.
+- **uniqueClassName**: 호출부는 `uniqueClassName` prop으로만 추가 스타일을 주입합니다.
+- **HTML 기본 속성 충돌 방지**: `size` 같은 HTML 기본 속성과 충돌하는 prop은 `inputSize`, `selectSize` 등으로 명명합니다.
+
+### 7. 계약 상세 페이지 구조
 
 - **URL**: `/[lang]/contract/[id]`
 - **3분할 컴포넌트 조립**:
