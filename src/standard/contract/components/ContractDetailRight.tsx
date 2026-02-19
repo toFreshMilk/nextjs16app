@@ -1,12 +1,15 @@
 // src/standard/contract/components/ContractDetailRight.tsx
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import type { DateRange } from 'react-day-picker';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import type { StandardContractDto } from '@/standard/contract/services/contract.service';
 import { Button } from '@/uikit/form/Button';
 import { Input } from '@/uikit/form/Input';
 import { Checkbox } from '@/uikit/form/Checkbox';
+import { DatePicker } from '@/uikit/calendar/DatePicker';
+import { BarChart } from '@/uikit/chart/BarChart';
 
 function safeText(v?: string) {
   return v && String(v).trim() ? v : '-';
@@ -39,12 +42,24 @@ export default function ContractDetailRight({ data }: Props) {
   const contract = data?.[0] || null;
 
   const [comment, setComment] = useState('승인합니다.');
+  const [signDate, setSignDate] = useState<Date | undefined>();
+  const [reviewRange, setReviewRange] = useState<DateRange | undefined>();
 
   const base = contract ?? { id: '-', title: '계약 상세', status: 'Active' };
   const derived = {
     ...base,
     smartEmail: `licombined+com${String(base.id ?? '0')}@smail.buptlestg.com`,
   };
+
+  const weeklyActivityData = useMemo(
+    () => [
+      { week: 'W1', comments: 2, files: 1 },
+      { week: 'W2', comments: 4, files: 2 },
+      { week: 'W3', comments: 3, files: 2 },
+      { week: 'W4', comments: 6, files: 4 },
+    ],
+    [],
+  );
 
   return (
     <section className="space-y-4">
@@ -68,6 +83,44 @@ export default function ContractDetailRight({ data }: Props) {
           <div className="text-sm text-slate-500">(데모) 공유 대상/권한 설정 영역입니다.</div>
         </div>
       </details>
+
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 space-y-3">
+        <div className="text-sm font-black text-slate-900">서명/검토 일정 (DatePicker 샘플)</div>
+        <DatePicker
+          mode="single"
+          label="서명 예정일"
+          description="단일 날짜 선택"
+          value={signDate}
+          onValueChange={setSignDate}
+          onDayClick={(day) => {
+            console.log('[DatePicker] sign date selected:', day);
+          }}
+        />
+        <DatePicker
+          mode="range"
+          label="검토 기간"
+          description="기간 선택"
+          value={reviewRange}
+          onValueChange={setReviewRange}
+          numberOfMonths={1}
+        />
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+        <div className="text-sm font-black text-slate-900 mb-2">주간 활동량 (Recharts 샘플)</div>
+        <BarChart
+          data={weeklyActivityData}
+          xKey="week"
+          series={[
+            { dataKey: 'comments', name: '코멘트', color: config.theme.primaryColor },
+            { dataKey: 'files', name: '첨부파일', color: '#f59e0b' },
+          ]}
+          height={220}
+          onBarClick={({ seriesKey, row }) => {
+            console.log('[BarChart] click', seriesKey, row.week);
+          }}
+        />
+      </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">

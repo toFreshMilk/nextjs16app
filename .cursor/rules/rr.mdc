@@ -3,17 +3,6 @@ name: rr
 description: BuptleBiz Development Rule (Strict Architecture & Environment Policy)
 ---
 
-## Approval Gate (HARD STOP)
-
-- 사용자가 정확히 "승인: 진행" 이라고 답하면, 해당 대화/작업 세션의 동일한 작업 범위 내에서는 추가 승인 없이 계속 진행한다.
-
-- 사용자가 승인 전까지는
-  - 어떤 파일도 수정하지 말 것
-  - 어떤 실행(터미널/스크립트/패키지 설치)도 하지 말 것
-  - 변경 diff/패치도 확정본으로 작성하지 말 것 (제안 수준만 가능)
-
----
-
 # Overview
 
 - 아키텍쳐를 구성하는 방식을 준수한다.
@@ -43,11 +32,11 @@ description: BuptleBiz Development Rule (Strict Architecture & Environment Polic
 
 # 2. 서비스 정의
 
-**법틀비즈(buptlebiz)** 는 기업용 법무관리 웹 솔루션이다. 고객사는 customer, 프로그램 내의 각종역할은 tenant 라고 명명한다.
+**법틀비즈(buptlebiz)** 는 기업용 법무관리 웹 솔루션이다. 고객사는 tenant, 프로그램 내의 각종역할은 role 라고 명명한다.
 
 모든 설계는 B2B SaaS 환경을 전제로 한다.
 - 멀티 테넌트 구조
-- 고객사별 기능 분기
+- role별 기능 분기
 - 설정 기반 기능 제어
 
 ---

@@ -1,15 +1,24 @@
 // src/tenants/apr/contract/components/ContractMain.tsx
 'use client';
 
+import type { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import { useCoreTranslation } from '@/core/hooks/useCoreTranslation';
 import { Button } from '@/uikit/form/Button';
+import { BarChart } from '@/uikit/chart/BarChart';
+import { DataTable } from '@/uikit/table/DataTable';
 
 function normalizeStatus(s: string) {
   return (s ?? '').trim().toLowerCase();
 }
+
+type ContractItem = {
+  id: number | string;
+  title: string;
+  status: string;
+};
 
 function StatCard({ label, value, accent }: { label: string; value: number; accent: string }) {
   return (
@@ -33,7 +42,7 @@ function Column({
 }: {
   title: string;
   hint: string;
-  items: any[];
+  items: ContractItem[];
   chip: { bg: string; text: string; border: string };
   emptyText: string;
   statusLabel: string;
@@ -74,18 +83,16 @@ function Column({
 }
 
 interface AprContractMainProps {
-  contracts: {
-    id: number | string;
-    title: string;
-    status: string;
-  }[];
-  ListComponent?: any;
+  contracts: ContractItem[];
+  ListComponent?: unknown;
 }
 
 export default function AprContractMain({ contracts }: AprContractMainProps) {
   const { t } = useCoreTranslation('contract');
 
   const { config } = useAppConfig();
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   // [React 19] 그냥 변수에 할당하면 끝. 컴파일러가 알아서 메모이제이션함.
@@ -110,6 +117,27 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
 
   const emptyText = t('apr.columns.empty');
   const statusLabel = t('apr.card.status_label');
+
+  const statusChartData = [
+    { status: 'Draft', count: draft.length },
+    { status: 'Review', count: review.length },
+    { status: 'Active', count: active.length },
+  ];
+
+  const tableColumns: Array<ColumnDef<ContractItem, unknown>> = [
+    {
+      accessorKey: 'id',
+      header: 'ID',
+    },
+    {
+      accessorKey: 'title',
+      header: '계약명',
+    },
+    {
+      accessorKey: 'status',
+      header: '상태',
+    },
+  ];
 
   return (
     <section className="flex-1 space-y-4">
@@ -151,6 +179,37 @@ export default function AprContractMain({ contracts }: AprContractMainProps) {
         <StatCard label={t('apr.stat.active')} value={active.length} accent="#16a34a" />
         <StatCard label={t('apr.stat.review')} value={review.length} accent="#f59e0b" />
         <StatCard label={t('apr.stat.draft')} value={draft.length} accent="#64748b" />
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className="rounded-2xl border border-rose-200 bg-white p-4 shadow-sm">
+          <div className="mb-2 text-sm font-bold text-slate-800">APR 상태 차트 (Recharts 샘플)</div>
+          <BarChart
+            data={statusChartData}
+            xKey="status"
+            series={[{ dataKey: 'count', name: '건수', color: config.theme.primaryColor }]}
+            height={220}
+            onBarClick={({ row }) => {
+              const status = String(row.status ?? '').toLowerCase();
+              if (!status) return;
+              const next = new URLSearchParams(searchParams.toString());
+              next.set('tab', status);
+              router.replace(`${pathname}?${next.toString()}`);
+            }}
+          />
+        </div>
+
+        <div className="rounded-2xl border border-rose-200 bg-white p-4 shadow-sm">
+          <div className="mb-2 text-sm font-bold text-slate-800">APR 테이블 (TanStack Table 샘플)</div>
+          <DataTable
+            data={filtered}
+            columns={tableColumns}
+            globalFilterPlaceholder="계약명 검색"
+            onRowClick={(row) => router.push(`${pathname}/${row.id}`)}
+            uniqueClassName="ui-apr-main-table"
+            tableUniqueClassName="border-rose-200"
+          />
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-4">
