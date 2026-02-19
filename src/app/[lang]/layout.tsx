@@ -1,6 +1,5 @@
 // src/app/[lang]/layout.tsx
-import type { ComponentType, ReactNode } from 'react';
-import dynamic from 'next/dynamic';
+import type { ReactNode } from 'react';
 import { headers } from 'next/headers';
 
 import { DEFAULT_LANG, getTenantId, loadTenantConfig } from '@/core/config/tenant.config';
@@ -9,18 +8,6 @@ import { AppConfigProvider } from '@/core/contexts/AppConfigContext';
 import { getI18nResources } from '@/core/i18n/server';
 import I18nProvider from '@/core/providers/I18nProvider';
 import { pickI18nOwnerMap } from '@/standard/registry';
-
-// 스타일 로더 설정
-const LOADERS: Record<string, ComponentType> = {
-  apr: dynamic(() => import('@/tenants/apr/shared/APRStyleLoader'), { ssr: true }),
-  demo: dynamic(() => import('@/tenants/demo/shared/DemoStyleLoader'), { ssr: true }),
-};
-
-export function TenantStyleGateway({ tenant }: { tenant: string }) {
-  const Loader = LOADERS[tenant];
-  if (!Loader) return null;
-  return <Loader />;
-}
 
 export default async function LangLayout({
   children,
@@ -54,9 +41,6 @@ export default async function LangLayout({
 
   return (
     <AppConfigProvider tenantConfig={configData}>
-      {/* 테넌트별 스타일 로드 */}
-      <TenantStyleGateway tenant={tenant} />
-
       {/* i18n Provider */}
       <I18nProvider lang={lang} resources={resources}>
         {children}

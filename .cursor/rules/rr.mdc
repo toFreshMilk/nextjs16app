@@ -1,26 +1,138 @@
 ---
 name: rr
-description: This is a new rule
+description: BuptleBiz Development Rule (Strict Architecture & Environment Policy)
 ---
 
-
-
 ## Approval Gate (HARD STOP)
-
 
 - 사용자가 정확히 "승인: 진행" 이라고 답하면, 해당 대화/작업 세션의 동일한 작업 범위 내에서는 추가 승인 없이 계속 진행한다.
 
 - 사용자가 승인 전까지는
   - 어떤 파일도 수정하지 말 것
   - 어떤 실행(터미널/스크립트/패키지 설치)도 하지 말 것
-  - 변경 diff/패치도 확정본으로 작성하지 말 것(제안 수준만 가능)
+  - 변경 diff/패치도 확정본으로 작성하지 말 것 (제안 수준만 가능)
+
+---
 
 # Overview
 
-- 아키텍쳐를 구성하는 방식을 준수해. 오버라이드가 아니라 설정파일에 맞는 파일을 조립하는 식이야.
+- 아키텍쳐를 구성하는 방식을 준수한다.
+- 오버라이드 방식이 아니라 **설정파일에 맞는 파일을 조립하는 방식**으로 구성한다.
+- 기존 구조를 파괴하지 않는다.
+- 결합도(Coupling)를 낮추고 모듈 Ownership을 지킨다.
 
-1) page.tsx 에서 해당 컴포넌트를 배치한다. url에 따른 바닥페이지야
+---
 
-2) page.tsx 안에 배치되는 component 들은 자기만의 ui도 가지고 있고 데이터도 자기가 서비스를 호출해서 가져온다.
+# 1. 개발 환경 강제 (Mandatory Development Environment)
 
-3) tenants.config.ts 에서 가지고 온 정보를 활용해서 어떤 page를 쓸건지와 component를 쓸건지를 결정해준다.
+- 에디터는 오직 **WebStorm**만 사용한다.
+- 기술 스택:
+  - Next.js 16.1.5 (React 19 RSC 컴파일러)
+  - TypeScript
+  - Tailwind CSS v4
+  - Node 24
+  - pnpm
+
+- 반드시 **Next.js 16 최신 공식 문서 기준**으로 설명하고 구현한다.
+- 구버전 문법 사용 금지.
+- 특히 `middleware.ts`는 deprecated 되었음을 반드시 인지한다.
+- Pages Router 기준 설명 금지.
+- App Router + RSC 구조를 기본 전제로 한다.
+
+---
+
+# 2. 서비스 정의
+
+**법틀비즈(buptlebiz)** 는 기업용 법무관리 웹 솔루션이다. 고객사는 customer, 프로그램 내의 각종역할은 tenant 라고 명명한다.
+
+모든 설계는 B2B SaaS 환경을 전제로 한다.
+- 멀티 테넌트 구조
+- 고객사별 기능 분기
+- 설정 기반 기능 제어
+
+---
+
+# 3. 아키텍처 원칙 (Colocation & Container Pattern)
+
+"Colocation & Container Pattern"을 엄격히 준수한다.
+
+## 핵심 원칙
+
+- Core 모듈에서 도메인 타입을 제거한다.
+- 각 모듈이 자신의 타입을 소유한다 (Ownership).
+- 타입을 중앙에서 통합 관리하지 않는다.
+
+## Container 규칙
+
+- `page.tsx`는 Container 역할만 수행한다.
+- 데이터 연결과 조립만 담당한다.
+- 비즈니스 로직을 넣지 않는다.
+- UI 로직을 넣지 않는다.
+- 결합도(Coupling)를 낮춘다.
+
+---
+
+# 4. Feature On/Off 구조
+
+현재 Feature 예시:
+- 다국어
+- AI
+- SSO
+
+## 원칙
+
+- 모든 기능은 고객사 설정 데이터 기반으로 on/off 한다.
+- off된 기능은 UI 뿐 아니라 관련 API/로직 호출도 차단한다.
+- 리소스 낭비를 발생시키지 않는다.
+
+## 다국어 처리 방식
+
+- 해당 언어 + 해당 고객사 데이터만 내려준다.
+- 고객사 고유 번역 데이터는 `useTranslation` 훅 호출 시 동적으로 병합한다.
+- 최종 번역 데이터는:
+  - 공통 번역
+  - 고객사 확장 번역
+  를 merge하여 구성한다.
+
+---
+
+# 5. 컴포넌트 패턴 (Smart Component Pattern)
+
+스마트 컴포넌트 방식을 채택한다.
+
+## 규칙
+
+- 데이터 페칭 (예: SuspenseQuery 등)은 필요한 컴포넌트 내부에서 직접 수행한다.
+- 비즈니스 로직도 해당 컴포넌트 내부에서 처리한다.
+- 불필요한 상위 전달을 하지 않는다.
+
+## 서버 액션 규칙
+
+- 서버 액션 사용 금지.
+- 최초 렌더링에 필요한 GET 호출은 서버 컴포넌트에서 처리.
+- 이후 API 호출은 클라이언트에서 직접 수행한다.
+
+## 멀티 테넌트 확장 방식
+
+- 신규 고객사가 추가되면:
+  - 고객사 특화 로직만 `tenants/` 폴더에 생성
+  - 공통 로직은 `standard/` 로직 재사용
+- 분기 기반 조립 구조를 유지한다.
+
+---
+
+# 6. 코드 작성 규칙 (Strict Code Policy)
+
+- 코드는 절대 생략하지 않는다.
+  - `// ...`
+  - `// rest`
+  - 부분 코드 제공
+  모두 금지
+
+- 항상 전체 파일을 작성한다.
+- 기존 코드의 주석은 유지한다.
+- 최상단에 반드시 파일 경로 주석을 작성한다.
+
+예:
+```ts
+// src/features/contracts/components/ContractList.tsx
