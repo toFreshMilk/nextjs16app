@@ -16,6 +16,19 @@ export interface StandardContractDto {
   requester?: string;
   reviewer?: string;
   documentCode?: string;
+  smartEmail?: string;
+  signDate?: string;
+  reviewFrom?: string;
+  reviewTo?: string;
+  weeklyActivity?: Array<{
+    week: string;
+    comments: number;
+    files: number;
+  }>;
+  timeline?: Array<{
+    title: string;
+    time: string;
+  }>;
 }
 
 async function getContracts(tenant: string): Promise<StandardContractDto[]> {

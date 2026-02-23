@@ -17,48 +17,7 @@ export function ContractList({ contracts }: { contracts?: ContractRow[] }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const rows: ContractRow[] = contracts ?? [
-    {
-      id: 101,
-      title: '2026년도 소프트웨어 유지보수 계약',
-      partner: '(주)테크솔루션',
-      status: 'Active',
-      date: '2026-01-14',
-      amount: '₩150,000,000',
-    },
-    {
-      id: 102,
-      title: '비밀유지서약서 (NDA)',
-      partner: '스타트업 A',
-      status: 'Draft',
-      date: '2026-01-13',
-      amount: '-',
-    },
-    {
-      id: 103,
-      title: '클라우드 서비스 이용 약관',
-      partner: 'AWS Korea',
-      status: 'Review',
-      date: '2026-01-10',
-      amount: '$5,000',
-    },
-    {
-      id: 104,
-      title: '마케팅 대행 용역 계약',
-      partner: '애드에이전시',
-      status: 'Expired',
-      date: '2025-12-31',
-      amount: '₩30,000,000',
-    },
-    {
-      id: 105,
-      title: '사무실 임대차 계약 갱신',
-      partner: '위워크 타워',
-      status: 'Active',
-      date: '2025-11-20',
-      amount: '₩24,000,000',
-    },
-  ];
+  const rows: ContractRow[] = contracts ?? [];
 
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {

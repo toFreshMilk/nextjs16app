@@ -10,7 +10,22 @@
     "templateName": "SW개발계약서",
     "requester": "DemoUser1",
     "reviewer": "Manager1",
-    "documentCode": "DEMO-2024-001"
+    "documentCode": "DEMO-2024-001",
+    "smartEmail": "licombined+com101@smail.buptlestg.com",
+    "signDate": "2026-02-01",
+    "reviewFrom": "2026-02-03",
+    "reviewTo": "2026-02-14",
+    "weeklyActivity": [
+      { "week": "W1", "comments": 2, "files": 1 },
+      { "week": "W2", "comments": 4, "files": 2 },
+      { "week": "W3", "comments": 3, "files": 2 },
+      { "week": "W4", "comments": 6, "files": 4 }
+    ],
+    "timeline": [
+      { "title": "법률_검토자: 검토완료", "time": "26/01/12 10:26" },
+      { "title": "법률_검토자: 최종승인요청", "time": "26/01/12 10:26" },
+      { "title": "법률_최종승인자: 최종승인", "time": "26/01/12 10:26" }
+    ]
   },
   {
     "id": 102,
@@ -23,6 +38,21 @@
     "templateName": "임대차계약서",
     "requester": "DemoUser2",
     "reviewer": "Manager2",
-    "documentCode": "DEMO-2024-002"
+    "documentCode": "DEMO-2024-002",
+    "smartEmail": "licombined+com102@smail.buptlestg.com",
+    "signDate": "2026-02-05",
+    "reviewFrom": "2026-02-07",
+    "reviewTo": "2026-02-18",
+    "weeklyActivity": [
+      { "week": "W1", "comments": 1, "files": 1 },
+      { "week": "W2", "comments": 2, "files": 1 },
+      { "week": "W3", "comments": 2, "files": 2 },
+      { "week": "W4", "comments": 3, "files": 2 }
+    ],
+    "timeline": [
+      { "title": "법률_검토자: 검토완료", "time": "26/01/10 09:20" },
+      { "title": "법률_검토자: 최종승인요청", "time": "26/01/10 11:05" },
+      { "title": "법률_최종승인자: 최종승인", "time": "26/01/11 16:40" }
+    ]
   }
 ]

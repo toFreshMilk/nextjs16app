@@ -41,6 +41,7 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
 
   const stepMap: Record<StepKey, number> = { draft: 0, review: 1, active: 2, done: 3 };
   const stepIndex = stepMap[step];
+  const contractId = contract?.id ? String(contract.id) : '';
 
   const title = contract?.title ?? t('detailTop.titleFallback');
 
@@ -77,8 +78,11 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
   // [변경] React Query useMutation 사용
   const { mutate: handleApprove, isPending } = useMutation({
     mutationFn: async () => {
+      if (!contractId) {
+        throw new Error('Contract ID is missing');
+      }
       // 서비스 파일의 approve 함수 직접 호출
-      return await contractService.approve(tenantId, String(contract.id));
+      return await contractService.approve(tenantId, contractId);
     },
     onSuccess: () => {
       alert(t('detailTop.approvedAlert'));
@@ -136,10 +140,10 @@ export default function ContractDetailTop({ data: contract, tenantId }: Props) {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          {contract.status !== 'APPROVED' && (
+          {normalizeStatus(contract?.status ?? '') !== 'approved' && (
             <Button
               onPress={onApproveClick}
-              disabled={isPending}
+              disabled={isPending || !contractId}
               tone="blue"
               uniqueClassName="ui-apr-detail-top-approve"
             >

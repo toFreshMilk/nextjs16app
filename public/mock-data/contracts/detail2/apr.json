@@ -10,7 +10,22 @@
     "templateName": "Partnership Agreement En",
     "requester": "James Kim",
     "reviewer": "Sarah Lee",
-    "documentCode": "APR-2024-001"
+    "documentCode": "APR-2024-001",
+    "smartEmail": "licombined+com201@smail.buptlestg.com",
+    "signDate": "2026-02-02",
+    "reviewFrom": "2026-02-04",
+    "reviewTo": "2026-02-15",
+    "weeklyActivity": [
+      { "week": "W1", "comments": 5, "files": 2 },
+      { "week": "W2", "comments": 6, "files": 3 },
+      { "week": "W3", "comments": 4, "files": 2 },
+      { "week": "W4", "comments": 7, "files": 4 }
+    ],
+    "timeline": [
+      { "title": "APR_검토자: 검토완료", "time": "26/01/08 10:10" },
+      { "title": "APR_검토자: 최종승인요청", "time": "26/01/09 14:45" },
+      { "title": "APR_최종승인자: 최종승인", "time": "26/01/10 18:30" }
+    ]
   },
   {
     "id": 202,
@@ -23,7 +38,22 @@
     "templateName": "모델출연계약서",
     "requester": "Marketing Team",
     "reviewer": "Legal Team",
-    "documentCode": "APR-2024-002"
+    "documentCode": "APR-2024-002",
+    "smartEmail": "licombined+com202@smail.buptlestg.com",
+    "signDate": "2026-02-06",
+    "reviewFrom": "2026-02-08",
+    "reviewTo": "2026-02-21",
+    "weeklyActivity": [
+      { "week": "W1", "comments": 2, "files": 1 },
+      { "week": "W2", "comments": 3, "files": 2 },
+      { "week": "W3", "comments": 4, "files": 2 },
+      { "week": "W4", "comments": 5, "files": 3 }
+    ],
+    "timeline": [
+      { "title": "APR_검토자: 검토완료", "time": "26/01/13 09:00" },
+      { "title": "APR_검토자: 최종승인요청", "time": "26/01/13 15:30" },
+      { "title": "APR_최종승인자: 최종승인", "time": "26/01/14 11:25" }
+    ]
   },
   {
     "id": 203,
@@ -36,6 +66,21 @@
     "templateName": "공사도급계약서",
     "requester": "Facility Mgr",
     "reviewer": "Finance Mgr",
-    "documentCode": "APR-2024-003"
+    "documentCode": "APR-2024-003",
+    "smartEmail": "licombined+com203@smail.buptlestg.com",
+    "signDate": "2026-02-09",
+    "reviewFrom": "2026-02-11",
+    "reviewTo": "2026-02-22",
+    "weeklyActivity": [
+      { "week": "W1", "comments": 3, "files": 1 },
+      { "week": "W2", "comments": 5, "files": 2 },
+      { "week": "W3", "comments": 4, "files": 3 },
+      { "week": "W4", "comments": 6, "files": 3 }
+    ],
+    "timeline": [
+      { "title": "APR_검토자: 검토완료", "time": "26/01/16 10:35" },
+      { "title": "APR_검토자: 최종승인요청", "time": "26/01/16 16:10" },
+      { "title": "APR_최종승인자: 최종승인", "time": "26/01/17 13:45" }
+    ]
   }
 ]

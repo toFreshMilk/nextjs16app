@@ -1,0 +1,26 @@
+[
+  {
+    "id": 2001,
+    "title": "[APR 샘플] 해외 총판 계약 갱신",
+    "status": "Active",
+    "partner": "APR Partner A",
+    "date": "2026-01-03",
+    "amount": "$110,000"
+  },
+  {
+    "id": 2002,
+    "title": "[APR 샘플] 광고 집행 부속합의",
+    "status": "Review",
+    "partner": "APR Agency B",
+    "date": "2026-01-11",
+    "amount": "220,000,000"
+  },
+  {
+    "id": 2003,
+    "title": "[APR 샘플] 원재료 납품 계약",
+    "status": "Draft",
+    "partner": "APR Vendor C",
+    "date": "2026-01-19",
+    "amount": "70,000,000"
+  }
+]

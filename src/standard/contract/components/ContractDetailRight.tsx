@@ -1,7 +1,7 @@
 // src/standard/contract/components/ContractDetailRight.tsx
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 import { useAppConfig } from '@/core/contexts/AppConfigContext';
 import type { StandardContractDto } from '@/standard/contract/services/contract.service';
@@ -36,29 +36,38 @@ interface Props {
   data: StandardContractDto[];
 }
 
+type WeeklyActivity = {
+  week: string;
+  comments: number;
+  files: number;
+};
+
 export default function ContractDetailRight({ data }: Props) {
   const { config } = useAppConfig();
 
   const contract = data?.[0] || null;
 
-  const [comment, setComment] = useState('승인합니다.');
-  const [signDate, setSignDate] = useState<Date | undefined>();
-  const [reviewRange, setReviewRange] = useState<DateRange | undefined>();
-
   const base = contract ?? { id: '-', title: '계약 상세', status: 'Active' };
-  const derived = {
-    ...base,
-    smartEmail: `licombined+com${String(base.id ?? '0')}@smail.buptlestg.com`,
-  };
 
-  const weeklyActivityData = useMemo(
-    () => [
-      { week: 'W1', comments: 2, files: 1 },
-      { week: 'W2', comments: 4, files: 2 },
-      { week: 'W3', comments: 3, files: 2 },
-      { week: 'W4', comments: 6, files: 4 },
-    ],
-    [],
+  const defaultSignDate =
+    typeof base.signDate === 'string' && !Number.isNaN(new Date(base.signDate).getTime()) ? new Date(base.signDate) : undefined;
+  const defaultReviewFrom =
+    typeof base.reviewFrom === 'string' && !Number.isNaN(new Date(base.reviewFrom).getTime()) ? new Date(base.reviewFrom) : undefined;
+  const defaultReviewTo =
+    typeof base.reviewTo === 'string' && !Number.isNaN(new Date(base.reviewTo).getTime()) ? new Date(base.reviewTo) : undefined;
+
+  const weeklyActivityData: WeeklyActivity[] = Array.isArray(base.weeklyActivity) && base.weeklyActivity.length > 0 ? base.weeklyActivity : [];
+  const timeline = Array.isArray(base.timeline) ? base.timeline : [];
+
+  const [comment, setComment] = useState('승인합니다.');
+  const [signDate, setSignDate] = useState<Date | undefined>(defaultSignDate);
+  const [reviewRange, setReviewRange] = useState<DateRange | undefined>(
+    defaultReviewFrom
+      ? {
+          from: defaultReviewFrom,
+          to: defaultReviewTo,
+        }
+      : undefined,
   );
 
   return (
@@ -80,7 +89,7 @@ export default function ContractDetailRight({ data }: Props) {
           <div className="text-slate-400">⌄</div>
         </summary>
         <div className="px-5 pb-5">
-          <div className="text-sm text-slate-500">(데모) 공유 대상/권한 설정 영역입니다.</div>
+          <div className="text-sm text-slate-500">공유 대상/권한 설정 영역입니다.</div>
         </div>
       </details>
 
@@ -119,6 +128,7 @@ export default function ContractDetailRight({ data }: Props) {
           onBarClick={({ seriesKey, row }) => {
             console.log('[BarChart] click', seriesKey, row.week);
           }}
+          emptyFallback={<div className="text-sm text-slate-400">활동 데이터가 없습니다.</div>}
         />
       </div>
 
@@ -135,7 +145,7 @@ export default function ContractDetailRight({ data }: Props) {
             <div className="text-sm font-bold text-slate-700">스마트 이메일</div>
             <div className="ml-auto flex items-center gap-2">
               <div className="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-xs font-mono text-slate-700">
-                {safeText(derived.smartEmail)}
+                    {safeText(base.smartEmail)}
               </div>
               <Button
                 variant="outline"
@@ -144,7 +154,7 @@ export default function ContractDetailRight({ data }: Props) {
                 uniqueClassName="ui-standard-right-copy"
                 onPress={async () => {
                   try {
-                    await navigator.clipboard.writeText(String(derived.smartEmail ?? ''));
+                    await navigator.clipboard.writeText(String(base.smartEmail ?? ''));
                   } catch {
                     // ignore
                   }
@@ -174,8 +184,9 @@ export default function ContractDetailRight({ data }: Props) {
           </div>
 
           <div className="pt-2">
-            <TimelineItem title="법률_검토자: 검토완료" time="26/01/12 10:26" />
-            <TimelineItem title="법률_검토자: 최종승인요청" time="26/01/12 10:26" />
+            {timeline.map((item, index) => (
+              <TimelineItem key={`${item.title}-${item.time}-${index}`} title={item.title} time={item.time} />
+            ))}
             <div className="flex gap-3">
               <div className="flex flex-col items-center">
                 <div className="h-8 w-8 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-500">

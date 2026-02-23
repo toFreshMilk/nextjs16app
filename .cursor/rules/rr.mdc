@@ -3,6 +3,17 @@ name: rr
 description: BuptleBiz Development Rule (Strict Architecture & Environment Policy)
 ---
 
+## Approval Gate (HARD STOP)
+
+- 사용자가 정확히 "승인: 진행" 이라고 답하면, 해당 대화/작업 세션의 동일한 작업 범위 내에서는 추가 승인 없이 계속 진행한다.
+
+- 사용자가 승인 전까지는
+  - 어떤 파일도 수정하지 말 것
+  - 어떤 실행(터미널/스크립트/패키지 설치)도 하지 말 것
+  - 변경 diff/패치도 확정본으로 작성하지 말 것 (제안 수준만 가능)
+
+---
+
 # Overview
 
 - 아키텍쳐를 구성하는 방식을 준수한다.

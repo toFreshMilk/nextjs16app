@@ -1,5 +1,6 @@
 // src/app/[lang]/(main)/contract/[id]/page.tsx
 import { getTenantComponent, getTenantService, getTenantId } from '@/core/config/tenant.config';
+import { notFound } from 'next/navigation';
 // [중요] Standard 구현체에서 타입을 가져옴 (Service & Props)
 import type { StandardContractService } from '@/standard/contract/services/contract.service';
 // ContractDetailTopProps는 실제 컴포넌트 파일이 있어야 import 가능. 여기선 any로 가정하거나 실제 파일에서 export 필요.
@@ -27,6 +28,9 @@ export default async function ContractDetailPage({ params }: { params: Promise<{
 
   // ID로 특정 계약 찾기
   const contractDetail = detailList.find((r) => String(r.id) === String(id));
+  if (!contractDetail) {
+    notFound();
+  }
 
   // 3. 렌더링
   // Top, Left, Right 컴포넌트는 "암묵적으로" contractDetail 데이터를 받을 준비가 되어 있다고 가정 (Duck Typing)
