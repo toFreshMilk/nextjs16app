@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
     "format": "prettier --write .",
     "lint2": "ghp_GmrKiokwgm",
     "lint3": "IP9ClQIVDRDARcvMV3kt31Ja9H",
@@ -34,6 +36,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.1.1",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/negotiator": "^0.6.4",
     "@types/node": "^24",
