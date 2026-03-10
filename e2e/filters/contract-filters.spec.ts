@@ -37,9 +37,10 @@ test.describe('Contract Filters (Demo Tenant)', () => {
     await page.getByPlaceholder('검색어를 입력하세요').fill('임대차');
     await expect(page).toHaveURL(/q=%EC%9E%84%EB%8C%80%EC%B0%A8/);
 
-    // 초기화 클릭
-    await page.getByRole('button', { name: '검색 초기화' }).click();
+    // 초기화 클릭 (고유 클래스 활용하여 명확히 지정)
+    await page.locator('.ui-standard-contract-reset').click();
     
+    // URL 업데이트 대기
     await expect(page).not.toHaveURL(/tab=/);
     await expect(page).not.toHaveURL(/q=/);
     await expect(page.getByPlaceholder('검색어를 입력하세요')).toHaveValue('');
