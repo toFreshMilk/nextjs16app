@@ -61,5 +61,17 @@ export default function I18nProvider({ lang, resources, children }: Props) {
     }
   }, [i18n, lang, resources]);
 
-  return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
+  return (
+    <I18nextProvider i18n={i18n}>
+      {/* E2E 테스트 검증용 숨겨진 데이터 영역 (서버가 어떤 언어 리소스를 내려줬는지 직접 노출) */}
+      <div 
+        id="i18n-debug-data" 
+        data-current-lang={lang} 
+        data-loaded-langs={Object.keys(resources || {}).join(',')} 
+        style={{ display: 'none' }}
+        aria-hidden="true"
+      />
+      {children}
+    </I18nextProvider>
+  );
 }
