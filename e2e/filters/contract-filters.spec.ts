@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Contract Filters (Demo Tenant)', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://demo.localhost:3000/ko/contract');
+    await page.goto('http://demo.localhost:3200/ko/contract');
   });
 
   test('상태 탭을 클릭하면 URL이 업데이트되고 목록이 필터링된다', async ({ page }) => {

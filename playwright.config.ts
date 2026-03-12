@@ -20,7 +20,7 @@ export default defineConfig({
   },
   webServer: {
     command: 'pnpm dev',
-    url: 'http://demo.localhost:3000/ko/contract',
+    url: 'http://demo.localhost:3200/ko/contract',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },

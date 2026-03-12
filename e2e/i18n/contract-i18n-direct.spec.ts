@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 test.describe('Tenant i18n Direct Resource Loading Config', () => {
   test('i18n 설정이 ON인 Demo 테넌트는 /en 접근 시 영어(en) 리소스를 서버에서 준비하여 내려준다', async ({ page }) => {
     // 1. 영어 경로로 Demo 접속
-    await page.goto('http://demo.localhost:3000/en/contract');
+    await page.goto('http://demo.localhost:3200/en/contract');
     
     // 2. 서버가 내려준 데이터 속성 값을 직접 확인 (.first()로 중복 요소 에러 방지)
     const debugElement = page.locator('#i18n-debug-data').first();
@@ -19,7 +19,7 @@ test.describe('Tenant i18n Direct Resource Loading Config', () => {
 
   test('i18n 설정이 OFF인 APR 테넌트는 /en 접근 시 강제로 한국어(ko) 리소스만 서버에서 준비하여 내려준다', async ({ page }) => {
     // 1. 강제로 영어 경로로 APR 접속
-    await page.goto('http://apr.localhost:3000/en/contract');
+    await page.goto('http://apr.localhost:3200/en/contract');
     
     // 2. 서버가 내려준 데이터 속성 값을 직접 확인
     const debugElement = page.locator('#i18n-debug-data').first();
