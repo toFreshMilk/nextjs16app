@@ -23,8 +23,8 @@
     ],
     "timeline": [
       { "title": "법률_검토자: 검토완료", "time": "26/01/12 10:26" },
-      { "title": "법률_검토자: 최종승인요청", "time": "26/01/12 10:26" },
-      { "title": "법률_최종승인자: 최종승인", "time": "26/01/12 10:26" }
+      { "title": "법률_검토자: 최종승인요청", "time": "26/01/12 13:10" },
+      { "title": "법률_최종승인자: 최종승인", "time": "26/01/13 09:40" }
     ]
   },
   {
@@ -53,6 +53,118 @@
       { "title": "법률_검토자: 검토완료", "time": "26/01/10 09:20" },
       { "title": "법률_검토자: 최종승인요청", "time": "26/01/10 11:05" },
       { "title": "법률_최종승인자: 최종승인", "time": "26/01/11 16:40" }
+    ]
+  },
+  {
+    "id": 103,
+    "title": "[데모] AI 계약서 위험조항 자동탐지 SaaS 도입 및 운영 위수탁 계약",
+    "status": "Draft",
+    "partner": "클라우드리걸 랩스",
+    "date": "2024-05-03",
+    "amount": "88,500,000",
+    "category": "AI",
+    "templateName": "서비스이용계약서",
+    "requester": "LegalOps",
+    "reviewer": "HeadManager",
+    "documentCode": "DEMO-2024-003",
+    "smartEmail": "licombined+com103@smail.buptlestg.com",
+    "signDate": "2026-02-12",
+    "reviewFrom": "2026-02-14",
+    "reviewTo": "2026-02-28",
+    "weeklyActivity": [
+      { "week": "W1", "comments": 7, "files": 3 },
+      { "week": "W2", "comments": 12, "files": 6 },
+      { "week": "W3", "comments": 14, "files": 7 },
+      { "week": "W4", "comments": 9, "files": 5 }
+    ],
+    "timeline": [
+      { "title": "요청자: 신규 검토 요청", "time": "26/02/13 08:45" },
+      { "title": "AI_분석엔진: 독소조항 4건 탐지", "time": "26/02/13 08:47" },
+      { "title": "법률_검토자: 계약 상대방 수정 요청 대기", "time": "26/02/14 17:05" }
+    ]
+  },
+  {
+    "id": 104,
+    "title": "[데모] 글로벌 공급망 재편 대응용 물류센터 단기 보관 및 출고 운영 계약",
+    "status": "Review",
+    "partner": "CJ Logistics Demo",
+    "date": "2024-05-21",
+    "amount": "245,000,000",
+    "category": "물류",
+    "templateName": "물류운영계약서",
+    "requester": "OpsTeam",
+    "reviewer": "FinanceLead",
+    "documentCode": "DEMO-2024-004",
+    "smartEmail": "licombined+com104@smail.buptlestg.com",
+    "signDate": "2026-02-15",
+    "reviewFrom": "2026-02-16",
+    "reviewTo": "2026-03-02",
+    "weeklyActivity": [
+      { "week": "W1", "comments": 4, "files": 2 },
+      { "week": "W2", "comments": 8, "files": 3 },
+      { "week": "W3", "comments": 10, "files": 5 },
+      { "week": "W4", "comments": 13, "files": 6 }
+    ],
+    "timeline": [
+      { "title": "운영팀: SLA 부속서 추가 요청", "time": "26/02/16 10:15" },
+      { "title": "재무팀: 손해배상 한도 검토의견 등록", "time": "26/02/18 14:20" },
+      { "title": "법률_검토자: 재검토 진행중", "time": "26/02/19 18:10" }
+    ]
+  },
+  {
+    "id": 105,
+    "title": "[데모] 브랜드 리뉴얼 통합 마케팅 대행 기본계약",
+    "status": "Active",
+    "partner": "브라이트캠페인",
+    "date": "2024-06-10",
+    "amount": "39,000,000/분기",
+    "category": "마케팅",
+    "templateName": "광고대행계약서",
+    "requester": "BrandTeam",
+    "reviewer": "LegalPartner",
+    "documentCode": "DEMO-2024-005",
+    "smartEmail": "licombined+com105@smail.buptlestg.com",
+    "signDate": "2026-02-20",
+    "reviewFrom": "2026-02-22",
+    "reviewTo": "2026-03-05",
+    "weeklyActivity": [
+      { "week": "W1", "comments": 3, "files": 1 },
+      { "week": "W2", "comments": 3, "files": 2 },
+      { "week": "W3", "comments": 5, "files": 3 },
+      { "week": "W4", "comments": 2, "files": 1 }
+    ],
+    "timeline": [
+      { "title": "브랜드팀: 캠페인 소재 확정", "time": "26/02/21 09:00" },
+      { "title": "법률_검토자: 계약서 체결 승인", "time": "26/02/22 15:55" },
+      { "title": "전자서명: 체결 완료", "time": "26/02/23 10:32" }
+    ]
+  },
+  {
+    "id": 106,
+    "title": "[데모] 보안관제 및 개인정보 접속기록 통합 관리 운영 계약",
+    "status": "Expired",
+    "partner": "SecureOps 24",
+    "date": "2023-12-18",
+    "amount": "67,200,000/년",
+    "category": "보안",
+    "templateName": "정보보호운영계약서",
+    "requester": "InfraAdmin",
+    "reviewer": "CISO Office",
+    "documentCode": "DEMO-2023-006",
+    "smartEmail": "licombined+com106@smail.buptlestg.com",
+    "signDate": "2025-01-05",
+    "reviewFrom": "2025-01-07",
+    "reviewTo": "2025-01-20",
+    "weeklyActivity": [
+      { "week": "W1", "comments": 0, "files": 1 },
+      { "week": "W2", "comments": 1, "files": 1 },
+      { "week": "W3", "comments": 0, "files": 0 },
+      { "week": "W4", "comments": 1, "files": 0 }
+    ],
+    "timeline": [
+      { "title": "인프라팀: 갱신 보류 결정", "time": "25/12/05 11:40" },
+      { "title": "법률_검토자: 만료 예정 안내 발송", "time": "25/12/12 16:25" },
+      { "title": "계약상태: 만료", "time": "25/12/31 23:59" }
     ]
   }
 ]

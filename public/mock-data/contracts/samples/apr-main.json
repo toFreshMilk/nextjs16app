@@ -22,5 +22,21 @@
     "partner": "APR Vendor C",
     "date": "2026-01-19",
     "amount": "70,000,000"
+  },
+  {
+    "id": 2004,
+    "title": "[APR 샘플] 일본 리테일 PB 독점판매 합의서",
+    "status": "Active",
+    "partner": "APR Retail D",
+    "date": "2026-01-24",
+    "amount": "JPY 48,000,000"
+  },
+  {
+    "id": 2005,
+    "title": "[APR 샘플] 뷰티 디바이스 AS 운영 SLA 초안",
+    "status": "Draft",
+    "partner": "APR Service E",
+    "date": "2026-02-02",
+    "amount": "54,000,000/년"
   }
 ]

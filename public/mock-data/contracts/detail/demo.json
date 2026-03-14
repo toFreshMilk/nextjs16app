@@ -24,5 +24,57 @@
     "requester": "DemoUser2",
     "reviewer": "Manager2",
     "documentCode": "DEMO-2024-002"
+  },
+  {
+    "id": 103,
+    "title": "[데모] AI 계약서 위험조항 자동탐지 SaaS 도입 및 운영 위수탁 계약",
+    "status": "Draft",
+    "partner": "클라우드리걸 랩스",
+    "date": "2024-05-03",
+    "amount": "88,500,000",
+    "category": "AI",
+    "templateName": "서비스이용계약서",
+    "requester": "LegalOps",
+    "reviewer": "HeadManager",
+    "documentCode": "DEMO-2024-003"
+  },
+  {
+    "id": 104,
+    "title": "[데모] 글로벌 공급망 재편 대응용 물류센터 단기 보관 및 출고 운영 계약",
+    "status": "Review",
+    "partner": "CJ Logistics Demo",
+    "date": "2024-05-21",
+    "amount": "245,000,000",
+    "category": "물류",
+    "templateName": "물류운영계약서",
+    "requester": "OpsTeam",
+    "reviewer": "FinanceLead",
+    "documentCode": "DEMO-2024-004"
+  },
+  {
+    "id": 105,
+    "title": "[데모] 브랜드 리뉴얼 통합 마케팅 대행 기본계약",
+    "status": "Active",
+    "partner": "브라이트캠페인",
+    "date": "2024-06-10",
+    "amount": "39,000,000/분기",
+    "category": "마케팅",
+    "templateName": "광고대행계약서",
+    "requester": "BrandTeam",
+    "reviewer": "LegalPartner",
+    "documentCode": "DEMO-2024-005"
+  },
+  {
+    "id": 106,
+    "title": "[데모] 보안관제 및 개인정보 접속기록 통합 관리 운영 계약",
+    "status": "Expired",
+    "partner": "SecureOps 24",
+    "date": "2023-12-18",
+    "amount": "67,200,000/년",
+    "category": "보안",
+    "templateName": "정보보호운영계약서",
+    "requester": "InfraAdmin",
+    "reviewer": "CISO Office",
+    "documentCode": "DEMO-2023-006"
   }
 ]

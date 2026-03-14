@@ -37,5 +37,57 @@
     "requester": "Facility Mgr",
     "reviewer": "Finance Mgr",
     "documentCode": "APR-2024-003"
+  },
+  {
+    "id": 204,
+    "title": "[APR] 북미 D2C 채널 입점 및 분기별 프로모션 정산 부속합의",
+    "status": "Draft",
+    "partner": "Ulta Beauty Commerce",
+    "date": "2024-03-25",
+    "amount": "$185,000",
+    "category": "해외영업",
+    "templateName": "Sales Addendum En",
+    "requester": "US Sales Team",
+    "reviewer": "Global Legal",
+    "documentCode": "APR-2024-004"
+  },
+  {
+    "id": 205,
+    "title": "[APR] 메가 인플루언서 공동 캠페인 콘텐츠 제작 및 초상권 이용 계약",
+    "status": "Active",
+    "partner": "Vision Creator Studio",
+    "date": "2024-04-08",
+    "amount": "420,000,000",
+    "category": "브랜드마케팅",
+    "templateName": "콘텐츠제작계약서",
+    "requester": "Brand Marketing",
+    "reviewer": "Compliance Team",
+    "documentCode": "APR-2024-005"
+  },
+  {
+    "id": 206,
+    "title": "[APR] 일본 오프라인 리테일 독점 공급계약 갱신",
+    "status": "Review",
+    "partner": "Tokyo Retail Holdings",
+    "date": "2024-04-19",
+    "amount": "JPY 95,000,000",
+    "category": "해외사업",
+    "templateName": "Exclusive Distribution Agreement",
+    "requester": "JP Biz Team",
+    "reviewer": "Regional Counsel",
+    "documentCode": "APR-2024-006"
+  },
+  {
+    "id": 207,
+    "title": "[APR] 스마트팩토리 설비 유지보수 통합 SLA 계약",
+    "status": "Draft",
+    "partner": "Factory Automation Korea",
+    "date": "2024-05-02",
+    "amount": "98,000,000/년",
+    "category": "생산지원",
+    "templateName": "유지보수계약서",
+    "requester": "Manufacturing PM",
+    "reviewer": "Procurement Lead",
+    "documentCode": "APR-2024-007"
   }
 ]
