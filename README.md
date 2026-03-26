@@ -49,3 +49,17 @@ Write-Host "2. pnpm 캐시 정리 중..."
 pnpm store prune
 
 Write-Host "3. 프로세스 초기화가 완료되었습니다. Gemini CLI를 다시 실행하세요."
+
+
+
+
+# 1. Git 인덱스(캐시)에 있는 모든 파일의 추적 상태를 일괄 삭제합니다.
+# (주의: 디스크의 실제 파일은 지워지지 않으니 안심하셔도 됩니다)
+git rm -r --cached .
+
+# 2. 현재 디렉토리의 모든 파일을 다시 Git에 추가합니다.
+# (이때 방금 업데이트된 .gitignore의 규칙이 비로소 강력하게 적용되어, 무시할 파일들은 걸러집니다)
+git add .
+
+# 3. 캐시가 정리된 상태를 새로운 커밋으로 확정하여 저장소에 반영합니다.
+git commit -m "chore: apply gitignore to already tracked files"
