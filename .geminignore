@@ -1,0 +1,17 @@
+# /.geminignore
+# (주의: 파일 최상단 주석 // src/ 의 역할을 하는 위치 주석입니다)
+
+# 1. 패키지 및 의존성 (pnpm 환경 필수 제외)
+node_modules/
+.pnpm-store/
+
+# 2. Next.js 16.1.5 빌드 산출물 및 캐시
+.next/
+out/
+build/
+dist/
+
+# 3. 기타 버전 관리 및 시스템 파일
+.git/
+.DS_Store
+coverage/
