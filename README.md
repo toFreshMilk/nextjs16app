@@ -66,3 +66,11 @@ git commit -m "chore: apply gitignore to already tracked files"
 
 
 "먼저 mcp_next-devtools_init 도구를 실행해서 컨텍스트를 초기화해 줘. 그 다음 nextjs_index를 호출해서 현재 켜져 있는 내 로컬 개발 서버와 연동해 줘."
+
+
+온니오피스 대신
+
+Syncfusion Document Editor: 문서를 렌더링한 후 사용자가 텍스트를 클릭하면 바로 입력 가능한 상태가 됩니다. 변경 내용 추적(Track changes) 기능을 켜두면, 사용자가 그 자리에서 지우거나 새로 쓴 텍스트가 빨간색 실선 등으로 바로 표시되는 기능도 지원합니다.
+
+
+에디터는 dext5

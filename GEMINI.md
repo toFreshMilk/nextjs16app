@@ -33,7 +33,8 @@ Next.js 16의 MCP 도구를 사용하여 추측이 아닌 **실시간 데이터*
 - **RSC (Server Components):** 초기 데이터 로드는 페이지 레벨에서 수행하여 Props로 전달하십시오.
 - **Client Components:** 상호작용 및 Mutation(POST/PUT/DELETE)에만 사용하십시오. 데이터 관리는 React Query를 사용합니다.
 - **Server Actions 금지:** 이 프로젝트는 명시적으로 Server Actions를 지양합니다. 표준 API 호출과 React Query를 사용하십시오.
-- **데이터 타입 정의:** 최대한 서비스 파일에서 정의하고
+- **데이터 타입 정의:** 최대한 서비스 파일에서 정의합니다.
+- **nuqs 스타일 적용** 서버데이터가 아닌 ui 컴포넌트 상호작용에서 생겨난 상태값은 url에 파라미터로 기록한다.
 
 ## 5. UI 킷 스타일링 규칙 (`src/uikit/`)
 - **Internal Style:** 컴포넌트 내부에 `variant`, `tone`, `size` 등을 정의합니다.
