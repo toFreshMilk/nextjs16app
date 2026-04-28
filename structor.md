@@ -5,35 +5,43 @@ buptlebiz_fe/
 ├── pnpm-workspace.yaml # pnpm workspace
 ├── next-env.d.ts # Next.js TypeScript declarations
 ├── tsconfig.json # TypeScript config
-├── tsconfig.tsbuildinfo # TypeScript incremental build info
 ├── next.config.ts # Next.js config
 ├── tailwind.config.ts # Tailwind config
 ├── postcss.config.mjs # PostCSS config
 ├── eslint.config.mjs # ESLint config
 ├── README.md # Project docs
-├── structor.md # Project structure doc
+├── structor.md # Project structure doc (Current)
+├── GEMINI.md # Gemini CLI 지침
 │
 ├── public/ # Static assets
 │   ├── favicons/
 │   │   ├── apr.svg
 │   │   ├── default.svg
 │   │   └── demo.svg
-│   ├── file.svg
-│   ├── globe.svg
-│   ├── window.svg
-│   └── mock-data/
-│       └── contracts/
-│           ├── apr.json
-│           ├── demo.json
-│           ├── detail/
-│           │   ├── apr.json
-│           │   └── demo.json
-│           └── detail2/
-│               ├── apr.json
-│               └── demo.json
+│   ├── mock-data/
+│   │   └── contracts/
+│   │       ├── apr.json
+│   │       ├── demo.json
+│   │       ├── detail/
+│   │       │   ├── apr.json
+│   │       │   └── demo.json
+│   │       ├── detail2/
+│   │       │   ├── apr.json
+│   │       │   └── demo.json
+│   │       └── samples/ # Mock samples for various views
+│   │           ├── apr-main.json
+│   │           ├── demo-detail-right.json
+│   │           └── demo-main.json
+│
+├── e2e/ # Playwright E2E Tests
+│   ├── actions/ # UI Action tests (e.g., contract-actions)
+│   ├── filters/ # Filtering logic tests
+│   ├── i18n/ # Multi-language verification tests
+│   ├── routing/ # Page routing & navigation tests
+│   └── tenant/ # Tenant switching & config tests
 │
 └── src/
-    ├── proxy.ts # Tenant 감지 및 검증 로직
+    ├── proxy.ts # Tenant 감지 및 검증 로직 (Middleware 역할)
     │
     ├── app/ # Next.js App Router (조립 레이어)
     │   ├── layout.tsx # Root Layout
@@ -50,7 +58,7 @@ buptlebiz_fe/
     │           ├── layout.tsx # Main Layout (TopNavbar, WorkspaceBanner 조립)
     │           └── contract/
     │               ├── layout.tsx # Contract Layout (Sidebar + Main 조립)
-    │               ├── page.tsx # Contract Page (Sidebar + Main 조립)
+    │               ├── page.tsx # Contract List Page
     │               └── [id]/
     │                   └── page.tsx # Contract Detail Page (Top + Left + Right 조립)
     │
@@ -108,7 +116,12 @@ buptlebiz_fe/
     │       │   ├── ContractList.tsx # Standard Contract List
     │       │   ├── ContractDetailTop.tsx # Standard Contract Detail Top
     │       │   ├── ContractDetailLeft.tsx # Standard Contract Detail Left
-    │       │   └── ContractDetailRight.tsx # Standard Contract Detail Right
+    │       │   ├── ContractDetailRight.tsx # Standard Contract Detail Right
+    │       │   └── main/ # Contract Main 하위 컴포넌트
+    │       │       ├── ContractMainBody.tsx
+    │       │       ├── ContractMainHeader.tsx
+    │       │       ├── ContractMainSummary.tsx
+    │       │       └── ContractMainTabs.tsx
     │       ├── locales/
     │       │   ├── en/
     │       │   │   └── contract.json # Standard 영어 계약 번역
@@ -154,6 +167,8 @@ buptlebiz_fe/
     │           └── DemoStyleLoader.tsx # Demo 스타일 로더
     │
     └── uikit/ # UI Kit Components (재사용 공통 컴포넌트)
+        ├── calendar/
+        │   └── DatePicker.tsx # 날짜 선택 컴포넌트
         ├── card/
         │   └── StatCard.tsx # 통계 카드 컴포넌트
         ├── chart/
@@ -165,10 +180,12 @@ buptlebiz_fe/
         │   ├── Radio.tsx # 라디오 버튼 컴포넌트
         │   ├── Select.tsx # 셀렉트 컴포넌트
         │   └── Textarea.tsx # 텍스트 영역 컴포넌트
-        └── layout/
-            ├── Modal.tsx # 모달 팝업 컴포넌트 (1버튼/2버튼)
-            ├── PageContainer.tsx # 페이지 컨테이너
-            └── Section.tsx # 섹션 컴포넌트
+        ├── layout/
+        │   ├── Modal.tsx # 모달 팝업 컴포넌트 (1버튼/2버튼)
+        │   ├── PageContainer.tsx # 페이지 컨테이너
+        │   └── Section.tsx # 섹션 컴포넌트
+        └── table/
+            └── DataTable.tsx # 데이터 테이블 컴포넌트
 
 ## 아키텍처 원칙
 

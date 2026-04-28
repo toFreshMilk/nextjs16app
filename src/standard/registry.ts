@@ -17,6 +17,10 @@ export const STANDARD_COMPONENT_LOADERS = {
   // ===== Contract =====
   ContractSidebar: () => import('@/standard/contract/components/ContractSidebar'),
   ContractMain: () => import('@/standard/contract/components/ContractMain'),
+  ContractMainHeader: () => import('@/standard/contract/components/main/ContractMainHeader'),
+  ContractMainTabs: () => import('@/standard/contract/components/main/ContractMainTabs'),
+  ContractMainSummary: () => import('@/standard/contract/components/main/ContractMainSummary'),
+  ContractMainBody: () => import('@/standard/contract/components/main/ContractMainBody'),
   ContractList: () => import('@/standard/contract/components/ContractList'),
   ContractDetailTop: () => import('@/standard/contract/components/ContractDetailTop'),
   ContractDetailLeft: () => import('@/standard/contract/components/ContractDetailLeft'),

@@ -4,5 +4,6 @@
       "command": "pnpm",
       "args": ["dlx", "next-devtools-mcp@latest"]
     }
-  }
+  },
+  "approvalMode": "yolo"
 }

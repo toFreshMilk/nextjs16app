@@ -34,14 +34,67 @@
 - **Testing:** Playwright (`e2e/`)
 
 ## 3. MCP 기반 "Runtime-First" 워크플로우 (Mandatory)
+
 Next.js 16의 MCP 도구를 사용하여 추측이 아닌 **실시간 데이터**에 기반해 판단하십시오.
 
-1.  **진단 (Diagnostic):** 변경 전후에 `nextjs_call`의 `get_errors`를 호출하여 컴파일/런타임 에러를 확인하십시오.
-2.  **라우트 확인:** 새로운 페이지나 링크 작업 시 `get_routes`를 통해 실제 등록된 엔드포인트를 확인하십시오.
-3.  **브라우저 검증:** UI 변경이나 복잡한 클라이언트 로직 수정 후에는 반드시 `browser_eval`을 사용하여 실제 렌더링 상태와 하이드레이션 오류를 검증하십시오.
-4.  **문서 참조:** Next.js API 관련 의문이 생기면 반드시 `nextjs_docs`를 사용하여 최신 공식 문서를 조회하십시오.
+### 3.0 노출되는 MCP 도구 (확인됨, 2026-04-28 기준)
 
-> **주의:** 위 도구 이름은 `gemini.md`에서 옮겨온 명칭이다. Claude Code 환경에서 동일 이름으로 가용한지 §1.1.3 절차에 따라 매 답변마다 확인하고, 불가용 시 그 사실을 명시한 뒤 대체 절차(예: Read/Grep으로 코드 직접 확인, Bash로 빌드/타입체크 실행)를 사용한다.
+| 도구 (Claude Code 노출명)                          | 용도                                                                |
+|----------------------------------------------------|---------------------------------------------------------------------|
+| `mcp__next-devtools__init`                         | 세션 시작 시 Next.js 지식 reset, 항상 `nextjs_docs` 우선             |
+| `mcp__next-devtools__nextjs_index`                 | 실행 중 dev 서버 + 노출 sub-tool 디스커버리                          |
+| `mcp__next-devtools__nextjs_call`                  | dev 서버의 sub-tool 호출 (`get_errors`, `get_routes` 등이 sub-tool) |
+| `mcp__next-devtools__browser_eval`                 | Playwright 자동화 (hydration 오류, console 캡처)                     |
+| `mcp__next-devtools__nextjs_docs`                  | 공식 문서 페치 — 사전에 `nextjs-docs://llms-index` 리소스로 path 확보 |
+| `mcp__next-devtools__enable_cache_components`      | Cache Components 기능 활성화 (Next.js 16 신기능)                     |
+| `mcp__next-devtools__upgrade_nextjs_16`            | Next.js 15 이하 업그레이드 어시스턴트                                |
+
+`get_errors`와 `get_routes`는 **별도 도구가 아님** — `nextjs_call({ port: "3200", toolName: "get_errors" })`처럼 sub-tool로 호출.
+
+### 3.1 사용 절차
+
+1.  **진단:** 변경 전후 `nextjs_call`로 `get_errors`를 호출해 컴파일/런타임 에러를 확인.
+2.  **라우트 확인:** 새 페이지/링크 작업 시 `nextjs_call`로 `get_routes` 호출.
+3.  **브라우저 검증:** UI/클라이언트 로직 변경 후 `browser_eval`로 hydration 오류 확인.
+4.  **문서 참조:** Next.js API 의문이 생기면 `nextjs_docs` (사전에 `nextjs-docs://llms-index` 리소스 읽기).
+
+### 3.2 전제조건과 폴백 (§1.1.3 구체화)
+
+- `nextjs_call`/`get_errors`/`get_routes`/`browser_eval`은 dev 서버 실행을 전제(`pnpm dev`, port 3200 — `package.json`의 `dev` 스크립트와 일치).
+- `nextjs_index`가 `No running Next.js dev servers with MCP enabled found` 반환 시: 그 사실을 답변에 명시하고 **정적 폴백** — `pnpm exec tsc --noEmit`, `pnpm exec eslint`, Read/Grep으로 코드 직접 확인.
+- MCP 도구 자체가 노출되지 않은 세션이면 (다른 등록 환경에서 호출되었거나 재시작 직후): 도구 가용성을 한 줄로 명시한 뒤 정적 폴백.
+
+## 3.5 위임 매트릭스 (work-executor 전용)
+
+work-executor는 다음 작업 유형을 직접 수행하지 않고 좁은 sub-agent에 위임한다:
+
+| 작업 유형                         | 위임 대상              |
+|----------------------------------|----------------------|
+| 슬롯 추출 (1개 슬롯)              | slot-refactor        |
+| ContractDetail 필드 추가          | detail-field-adder   |
+| 신규 컴포넌트 registry 등록       | registry-syncer      |
+| 신규 테넌트 scaffold              | tenant-scaffolder    |
+| Playwright spec 생성              | e2e-generator        |
+| i18n drift 검사 (read-only)       | i18n-validator       |
+| 비자명 아키텍처 결정 2차 의견     | gemini-second-opinion|
+
+표에 없는 작업만 work-executor가 직접 수행한다.
+change-verifier와 test-runner는 위임 대상이 아니라 파이프라인의 다음 단계이며,
+work-executor 종료 후 호출자(메인 Claude Code 에이전트)가 순차 실행한다.
+
+검증 단계는 **change-verifier + i18n-validator** 둘 다 호출한다 — change-verifier는 i18n 정밀 검사를 흡수하지 않는다.
+
+### gemini-second-opinion 자동 트리거 (메인 에이전트 책임)
+
+work-executor 호출 **전** 다음 중 하나라도 해당하면 gemini-second-opinion을 먼저 돌린다:
+- standard ↔ tenants 경계 변경
+- 새로운 추상화 도입 (신규 hook, util, 공유 타입 패턴)
+- slot-refactor 호출 직전 (slot 경계 결정 검증)
+
+change-verifier 통과 **후** 다음 중 하나라도 해당하면 추가로 돌린다:
+- 변경 line 합계 > 200
+- 신규 디렉터리 생성
+- `src/standard/registry.ts` 다중 항목 변경
 
 ## 4. 멀티테넌트 및 조립 아키텍처 (Architecture)
 
